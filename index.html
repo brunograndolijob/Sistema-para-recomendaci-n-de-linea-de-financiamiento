@@ -1733,6 +1733,28 @@
     function restart() {
         location.reload(); // Simplest way to reset everything
     }
+
+    // Export functions to window for HTML access (since this is a module)
+    window.nextStep = nextStep;
+    window.selectOption = (question, value, element) => {
+        // This is a helper if needed, but we used event listeners
+    };
+    window.calculateResults = calculateResults;
+    window.selectSatisfaction = selectSatisfaction;
+    window.updateCharCount = updateCharCount;
+    window.sendFeedback = sendFeedback;
+    window.saveUserInfo = saveUserInfo;
+    window.openAdminModal = openAdminModal;
+    window.closeAdminModal = closeAdminModal;
+    window.handleAdminLogin = handleAdminLogin;
+    window.handleLogout = handleLogout;
+    window.closeAdminPanel = closeAdminPanel;
+    window.downloadUserInfoCSV = downloadUserInfoCSV;
+    window.clearAllData = clearAllData;
+    window.toggleGlossary = toggleGlossary;
+    window.showMoreInfo = showMoreInfo;
+    window.closeModal = closeModal;
+    window.restart = restart;
 </script>
 
 
