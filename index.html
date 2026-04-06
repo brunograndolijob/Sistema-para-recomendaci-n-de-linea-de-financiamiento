@@ -887,19 +887,17 @@
         <div class="modal" onclick="event.stopPropagation()" style="text-align: center;">
             <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔒</div>
             <h3 style="margin-bottom: 0.5rem; color: var(--primary); font-size: 1.5rem; font-weight: 800;">Acceso Restringido</h3>
-            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">Iniciá sesión con tu cuenta de Google para acceder al panel de estadísticas.</p>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">Ingresá la contraseña para acceder al panel de estadísticas.</p>
             
-            <button class="btn btn-primary btn-block" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; height: 50px; font-size: 1.1rem;" onclick="handleAdminLogin()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" fill="#EA4335"/>
-                </svg>
-                Continuar con Google
+            <div class="question-group" style="margin-bottom: 1.5rem;">
+                <input type="password" id="admin-password" class="comment-textarea" style="height: 50px; text-align: center; font-size: 1.2rem; letter-spacing: 0.2rem;" placeholder="••••••••">
+            </div>
+            
+            <button class="btn btn-primary btn-block" style="height: 50px; font-size: 1.1rem;" onclick="handleAdminLogin()">
+                Ingresar
             </button>
             
-            <p id="admin-error" class="error-msg" style="margin-top: 1rem; display: none;">No tenés permisos para acceder a esta sección.</p>
+            <p id="admin-error" class="error-msg" style="margin-top: 1rem; display: none;">Contraseña incorrecta. Intentá de nuevo.</p>
             
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                 <button class="btn" style="flex: 1; border: 1px solid var(--border);" onclick="closeAdminModal()">Cancelar</button>
@@ -1477,26 +1475,29 @@
     }
 
     // Admin Panel Logic
-    async function handleAdminLogin() {
-        try {
-            const result = await loginWithGoogle();
-            const user = result.user;
-            
-            if (await checkAdminPrivileges(user)) {
-                closeAdminModal();
-                showAdminPanel();
-            } else {
-                document.getElementById('admin-error').style.display = 'block';
-                await logout();
-            }
-        } catch (error) {
-            console.error("Login error:", error);
-            document.getElementById('admin-error').innerText = "Error al iniciar sesión. Intentá de nuevo.";
-            document.getElementById('admin-error').style.display = 'block';
+    const ADMIN_PASSWORD = "usuario25*";
+    let isAdminLoggedIn = false;
+
+    function handleAdminLogin() {
+        const passwordInput = document.getElementById('admin-password');
+        const password = passwordInput.value;
+        const errorMsg = document.getElementById('admin-error');
+
+        if (password === ADMIN_PASSWORD) {
+            isAdminLoggedIn = true;
+            closeAdminModal();
+            showAdminPanel();
+        } else {
+            errorMsg.innerText = "Contraseña incorrecta. Intentá de nuevo.";
+            errorMsg.style.display = 'block';
+            passwordInput.value = '';
         }
     }
 
     async function checkAdminPrivileges(user) {
+        // If password was entered correctly in this session
+        if (isAdminLoggedIn) return true;
+        
         if (!user) return false;
         
         // Primary check: Email
@@ -1513,13 +1514,26 @@
     }
 
     async function handleLogout() {
+        isAdminLoggedIn = false;
         await logout();
         closeAdminPanel();
     }
 
     function openAdminModal() {
         document.getElementById('admin-error').style.display = 'none';
+        document.getElementById('admin-password').value = '';
         document.getElementById('admin-modal').style.display = 'flex';
+        
+        // Focus input and add enter listener
+        const passwordInput = document.getElementById('admin-password');
+        passwordInput.focus();
+        
+        if (!passwordInput.dataset.listenerAdded) {
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleAdminLogin();
+            });
+            passwordInput.dataset.listenerAdded = 'true';
+        }
     }
 
     function closeAdminModal() {
@@ -1692,13 +1706,16 @@
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             if (await checkAdminPrivileges(user)) {
-                console.log("Admin session active");
+                console.log("Admin session active (Google)");
+                showAdminPanel();
             } else {
                 console.log("Non-admin user logged in");
             }
         } else {
-            console.log("User logged out");
-            closeAdminPanel();
+            console.log("User logged out from Google");
+            if (!isAdminLoggedIn) {
+                closeAdminPanel();
+            }
         }
     });
 

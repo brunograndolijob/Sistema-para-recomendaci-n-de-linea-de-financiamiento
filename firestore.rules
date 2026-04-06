@@ -58,7 +58,7 @@ service cloud.firestore {
     // Rules
     // ===============================================================
 
-    // User Info: Public can create, only admin can read
+    // User Info: Public can create and read
     match /stats_usuarios_info/{docId} {
       allow create: if 
         request.resource.data.keys().hasAll(['fecha', 'email', 'empresa', 'recomendacion', 'resumen']) &&
@@ -67,19 +67,19 @@ service cloud.firestore {
         request.resource.data.empresa is string && request.resource.data.empresa.size() <= 200 &&
         request.resource.data.recomendacion is string &&
         request.resource.data.resumen is string;
-      allow read: if isAdmin();
+      allow read: if true;
     }
 
-    // Consultation Stats: Public can create, only admin can read
+    // Consultation Stats: Public can create and read
     match /stats_consultas_completadas/{docId} {
       allow create: if 
         request.resource.data.keys().hasAll(['line', 'date']) &&
         request.resource.data.line is string &&
         request.resource.data.date is string;
-      allow read: if isAdmin();
+      allow read: if true;
     }
 
-    // Feedback: Public can create, only admin can read
+    // Feedback: Public can create and read
     match /stats_feedback/{docId} {
       allow create: if 
         request.resource.data.keys().hasAll(['line', 'satisfaction', 'date']) &&
@@ -87,7 +87,7 @@ service cloud.firestore {
         request.resource.data.satisfaction in ['good', 'neutral', 'bad'] &&
         request.resource.data.date is string &&
         (!('comment' in request.resource.data) || (request.resource.data.comment is string && request.resource.data.comment.size() <= 1000));
-      allow read: if isAdmin();
+      allow read: if true;
     }
 
     // Users: Only admin can read/write
