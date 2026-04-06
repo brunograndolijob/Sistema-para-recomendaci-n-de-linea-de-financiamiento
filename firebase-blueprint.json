@@ -1,0 +1,68 @@
+{
+  "entities": {
+    "UserConsultation": {
+      "title": "User Consultation",
+      "description": "Information provided by the user after receiving a recommendation.",
+      "type": "object",
+      "properties": {
+        "fecha": { "type": "string", "format": "date-time", "description": "Date and time of the consultation." },
+        "email": { "type": "string", "format": "email", "description": "User's email address." },
+        "empresa": { "type": "string", "description": "User's company or organization name." },
+        "recomendacion": { "type": "string", "description": "The recommended credit line." },
+        "resumen": { "type": "string", "description": "Summary of the user's profile answers." },
+        "uid": { "type": "string", "description": "Firebase Auth UID of the user (if authenticated)." }
+      },
+      "required": ["fecha", "email", "empresa", "recomendacion", "resumen"]
+    },
+    "ConsultationStats": {
+      "title": "Consultation Stats",
+      "description": "Anonymous stats for each completed consultation.",
+      "type": "object",
+      "properties": {
+        "line": { "type": "string", "description": "The recommended credit line." },
+        "date": { "type": "string", "format": "date-time", "description": "Date and time of completion." }
+      },
+      "required": ["line", "date"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "User feedback on the recommendation.",
+      "type": "object",
+      "properties": {
+        "line": { "type": "string", "description": "The recommended credit line." },
+        "satisfaction": { "type": "string", "enum": ["good", "neutral", "bad"], "description": "User satisfaction level." },
+        "comment": { "type": "string", "description": "Optional user comment." },
+        "date": { "type": "string", "format": "date-time", "description": "Date and time of feedback." }
+      },
+      "required": ["line", "satisfaction", "date"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "User with administrative privileges.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin"] }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "stats_usuarios_info": {
+      "schema": "UserConsultation",
+      "description": "Collection of user information and their recommendations."
+    },
+    "stats_consultas_completadas": {
+      "schema": "ConsultationStats",
+      "description": "Collection of anonymous consultation statistics."
+    },
+    "stats_feedback": {
+      "schema": "Feedback",
+      "description": "Collection of user feedback."
+    },
+    "users": {
+      "schema": "Admin",
+      "description": "Collection of user roles and permissions."
+    }
+  }
+}

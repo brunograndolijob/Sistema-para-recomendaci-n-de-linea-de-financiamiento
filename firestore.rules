@@ -1,0 +1,103 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: stats_usuarios_info
+    // Fields:
+    //   - fecha: string (required, ISO 8601)
+    //   - email: string (required, email format)
+    //   - empresa: string (required, 1-100 chars)
+    //   - recomendacion: string (required)
+    //   - resumen: string (required)
+    //   - uid: string (optional)
+    //
+    // Collection: stats_consultas_completadas
+    // Fields:
+    //   - line: string (required)
+    //   - date: string (required, ISO 8601)
+    //
+    // Collection: stats_feedback
+    // Fields:
+    //   - line: string (required)
+    //   - satisfaction: string (required, ['good', 'neutral', 'bad'])
+    //   - comment: string (optional, max 500 chars)
+    //   - date: string (required, ISO 8601)
+    //
+    // Collection: users
+    // Fields:
+    //   - email: string (required)
+    //   - role: string (required, ['admin'])
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "brunograndolijob@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidDateString(dateStr) {
+      return dateStr is string && dateStr.matches("^\\d{4}-\\d{2}-\\d{2}.*");
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    // User Info: Public can create, only admin can read
+    match /stats_usuarios_info/{docId} {
+      allow create: if 
+        request.resource.data.keys().hasAll(['fecha', 'email', 'empresa', 'recomendacion', 'resumen']) &&
+        request.resource.data.fecha is string &&
+        request.resource.data.email is string && isValidEmail(request.resource.data.email) &&
+        request.resource.data.empresa is string && request.resource.data.empresa.size() <= 200 &&
+        request.resource.data.recomendacion is string &&
+        request.resource.data.resumen is string;
+      allow read: if isAdmin();
+    }
+
+    // Consultation Stats: Public can create, only admin can read
+    match /stats_consultas_completadas/{docId} {
+      allow create: if 
+        request.resource.data.keys().hasAll(['line', 'date']) &&
+        request.resource.data.line is string &&
+        request.resource.data.date is string;
+      allow read: if isAdmin();
+    }
+
+    // Feedback: Public can create, only admin can read
+    match /stats_feedback/{docId} {
+      allow create: if 
+        request.resource.data.keys().hasAll(['line', 'satisfaction', 'date']) &&
+        request.resource.data.line is string &&
+        request.resource.data.satisfaction in ['good', 'neutral', 'bad'] &&
+        request.resource.data.date is string &&
+        (!('comment' in request.resource.data) || (request.resource.data.comment is string && request.resource.data.comment.size() <= 1000));
+      allow read: if isAdmin();
+    }
+
+    // Users: Only admin can read/write
+    match /users/{userId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Test connection
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}

@@ -475,9 +475,9 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 36px;
+            min-width: 36px;
             height: 36px;
-            border-radius: 50%;
+            border-radius: 18px;
             background: var(--white);
             border: 1px solid var(--border);
             display: flex;
@@ -488,6 +488,8 @@
             transition: all 0.2s ease;
             z-index: 900;
             font-size: 1rem;
+            padding: 0 10px;
+            gap: 5px;
         }
 
         .lock-btn:hover {
@@ -829,10 +831,33 @@
             </div>
         </div>
 
-        <button class="btn btn-primary btn-block" style="background-color: var(--text-muted);" onclick="restart()">Volver a empezar</button>
+        <!-- User Info Form -->
+        <div id="user-info-section" class="feedback-section" style="margin-top: 0; margin-bottom: 3rem; text-align: left;">
+            <h3 class="feedback-title" style="text-align: center;">Continuar con el proceso</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">
+                Para poder continuar con el proceso y brindarte un acompañamiento más personalizado, por favor indícanos:
+            </p>
+            
+            <div class="question-group" style="margin-bottom: 1rem;">
+                <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem;">Correo electrónico</label>
+                <input type="email" id="user-email" class="comment-textarea" style="height: 44px; margin-bottom: 0;" placeholder="ejemplo@correo.com">
+            </div>
+            
+            <div class="question-group" style="margin-bottom: 1.5rem;">
+                <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem;">Nombre de la empresa, emprendimiento o compañía</label>
+                <input type="text" id="user-company" class="comment-textarea" style="height: 44px; margin-bottom: 0;" placeholder="Nombre de tu organización">
+            </div>
+            
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.4; font-style: italic;">
+                "Estos datos podrían ser utilizados por un responsable del área de la Secretaría de Energía que se comunicara con usted para brindarle información correspondiente para avanzar en la gestión de la línea de financiamiento."
+            </p>
+            
+            <button class="btn btn-primary btn-block" id="btn-save-user-info" onclick="saveUserInfo()">Enviar información y finalizar</button>
+            <p id="user-info-thanks" style="display: none; color: var(--secondary); font-weight: 700; margin-top: 1rem; text-align: center;">¡Información enviada correctamente!</p>
+        </div>
 
         <!-- Feedback Section -->
-        <div class="feedback-section">
+        <div class="feedback-section" style="margin-bottom: 3rem;">
             <p class="feedback-title">¿Obtuviste la respuesta que buscabas?</p>
             <div class="feedback-buttons">
                 <button class="feedback-btn yes" id="feedback-yes" onclick="selectSatisfaction('yes')">✓</button>
@@ -846,27 +871,37 @@
                 <p id="feedback-thanks" style="display: none; color: var(--secondary); font-weight: 700; margin-top: 1rem;">¡Gracias por tu comentario!</p>
             </div>
         </div>
+
+        <button class="btn btn-primary btn-block" style="background-color: var(--text-muted); margin-bottom: 5rem;" onclick="restart()">Volver a empezar</button>
     </section>
 </div>
 
 <!-- Lock Button -->
-<button class="lock-btn" onclick="openAdminModal()" title="Acceso Administrador">🔒</button>
+<div class="lock-btn" onclick="openAdminModal()" title="Acceso Administrador">
+    <span>🔒</span>
+    <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">Admin</span>
+</div>
 
-    <!-- Admin Password Modal -->
+    <!-- Admin Auth Modal -->
     <div id="admin-modal" class="modal-overlay" onclick="closeAdminModal()">
         <div class="modal" onclick="event.stopPropagation()" style="text-align: center;">
             <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔒</div>
             <h3 style="margin-bottom: 0.5rem; color: var(--primary); font-size: 1.5rem; font-weight: 800;">Acceso Restringido</h3>
-            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">Ingresá la contraseña de administrador para ver las estadísticas del sistema.</p>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">Iniciá sesión con tu cuenta de Google para acceder al panel de estadísticas.</p>
             
-            <input type="password" id="admin-password" class="comment-textarea" 
-                   style="height: 50px; margin-bottom: 0.5rem; text-align: center; font-size: 1.1rem; letter-spacing: 4px;" 
-                   placeholder="••••••••">
+            <button class="btn btn-primary btn-block" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; height: 50px; font-size: 1.1rem;" onclick="handleAdminLogin()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" fill="#EA4335"/>
+                </svg>
+                Continuar con Google
+            </button>
             
-            <p id="admin-error" class="error-msg" style="margin-bottom: 1rem;">Contraseña incorrecta. Intentá de nuevo.</p>
+            <p id="admin-error" class="error-msg" style="margin-top: 1rem; display: none;">No tenés permisos para acceder a esta sección.</p>
             
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                <button class="btn btn-primary" style="flex: 2;" onclick="checkPassword()">Ingresar al panel</button>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                 <button class="btn" style="flex: 1; border: 1px solid var(--border);" onclick="closeAdminModal()">Cancelar</button>
             </div>
         </div>
@@ -881,7 +916,7 @@
                 <p id="admin-datetime" style="color: var(--text-muted); font-size: 0.9rem;"></p>
             </div>
             <div style="display: flex; gap: 1rem;">
-                <button class="btn" style="border: 1px solid var(--border);" onclick="closeAdminPanel()">Cerrar sesión</button>
+                <button class="btn" style="border: 1px solid var(--border);" onclick="handleLogout()">Cerrar sesión</button>
             </div>
         </div>
 
@@ -916,6 +951,30 @@
                 <span style="color: var(--secondary);">Positivas: <span id="chart-yes-label">0</span>%</span>
                 <span style="color: #e53935;">Negativas: <span id="chart-no-label">0</span>%</span>
             </div>
+        </div>
+
+        <!-- User Info History -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 class="admin-section-title" style="margin-bottom: 0;">Información de los usuarios</h3>
+            <button class="btn" style="font-size: 0.8rem; padding: 0.4rem 1rem; border: 1px solid var(--secondary); color: var(--secondary); background: none;" onclick="downloadUserInfoCSV()">
+                📥 Descargar CSV
+            </button>
+        </div>
+        <div class="table-container" style="margin-bottom: 2.5rem;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Empresa</th>
+                        <th>Email</th>
+                        <th>Recomendación</th>
+                        <th>Resumen del caso</th>
+                    </tr>
+                </thead>
+                <tbody id="user-info-body">
+                    <!-- Injected by JS -->
+                </tbody>
+            </table>
         </div>
 
         <!-- Most Recommended Lines -->
@@ -964,7 +1023,11 @@
     </div>
 </div>
 
-<script>
+<script type="module">
+    import { db, auth, loginWithGoogle, logout } from './src/firebase.ts';
+    import { collection, addDoc, query, orderBy, onSnapshot, limit, getDoc, doc } from 'firebase/firestore';
+    import { onAuthStateChanged } from 'firebase/auth';
+
     // Data: Financial Lines
     const financialLines = [
         {
@@ -1157,9 +1220,21 @@
         currentRecommendedLine = scores[0].name;
         
         // Track completion
+        const completionData = { line: currentRecommendedLine, date: formatDate(new Date()) };
+        
+        // Save to LocalStorage (backup)
         let completions = JSON.parse(localStorage.getItem('stats_consultas_completadas') || '[]');
-        completions.push({ line: currentRecommendedLine, date: formatDate(new Date()) });
+        completions.push(completionData);
         localStorage.setItem('stats_consultas_completadas', JSON.stringify(completions));
+
+        // Save to Firebase
+        try {
+            addDoc(collection(db, 'stats_consultas_completadas'), completionData);
+        } catch (e) { console.error("Error saving to Firebase:", e); }
+
+        // Save current session answers temporarily for the user info form
+        localStorage.setItem('temp_current_answers', JSON.stringify(userAnswers));
+        localStorage.setItem('temp_current_recommendation', currentRecommendedLine);
 
         currentSatisfaction = null;
         feedbackSent = false;
@@ -1245,14 +1320,25 @@
         }
 
         // Save satisfaction immediately
-        const now = new Date();
-        const satLog = JSON.parse(localStorage.getItem('stats_satisfaccion') || '[]');
-        satLog.push({
+        const satisfactionData = {
             respuesta: val,
-            fecha: formatDate(now),
+            fecha: formatDate(new Date()),
             lineaRecomendada: currentRecommendedLine
-        });
+        };
+
+        // Save to LocalStorage (backup)
+        const satLog = JSON.parse(localStorage.getItem('stats_satisfaccion') || '[]');
+        satLog.push(satisfactionData);
         localStorage.setItem('stats_satisfaccion', JSON.stringify(satLog));
+
+        // Save to Firebase
+        try {
+            addDoc(collection(db, 'stats_feedback'), {
+                line: currentRecommendedLine,
+                satisfaction: val === 'yes' ? 'good' : 'bad',
+                date: satisfactionData.fecha
+            });
+        } catch (e) { console.error("Error saving satisfaction to Firebase:", e); }
     }
 
     function updateCharCount() {
@@ -1276,15 +1362,27 @@
         
         const comment = document.getElementById('feedback-comment').value;
         const now = new Date();
-        
-        const commentLog = JSON.parse(localStorage.getItem('stats_comentarios') || '[]');
-        commentLog.push({
+        const feedbackData = {
             texto: comment,
             fecha: formatDate(now),
             satisfaccion: currentSatisfaction || "sin_respuesta",
             lineaRecomendada: currentRecommendedLine
-        });
+        };
+        
+        // Save to LocalStorage (backup)
+        const commentLog = JSON.parse(localStorage.getItem('stats_comentarios') || '[]');
+        commentLog.push(feedbackData);
         localStorage.setItem('stats_comentarios', JSON.stringify(commentLog));
+
+        // Save to Firebase
+        try {
+            addDoc(collection(db, 'stats_feedback'), {
+                line: currentRecommendedLine,
+                satisfaction: currentSatisfaction === 'yes' ? 'good' : (currentSatisfaction === 'no' ? 'bad' : 'neutral'),
+                comment: comment,
+                date: feedbackData.fecha
+            });
+        } catch (e) { console.error("Error saving feedback to Firebase:", e); }
         
         feedbackSent = true;
         document.getElementById('feedback-comment').disabled = true;
@@ -1297,9 +1395,129 @@
         }, 3000);
     }
 
+    // User Info Logic
+    function saveUserInfo() {
+        const emailInput = document.getElementById('user-email');
+        const companyInput = document.getElementById('user-company');
+        const btn = document.getElementById('btn-save-user-info');
+        const email = emailInput.value.trim();
+        const company = companyInput.value.trim();
+        
+        // Validation
+        if (!email || !company) {
+            emailInput.style.borderColor = !email ? '#e53935' : 'var(--border)';
+            companyInput.style.borderColor = !company ? '#e53935' : 'var(--border)';
+            return;
+        }
+
+        // Reset borders
+        emailInput.style.borderColor = 'var(--border)';
+        companyInput.style.borderColor = 'var(--border)';
+
+        // Ensure we have a recommendation and summary
+        let recommendation = currentRecommendedLine;
+        let answers = userAnswers;
+
+        // Try to recover from temp storage if global variables are lost
+        if (!recommendation) {
+            recommendation = localStorage.getItem('temp_current_recommendation') || "No especificada";
+        }
+        if (Object.keys(answers).length === 0) {
+            try {
+                answers = JSON.parse(localStorage.getItem('temp_current_answers') || '{}');
+            } catch (e) { answers = {}; }
+        }
+
+        const now = new Date();
+        const userInfoData = {
+            fecha: formatDate(now),
+            email: email,
+            empresa: company,
+            recomendacion: recommendation,
+            resumen: getCaseSummary(answers),
+            uid: auth.currentUser ? auth.currentUser.uid : null
+        };
+
+        // Save to LocalStorage (backup)
+        const userInfoLog = JSON.parse(localStorage.getItem('stats_usuarios_info') || '[]');
+        userInfoLog.push(userInfoData);
+        localStorage.setItem('stats_usuarios_info', JSON.stringify(userInfoLog));
+        
+        // Save to Firebase
+        try {
+            addDoc(collection(db, 'stats_usuarios_info'), userInfoData);
+        } catch (e) { console.error("Error saving user info to Firebase:", e); }
+        
+        // UI Feedback
+        emailInput.disabled = true;
+        companyInput.disabled = true;
+        btn.disabled = true;
+        btn.innerText = "✓ Información enviada";
+        btn.style.background = "var(--secondary)";
+        document.getElementById('user-info-thanks').style.display = 'block';
+        
+        console.log("Información de usuario guardada con éxito.");
+    }
+
+    function getCaseSummary(answers = userAnswers) {
+        const labels = {
+            purpose: "Propósito",
+            amount: "Monto",
+            size: "Tamaño",
+            sector: "Sector",
+            term: "Plazo",
+            guarantees: "Garantías"
+        };
+        
+        const summary = Object.entries(answers).map(([key, value]) => {
+            return `${labels[key] || key}: ${value}`;
+        }).join(" | ");
+        
+        return summary || "Sin datos de perfil";
+    }
+
     // Admin Panel Logic
+    async function handleAdminLogin() {
+        try {
+            const result = await loginWithGoogle();
+            const user = result.user;
+            
+            if (await checkAdminPrivileges(user)) {
+                closeAdminModal();
+                showAdminPanel();
+            } else {
+                document.getElementById('admin-error').style.display = 'block';
+                await logout();
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            document.getElementById('admin-error').innerText = "Error al iniciar sesión. Intentá de nuevo.";
+            document.getElementById('admin-error').style.display = 'block';
+        }
+    }
+
+    async function checkAdminPrivileges(user) {
+        if (!user) return false;
+        
+        // Primary check: Email
+        if (user.email === "brunograndolijob@gmail.com") return true;
+        
+        // Secondary check: Firestore role
+        try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            return userDoc.exists() && userDoc.data().role === 'admin';
+        } catch (e) {
+            console.error("Error checking admin role:", e);
+            return false;
+        }
+    }
+
+    async function handleLogout() {
+        await logout();
+        closeAdminPanel();
+    }
+
     function openAdminModal() {
-        document.getElementById('admin-password').value = '';
         document.getElementById('admin-error').style.display = 'none';
         document.getElementById('admin-modal').style.display = 'flex';
     }
@@ -1308,58 +1526,77 @@
         document.getElementById('admin-modal').style.display = 'none';
     }
 
-    function checkPassword() {
-        const input = document.getElementById('admin-password').value;
-        if (input === ADMIN_PASS) {
-            closeAdminModal();
-            showAdminPanel();
-        } else {
-            document.getElementById('admin-error').style.display = 'block';
-            document.getElementById('admin-password').value = '';
-        }
-    }
-
     function showAdminPanel() {
-        renderAdminStats();
         document.getElementById('admin-panel').style.display = 'flex';
         document.getElementById('admin-datetime').innerText = formatDate(new Date());
+        renderAdminStats();
+        setupAdminListeners();
     }
 
     function closeAdminPanel() {
         document.getElementById('admin-panel').style.display = 'none';
+        // Stop listeners if needed
+        if (window.adminUnsubscribes) {
+            window.adminUnsubscribes.forEach(unsub => unsub());
+            window.adminUnsubscribes = [];
+        }
     }
 
-    function renderAdminStats() {
-        const visits = parseInt(localStorage.getItem('stats_visitas') || '0');
-        const completions = JSON.parse(localStorage.getItem('stats_consultas_completadas') || '[]');
-        const satisfaction = JSON.parse(localStorage.getItem('stats_satisfaccion') || '[]');
-        const comments = JSON.parse(localStorage.getItem('stats_comentarios') || '[]');
-        const visitLog = JSON.parse(localStorage.getItem('stats_visitas_log') || '[]');
+    window.adminUnsubscribes = [];
+    function setupAdminListeners() {
+        // Clear previous
+        if (window.adminUnsubscribes) {
+            window.adminUnsubscribes.forEach(unsub => unsub());
+        }
+        window.adminUnsubscribes = [];
 
-        // Summary Cards
-        document.getElementById('stat-visitas').innerText = visits;
-        document.getElementById('stat-completadas').innerText = completions.length;
+        // Listen for consultations
+        const qConsults = query(collection(db, 'stats_usuarios_info'), orderBy('fecha', 'desc'), limit(100));
+        const unsubConsults = onSnapshot(qConsults, (snapshot) => {
+            const data = snapshot.docs.map(doc => doc.data());
+            updateUserInfoTable(data);
+            document.getElementById('stat-completadas').innerText = data.length;
+            updateLineCounts(data);
+        });
+        window.adminUnsubscribes.push(unsubConsults);
 
-        const totalFeedback = satisfaction.length;
-        const positives = satisfaction.filter(s => s.respuesta === 'yes').length;
-        const negatives = satisfaction.filter(s => s.respuesta === 'no').length;
+        // Listen for feedback
+        const qFeedback = query(collection(db, 'stats_feedback'), orderBy('date', 'desc'), limit(100));
+        const unsubFeedback = onSnapshot(qFeedback, (snapshot) => {
+            const data = snapshot.docs.map(doc => doc.data());
+            updateFeedbackStats(data);
+            updateCommentsList(data);
+        });
+        window.adminUnsubscribes.push(unsubFeedback);
+    }
 
-        const posPerc = totalFeedback > 0 ? Math.round((positives / totalFeedback) * 100) : 0;
-        const negPerc = totalFeedback > 0 ? Math.round((negatives / totalFeedback) * 100) : 0;
+    function updateUserInfoTable(userInfo) {
+        const userInfoBody = document.getElementById('user-info-body');
+        if (userInfo.length === 0) {
+            userInfoBody.innerHTML = '<tr><td colspan="5" style="text-align:center">No hay información de usuarios aún</td></tr>';
+            return;
+        }
 
-        document.getElementById('stat-positivas').innerText = `${posPerc}%`;
-        document.getElementById('stat-negativas').innerText = `${negPerc}%`;
+        userInfoBody.innerHTML = userInfo.map(u => `
+            <tr>
+                <td style="font-size: 0.8rem;">${u.fecha || '-'}</td>
+                <td>${u.empresa || '-'}</td>
+                <td>${u.email || '-'}</td>
+                <td style="font-size: 0.8rem; font-weight: 600;">${u.recomendacion || '-'}</td>
+                <td style="font-size: 0.75rem; color: var(--text-muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${u.resumen || ''}">${u.resumen || '-'}</td>
+            </tr>
+        `).join('');
+        
+        // Update global for CSV download
+        window.currentAdminUserInfo = userInfo;
+    }
 
-        // Chart
-        document.getElementById('chart-yes').style.width = `${posPerc}%`;
-        document.getElementById('chart-no').style.width = `${negPerc}%`;
-        document.getElementById('chart-yes-label').innerText = posPerc;
-        document.getElementById('chart-no-label').innerText = negPerc;
-
-        // Recommended Lines Table
+    function updateLineCounts(userInfo) {
         const lineCounts = {};
-        completions.forEach(c => {
-            lineCounts[c.line] = (lineCounts[c.line] || 0) + 1;
+        userInfo.forEach(u => {
+            if (u.recomendacion) {
+                lineCounts[u.recomendacion] = (lineCounts[u.recomendacion] || 0) + 1;
+            }
         });
         const sortedLines = Object.entries(lineCounts).sort((a, b) => b[1] - a[1]);
         
@@ -1367,45 +1604,111 @@
         linesBody.innerHTML = sortedLines.length > 0 
             ? sortedLines.map(([name, count]) => `<tr><td>${name}</td><td>${count}</td></tr>`).join('')
             : '<tr><td colspan="2" style="text-align:center">No hay datos aún</td></tr>';
-
-        // Comments History
-        const commentsList = document.getElementById('comments-history-list');
-        if (comments.length === 0) {
-            commentsList.innerHTML = '<p style="text-align:center; color:var(--text-muted)">Aún no se recibieron comentarios.</p>';
-        } else {
-            commentsList.innerHTML = comments.slice().reverse().map(c => `
-                <div class="comment-item">
-                    <div class="comment-meta">
-                        <span>${c.fecha}</span>
-                        <span>Satisfacción: ${c.satisfaccion === 'yes' ? '✓' : (c.satisfaccion === 'no' ? '✗' : 'sin respuesta')}</span>
-                    </div>
-                    <div style="font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem; font-weight: 600;">Línea: ${c.lineaRecomendada}</div>
-                    <div class="comment-text">${c.texto || '<span style="color:#ccc">Sin comentario escrito</span>'}</div>
-                </div>
-            `).join('');
-        }
-
-        // Recent Visits
-        const visitsList = document.getElementById('visits-history-list');
-        const recentVisits = visitLog.slice(-20).reverse();
-        visitsList.innerHTML = recentVisits.length > 0
-            ? recentVisits.map(v => `
-                <div class="visit-item">
-                    <span>Visita registrada</span>
-                    <span style="color: var(--text-muted)">${v.date}</span>
-                </div>
-            `).join('')
-            : '<p style="text-align:center; padding: 1rem; color: var(--text-muted)">No hay registros de visitas</p>';
     }
 
+    function updateFeedbackStats(feedback) {
+        const total = feedback.length;
+        if (total === 0) {
+            document.getElementById('stat-positivas').innerText = '0%';
+            document.getElementById('stat-negativas').innerText = '0%';
+            document.getElementById('chart-yes').style.width = '0%';
+            document.getElementById('chart-no').style.width = '0%';
+            return;
+        }
+
+        const positives = feedback.filter(f => f.satisfaction === 'good').length;
+        const negatives = feedback.filter(f => f.satisfaction === 'bad').length;
+        
+        const posPerc = Math.round((positives / total) * 100);
+        const negPerc = Math.round((negatives / total) * 100);
+
+        document.getElementById('stat-positivas').innerText = `${posPerc}%`;
+        document.getElementById('stat-negativas').innerText = `${negPerc}%`;
+        
+        document.getElementById('chart-yes').style.width = `${posPerc}%`;
+        document.getElementById('chart-no').style.width = `${negPerc}%`;
+        document.getElementById('chart-yes-label').innerText = posPerc;
+        document.getElementById('chart-no-label').innerText = negPerc;
+    }
+
+    function updateCommentsList(feedback) {
+        const commentsList = document.getElementById('comments-history-list');
+        const comments = feedback.filter(f => f.comment && f.comment.trim() !== '');
+        
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay comentarios aún.</div>';
+            return;
+        }
+
+        commentsList.innerHTML = comments.map(c => `
+            <div class="comment-card">
+                <div class="comment-header">
+                    <span class="badge" style="background: #eff6ff; color: #1d4ed8; border: none;">${c.line}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">${c.date}</span>
+                </div>
+                <div class="comment-body">${c.comment}</div>
+                <div style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: 600; color: ${c.satisfaction === 'good' ? 'var(--secondary)' : '#e53935'}">
+                    ${c.satisfaction === 'good' ? '✓ Recomendación útil' : '✗ No fue lo que buscaba'}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function downloadUserInfoCSV() {
+        const userInfo = window.currentAdminUserInfo || JSON.parse(localStorage.getItem('stats_usuarios_info') || '[]');
+        if (userInfo.length === 0) {
+            alert('No hay datos para descargar.');
+            return;
+        }
+
+        const headers = ['Fecha', 'Empresa', 'Email', 'Recomendación', 'Resumen del caso'];
+        const rows = userInfo.map(u => [
+            u.fecha,
+            u.empresa,
+            u.email,
+            u.recomendacion,
+            u.resumen
+        ]);
+
+        let csvContent = "data:text/csv;charset=utf-8," 
+            + headers.join(",") + "\n"
+            + rows.map(e => e.map(val => `"${val.replace(/"/g, '""')}"`).join(",")).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `usuarios_simulador_energia_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function renderAdminStats() {
+        const visits = parseInt(localStorage.getItem('stats_visitas') || '0');
+        document.getElementById('stat-visitas').innerText = visits;
+    }
+
+    // Auth state listener
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            if (await checkAdminPrivileges(user)) {
+                console.log("Admin session active");
+            } else {
+                console.log("Non-admin user logged in");
+            }
+        } else {
+            console.log("User logged out");
+            closeAdminPanel();
+        }
+    });
+
     function clearAllData() {
-        if (confirm('¿Estás seguro de que querés borrar todos los datos de estadísticas e historial? Esta acción no se puede deshacer.')) {
+        if (confirm('¿Estás seguro de que querés borrar los datos locales? Los datos en la nube (Firebase) no se verán afectados.')) {
             Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('stats_')) {
+                if (key.startsWith('stats_') || key.startsWith('temp_')) {
                     localStorage.removeItem(key);
                 }
             });
-            alert('Datos eliminados correctamente.');
             location.reload();
         }
     }
