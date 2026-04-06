@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanciAR - Simulador de Créditos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-dark: #1e429f;
+            --secondary: #0f9d58;
+            --bg: #f9fafb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin-bottom: 2.5rem;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Welcome Screen */
+        #welcome-screen {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-size: 1rem;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        /* Form Elements */
+        .question-group {
+            margin-bottom: 2.5rem;
+        }
+
+        .question-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: block;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .option-card {
+            background: var(--white);
+            border: 2px solid var(--border);
+            padding: 1.25rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+
+        .option-card:hover {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+        }
+
+        .option-card.selected {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+            color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.1);
+        }
+
+        /* Results Screen */
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .main-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--secondary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #dcfce7;
+            color: #166534;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .line-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            color: var(--primary);
+        }
+
+        .line-desc {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .line-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-item span {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-item strong {
+            font-size: 1.125rem;
+            color: var(--text-main);
+        }
+
+        .why-ideal {
+            background: #f0fdf4;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .why-ideal h4 {
+            color: #166534;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .why-ideal p {
+            font-size: 0.95rem;
+            color: #14532d;
+        }
+
+        /* Secondary Options */
+        .secondary-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .alternatives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .alt-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        .alt-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .alt-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .compatibility {
+            font-size: 0.875rem;
+            color: var(--secondary);
+        }
+
+        .alt-desc {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Glossary */
+        .glossary {
+            margin-bottom: 3rem;
+        }
+
+        .glossary-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .glossary-trigger {
+            width: 100%;
+            padding: 1rem 0;
+            background: none;
+            border: none;
+            text-align: left;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .glossary-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .glossary-item.active .glossary-content {
+            max-height: 200px;
+            padding-bottom: 1rem;
+        }
+
+        .glossary-item.active .icon-plus {
+            transform: rotate(45deg);
+        }
+
+        .icon-plus {
+            transition: transform 0.3s ease;
+            font-size: 1.25rem;
+        }
+
+        /* Feedback Section */
+        .feedback-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .feedback-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feedback-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .feedback-btn.yes { color: var(--secondary); }
+        .feedback-btn.no { color: #e53935; }
+
+        .feedback-btn.yes:hover { background: #f0fdf4; border-color: var(--secondary); }
+        .feedback-btn.no:hover { background: #fef2f2; border-color: #e53935; }
+
+        .feedback-btn.selected {
+            border-width: 4px;
+            transform: scale(1.1);
+        }
+        .feedback-btn.selected.yes { background: #f0fdf4; border-color: var(--secondary); }
+        .feedback-btn.selected.no { background: #fef2f2; border-color: #e53935; }
+
+        .feedback-btn.inactive {
+            opacity: 0.3;
+            filter: grayscale(1);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .comment-area {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            height: 100px;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            resize: none;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .char-counter {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+
+        /* Lock Button */
+        .lock-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            z-index: 900;
+            font-size: 1rem;
+        }
+
+        .lock-btn:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .chart-section {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 2.5rem;
+        }
+
+        .bar-chart-container {
+            height: 40px;
+            width: 100%;
+            background: #eee;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            margin: 1.5rem 0;
+        }
+
+        .bar-segment {
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .admin-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-container {
+            background: var(--white);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f9fafb;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .comment-item {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .comment-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .comment-text {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .visit-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .visit-item:last-child { border-bottom: none; }
+
+
+        .error-msg {
+            color: #e53935;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        /* Modal Info */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo">Financi<span>AR</span></div>
+        <div class="progress-container" id="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </header>
+
+    <!-- Welcome Screen -->
+    <section id="welcome-screen" class="screen active">
+        <h1>Encontrá la línea de crédito ideal para vos</h1>
+        <p class="subtitle">Respondé unas breves preguntas y nuestro algoritmo te recomendará la mejor opción de financiamiento para potenciar tu negocio.</p>
+        <button class="btn btn-primary" onclick="nextStep(1)">Comenzar</button>
+    </section>
+
+    <!-- Form Step 1 -->
+    <section id="step-1" class="screen">
+        <div class="question-group">
+            <label class="question-title">1. ¿Para qué necesitás el financiamiento?</label>
+            <div class="options-grid" data-question="purpose">
+                <div class="option-card" data-value="working_capital">Capital de trabajo / insumos</div>
+                <div class="option-card" data-value="machinery">Compra de maquinaria o equipamiento</div>
+                <div class="option-card" data-value="expansion">Ampliación o refacción</div>
+                <div class="option-card" data-value="export">Proyecto de exportación</div>
+                <div class="option-card" data-value="other">Otro</div>
+            </div>
+        </div>
+
+        <div class="question-group">
+            <label class="question-title">2. ¿Cuánto necesitás?</label>
+            <div class="options-grid" data-question="amount">
+                <div class="option-card" data-value="low">Hasta $5.000.000</div>
+                <div class="option-card" data-value="medium">Entre $5M y $20M</div>
+                <div class="option-card" data-value="high">Entre $20M y $100M</div>
+                <div class="option-card" data-value="very_high">Más de $100M</div>
+            </div>
+        </div>
+
+        <div class="question-group">
+            <label class="question-title">3. ¿Cuál es el tamaño de tu empresa?</label>
+            <div class="options-grid" data-question="size">
+                <div class="option-card" data-value="entrepreneur">Emprendedor / Persona física</div>
+                <div class="option-card" data-value="micro">Micro empresa</div>
+                <div class="option-card" data-value="sme">PyME (pequeña o mediana)</div>
+                <div class="option-card" data-value="large">Gran empresa</div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="nextStep(2)">Siguiente →</button>
+    </section>
+
+    <!-- Form Step 2 -->
+    <section id="step-2" class="screen">
+        <div class="question-group">
+            <label class="question-title">4. ¿En qué sector operás?</label>
+            <div class="options-grid" data-question="sector">
+                <div class="option-card" data-value="industry">Industria / Manufactura</div>
+                <div class="option-card" data-value="agro">Agro / Ganadería</div>
+                <div class="option-card" data-value="commerce">Comercio / Servicios</div>
+                <div class="option-card" data-value="tech">Tecnología / Software</div>
+                <div class="option-card" data-value="construction">Construcción</div>
+                <div class="option-card" data-value="other">Otro</div>
+            </div>
+        </div>
+
+        <div class="question-group">
+            <label class="question-title">5. ¿Con qué plazo de devolución te sentirías cómodo?</label>
+            <div class="options-grid" data-question="term">
+                <div class="option-card" data-value="short">Hasta 12 meses</div>
+                <div class="option-card" data-value="medium">Entre 1 y 3 años</div>
+                <div class="option-card" data-value="long">Entre 3 y 5 años</div>
+                <div class="option-card" data-value="very_long">Más de 5 años</div>
+            </div>
+        </div>
+
+        <div class="question-group">
+            <label class="question-title">6. ¿Tenés garantías para ofrecer?</label>
+            <div class="options-grid" data-question="guarantees">
+                <div class="option-card" data-value="real">Sí, tengo garantías reales o SGR</div>
+                <div class="option-card" data-value="personal">Solo tengo garantías personales</div>
+                <div class="option-card" data-value="none">No cuento con garantías por ahora</div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="calculateResults()">Ver mi recomendación →</button>
+    </section>
+
+    <!-- Results Screen -->
+    <section id="results-screen" class="screen">
+        <div class="results-header">
+            <h2 style="font-size: 2rem; font-weight: 800;">¡Listo! Analizamos tu perfil</h2>
+            <p class="subtitle">Basado en tus respuestas, estas son las mejores opciones para vos.</p>
+        </div>
+
+        <h3 class="secondary-title">Tu línea recomendada</h3>
+        <div id="main-recommendation" class="main-card">
+            <!-- Injected by JS -->
+        </div>
+
+        <h3 class="secondary-title">Otras opciones que también podrían interesarte</h3>
+        <div id="alternatives-container" class="alternatives-grid">
+            <!-- Injected by JS -->
+        </div>
+
+        <div class="glossary">
+            <h3 class="secondary-title">¿Qué significa cada término?</h3>
+            <div class="glossary-item">
+                <button class="glossary-trigger" onclick="toggleGlossary(this)">
+                    Tasa de interés <span class="icon-plus">+</span>
+                </button>
+                <div class="glossary-content">
+                    Es el costo que pagás por el dinero prestado, expresado como un porcentaje anual. Puede ser fija o variable.
+                </div>
+            </div>
+            <div class="glossary-item">
+                <button class="glossary-trigger" onclick="toggleGlossary(this)">
+                    Plazo <span class="icon-plus">+</span>
+                </button>
+                <div class="glossary-content">
+                    Es el tiempo total que tenés para devolver el préstamo, generalmente dividido en cuotas mensuales.
+                </div>
+            </div>
+            <div class="glossary-item">
+                <button class="glossary-trigger" onclick="toggleGlossary(this)">
+                    Garantía / SGR <span class="icon-plus">+</span>
+                </button>
+                <div class="glossary-content">
+                    Respaldo que asegura el pago del crédito. Las SGR (Sociedades de Garantía Recíproca) facilitan el acceso avalando a las PyMEs ante los bancos.
+                </div>
+            </div>
+            <div class="glossary-item">
+                <button class="glossary-trigger" onclick="toggleGlossary(this)">
+                    Capital de trabajo <span class="icon-plus">+</span>
+                </button>
+                <div class="glossary-content">
+                    Fondos destinados a la operación diaria del negocio: compra de materia prima, pago de salarios o stock.
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" style="background-color: var(--text-muted);" onclick="restart()">Volver a empezar</button>
+
+        <!-- Feedback Section -->
+        <div class="feedback-section">
+            <p class="feedback-title">¿Obtuviste la respuesta que buscabas?</p>
+            <div class="feedback-buttons">
+                <button class="feedback-btn yes" id="feedback-yes" onclick="selectSatisfaction('yes')">✓</button>
+                <button class="feedback-btn no" id="feedback-no" onclick="selectSatisfaction('no')">✗</button>
+            </div>
+            
+            <div class="comment-area">
+                <textarea id="feedback-comment" class="comment-textarea" placeholder="¿Tenés alguna sugerencia o comentario para mejorar el sistema? (opcional)" maxlength="500" oninput="updateCharCount()"></textarea>
+                <div class="char-counter"><span id="char-count">0</span>/500</div>
+                <button class="btn btn-primary btn-block" id="btn-send-feedback" onclick="sendFeedback()">Enviar comentario</button>
+                <p id="feedback-thanks" style="display: none; color: var(--secondary); font-weight: 700; margin-top: 1rem;">¡Gracias por tu comentario!</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Lock Button -->
+<button class="lock-btn" onclick="openAdminModal()" title="Acceso Administrador">🔒</button>
+
+    <!-- Admin Password Modal -->
+    <div id="admin-modal" class="modal-overlay" onclick="closeAdminModal()">
+        <div class="modal" onclick="event.stopPropagation()" style="text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔒</div>
+            <h3 style="margin-bottom: 0.5rem; color: var(--primary); font-size: 1.5rem; font-weight: 800;">Acceso Restringido</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">Ingresá la contraseña de administrador para ver las estadísticas del sistema.</p>
+            
+            <input type="password" id="admin-password" class="comment-textarea" 
+                   style="height: 50px; margin-bottom: 0.5rem; text-align: center; font-size: 1.1rem; letter-spacing: 4px;" 
+                   placeholder="••••••••">
+            
+            <p id="admin-error" class="error-msg" style="margin-bottom: 1rem;">Contraseña incorrecta. Intentá de nuevo.</p>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button class="btn btn-primary" style="flex: 2;" onclick="checkPassword()">Ingresar al panel</button>
+                <button class="btn" style="flex: 1; border: 1px solid var(--border);" onclick="closeAdminModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="admin-panel">
+        <div class="admin-header">
+            <div>
+                <h2 style="font-size: 1.75rem; font-weight: 800;">Panel de administración</h2>
+                <p id="admin-datetime" style="color: var(--text-muted); font-size: 0.9rem;"></p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn" style="border: 1px solid var(--border);" onclick="closeAdminPanel()">Cerrar sesión</button>
+            </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-visitas">0</div>
+                <div class="stat-label">Total de visitas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-completadas">0</div>
+                <div class="stat-label">Consultas completadas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-positivas">0%</div>
+                <div class="stat-label">Respuestas positivas (✓)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-negativas">0%</div>
+                <div class="stat-label">Respuestas negativas (✗)</div>
+            </div>
+        </div>
+
+        <!-- Satisfaction Chart -->
+        <div class="chart-section">
+            <h3 class="admin-section-title">Nivel de satisfacción</h3>
+            <div class="bar-chart-container">
+                <div id="chart-yes" class="bar-segment" style="background: var(--secondary); width: 0%;"></div>
+                <div id="chart-no" class="bar-segment" style="background: #e53935; width: 0%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600;">
+                <span style="color: var(--secondary);">Positivas: <span id="chart-yes-label">0</span>%</span>
+                <span style="color: #e53935;">Negativas: <span id="chart-no-label">0</span>%</span>
+            </div>
+        </div>
+
+        <!-- Most Recommended Lines -->
+        <h3 class="admin-section-title">Líneas más recomendadas</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Línea de financiamiento</th>
+                        <th>Recomendaciones</th>
+                    </tr>
+                </thead>
+                <tbody id="recommended-lines-body">
+                    <!-- Injected by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Comment History -->
+        <h3 class="admin-section-title">Historial de comentarios</h3>
+        <div id="comments-history-list" style="margin-bottom: 2.5rem;">
+            <!-- Injected by JS -->
+        </div>
+
+        <!-- Visit History -->
+        <h3 class="admin-section-title">Últimas 20 visitas</h3>
+        <div class="table-container">
+            <div id="visits-history-list">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); text-align: center;">
+            <button class="btn" style="background: #fef2f2; color: #e53935; border: 1px solid #fecaca;" onclick="clearAllData()">Borrar todos los datos</button>
+        </div>
+    </div>
+
+
+<!-- Modal -->
+<div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h3 id="modal-title" style="margin-bottom: 1rem; color: var(--primary);"></h3>
+        <p id="modal-body" style="color: var(--text-muted);"></p>
+        <button class="btn btn-primary btn-block" style="margin-top: 2rem;" onclick="closeModal()">Entendido</button>
+    </div>
+</div>
+
+<script>
+    // Data: Financial Lines
+    const financialLines = [
+        {
+            id: 'pyme_inversion',
+            name: 'Línea PyME Inversión',
+            desc: 'Financiamiento de largo plazo destinado a la adquisición de bienes de capital y proyectos de expansión productiva.',
+            maxAmount: '$150.000.000',
+            term: 'Hasta 60 meses',
+            rate: '42% TNA',
+            idealFor: 'Es ideal para vos porque buscás invertir en maquinaria o infraestructura a largo plazo y contás con el respaldo necesario.',
+            moreInfo: 'Esta línea cuenta con beneficios de tasa subsidiada para proyectos que incrementen la capacidad productiva nacional. Requiere presentación de proyecto técnico y garantías reales.',
+            criteria: {
+                purpose: ['machinery', 'expansion'],
+                size: ['sme', 'large'],
+                term: ['long', 'very_long'],
+                guarantees: ['real']
+            }
+        },
+        {
+            id: 'capital_express',
+            name: 'Capital de Trabajo Express',
+            desc: 'Crédito ágil para cubrir necesidades inmediatas de liquidez, compra de insumos o pago a proveedores.',
+            maxAmount: '$25.000.000',
+            term: 'Hasta 18 meses',
+            rate: '55% TNA',
+            idealFor: 'Es perfecta para tu necesidad de liquidez inmediata y ciclos operativos cortos, con mínimos requisitos de entrada.',
+            moreInfo: 'Aprobación en 48hs hábiles. No requiere garantías reales, se otorga a sola firma o con fianza personal de los socios.',
+            criteria: {
+                purpose: ['working_capital', 'other'],
+                size: ['micro', 'sme'],
+                term: ['short', 'medium'],
+                guarantees: ['personal', 'none']
+            }
+        },
+        {
+            id: 'exporta_plus',
+            name: 'Línea Exporta+',
+            desc: 'Financiamiento en dólares o pesos para pre-financiación y post-financiación de exportaciones.',
+            maxAmount: 'USD 500.000',
+            term: 'Hasta 360 días',
+            rate: '4% (USD) / 48% (ARS)',
+            idealFor: 'Al tener un perfil exportador, esta línea te permite calzar tu deuda con tus ingresos en moneda extranjera.',
+            moreInfo: 'Destinado exclusivamente a empresas con contratos de exportación vigentes. Ofrece tasas competitivas para fomentar la salida de productos al exterior.',
+            criteria: {
+                purpose: ['export'],
+                sector: ['industry', 'agro', 'tech'],
+                size: ['sme', 'large'],
+                guarantees: ['real', 'personal']
+            }
+        },
+        {
+            id: 'micro_credito',
+            name: 'Crédito Microempresa',
+            desc: 'Financiamiento diseñado para emprendedores y micro-negocios que buscan dar su primer salto de crecimiento.',
+            maxAmount: '$8.000.000',
+            term: 'Hasta 24 meses',
+            rate: '60% TNA',
+            idealFor: 'Se adapta a tu escala actual, ofreciendo montos acordes a tu facturación y flexibilidad en las garantías.',
+            moreInfo: 'Incluye un programa de educación financiera gratuito. Los requisitos son mínimos: DNI, constancia de inscripción y 6 meses de actividad.',
+            criteria: {
+                size: ['entrepreneur', 'micro'],
+                amount: ['low'],
+                guarantees: ['none', 'personal']
+            }
+        },
+        {
+            id: 'fondo_industrial',
+            name: 'Fondo de Desarrollo Industrial',
+            desc: 'Programa de fomento para el sector manufacturero con tasas bonificadas por el Ministerio de Producción.',
+            maxAmount: '$300.000.000',
+            term: 'Hasta 84 meses',
+            rate: '35% TNA',
+            idealFor: 'Como pertenecés al sector industrial, podés acceder a esta tasa subsidiada para proyectos estratégicos de gran escala.',
+            moreInfo: 'Requiere certificado MiPyME vigente. El destino debe ser adquisición de tecnología 4.0 o adecuación ambiental de plantas industriales.',
+            criteria: {
+                sector: ['industry'],
+                size: ['sme', 'large']
+            }
+        }
+    ];
+
+    let currentStep = 0;
+
+    const userAnswers = {};
+    let currentRecommendedLine = "";
+    let currentSatisfaction = null;
+    let feedbackSent = false;
+
+    // Password (usuario25*)
+    const ADMIN_PASS = "usuario25*";
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+        trackVisit();
+    });
+
+    function trackVisit() {
+        const now = new Date();
+        const dateStr = formatDate(now);
+        
+        let totalVisits = parseInt(localStorage.getItem('stats_visitas') || '0');
+        totalVisits++;
+        localStorage.setItem('stats_visitas', totalVisits.toString());
+
+        let visitLog = JSON.parse(localStorage.getItem('stats_visitas_log') || '[]');
+        visitLog.push({ date: dateStr });
+        // Keep only last 100 for performance if needed, but request says history
+        localStorage.setItem('stats_visitas_log', JSON.stringify(visitLog));
+    }
+
+    function formatDate(date) {
+        return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    }
+
+    // Navigation
+    function nextStep(step) {
+        if (step === 1) {
+            document.getElementById('welcome-screen').classList.remove('active');
+            document.getElementById('step-1').classList.add('active');
+            document.getElementById('progress-container').style.display = 'block';
+            updateProgress(33);
+        } else if (step === 2) {
+            if (!validateStep(1)) return;
+            document.getElementById('step-1').classList.remove('active');
+            document.getElementById('step-2').classList.add('active');
+            updateProgress(66);
+        }
+        currentStep = step;
+        window.scrollTo(0, 0);
+    }
+
+    function updateProgress(val) {
+        document.getElementById('progress-bar').style.width = val + '%';
+    }
+
+    // Option Selection
+    document.querySelectorAll('.option-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const question = this.parentElement.dataset.question;
+            const value = this.dataset.value;
+
+            // Deselect others in the same question
+            this.parentElement.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+            
+            // Select this one
+            this.classList.add('selected');
+            userAnswers[question] = value;
+        });
+    });
+
+    function validateStep(step) {
+        const questions = step === 1 ? ['purpose', 'amount', 'size'] : ['sector', 'term', 'guarantees'];
+        for (const q of questions) {
+            if (!userAnswers[q]) {
+                alert('Por favor, respondé todas las preguntas para continuar.');
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Recommendation Logic
+    function calculateResults() {
+        if (!validateStep(2)) return;
+
+        const scores = financialLines.map(line => {
+            let score = 0;
+            
+            // Check each criteria
+            for (const [key, values] of Object.entries(line.criteria)) {
+                if (values.includes(userAnswers[key])) {
+                    score += 10;
+                }
+            }
+
+            // Bonus points for specific combinations
+            if (line.id === 'pyme_inversion' && userAnswers.purpose === 'machinery' && userAnswers.guarantees === 'real') score += 5;
+            if (line.id === 'capital_express' && userAnswers.purpose === 'working_capital' && userAnswers.term === 'short') score += 5;
+            if (line.id === 'exporta_plus' && userAnswers.purpose === 'export') score += 15; // Strong weight for export
+            if (line.id === 'micro_credito' && userAnswers.size === 'entrepreneur' && userAnswers.amount === 'low') score += 5;
+            if (line.id === 'fondo_industrial' && userAnswers.sector === 'industry' && userAnswers.amount === 'very_high') score += 5;
+
+            return { ...line, score };
+        });
+
+        // Sort by score
+        scores.sort((a, b) => b.score - a.score);
+
+        renderResults(scores);
+        currentRecommendedLine = scores[0].name;
+        
+        // Track completion
+        let completions = JSON.parse(localStorage.getItem('stats_consultas_completadas') || '[]');
+        completions.push({ line: currentRecommendedLine, date: formatDate(new Date()) });
+        localStorage.setItem('stats_consultas_completadas', JSON.stringify(completions));
+
+        currentSatisfaction = null;
+        feedbackSent = false;
+        resetFeedbackUI();
+        
+        document.getElementById('step-2').classList.remove('active');
+        document.getElementById('results-screen').classList.add('active');
+        updateProgress(100);
+        window.scrollTo(0, 0);
+    }
+
+    function renderResults(scores) {
+        const main = scores[0];
+        const alts = scores.slice(1, 3);
+
+        // Render Main
+        document.getElementById('main-recommendation').innerHTML = `
+            <span class="badge">Mejor coincidencia</span>
+            <h4 class="line-title">${main.name}</h4>
+            <p class="line-desc">${main.desc}</p>
+            
+            <div class="line-details">
+                <div class="detail-item">
+                    <span>Monto Máximo</span>
+                    <strong>${main.maxAmount}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>Plazo Típico</span>
+                    <strong>${main.term}</strong>
+                </div>
+                <div class="detail-item">
+                    <span>Tasa Estimada</span>
+                    <strong>${main.rate}</strong>
+                </div>
+            </div>
+
+            <div class="why-ideal">
+                <h4>¿Por qué es ideal para vos?</h4>
+                <p>${main.idealFor}</p>
+            </div>
+
+            <button class="btn btn-primary" onclick="showMoreInfo('${main.id}')">Quiero saber más</button>
+        `;
+
+        // Render Alternatives
+        document.getElementById('alternatives-container').innerHTML = alts.map(alt => {
+            const stars = getStars(alt.score);
+            return `
+                <div class="alt-card">
+                    <div class="alt-title">
+                        ${alt.name}
+                        <span class="compatibility">${stars}</span>
+                    </div>
+                    <p class="alt-desc">${alt.desc}</p>
+                    <button class="btn" style="padding: 0.5rem 0; color: var(--primary); font-size: 0.875rem;" onclick="showMoreInfo('${alt.id}')">Ver detalles →</button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function getStars(score) {
+        // Simple normalization for stars
+        if (score >= 30) return '★★★★★';
+        if (score >= 20) return '★★★★☆';
+        if (score >= 10) return '★★★☆☆';
+        return '★★☆☆☆';
+    }
+
+    // Feedback Logic
+    function selectSatisfaction(val) {
+        if (currentSatisfaction !== null) return;
+        
+        currentSatisfaction = val;
+        const btnYes = document.getElementById('feedback-yes');
+        const btnNo = document.getElementById('feedback-no');
+
+        if (val === 'yes') {
+            btnYes.classList.add('selected');
+            btnNo.classList.add('inactive');
+        } else {
+            btnNo.classList.add('selected');
+            btnYes.classList.add('inactive');
+        }
+
+        // Save satisfaction immediately
+        const now = new Date();
+        const satLog = JSON.parse(localStorage.getItem('stats_satisfaccion') || '[]');
+        satLog.push({
+            respuesta: val,
+            fecha: formatDate(now),
+            lineaRecomendada: currentRecommendedLine
+        });
+        localStorage.setItem('stats_satisfaccion', JSON.stringify(satLog));
+    }
+
+    function updateCharCount() {
+        const text = document.getElementById('feedback-comment').value;
+        document.getElementById('char-count').innerText = text.length;
+    }
+
+    function resetFeedbackUI() {
+        document.getElementById('feedback-yes').classList.remove('selected', 'inactive');
+        document.getElementById('feedback-no').classList.remove('selected', 'inactive');
+        document.getElementById('feedback-comment').value = '';
+        document.getElementById('feedback-comment').disabled = false;
+        document.getElementById('char-count').innerText = '0';
+        document.getElementById('btn-send-feedback').disabled = false;
+        document.getElementById('btn-send-feedback').style.display = 'block';
+        document.getElementById('feedback-thanks').style.display = 'none';
+    }
+
+    function sendFeedback() {
+        if (feedbackSent) return;
+        
+        const comment = document.getElementById('feedback-comment').value;
+        const now = new Date();
+        
+        const commentLog = JSON.parse(localStorage.getItem('stats_comentarios') || '[]');
+        commentLog.push({
+            texto: comment,
+            fecha: formatDate(now),
+            satisfaccion: currentSatisfaction || "sin_respuesta",
+            lineaRecomendada: currentRecommendedLine
+        });
+        localStorage.setItem('stats_comentarios', JSON.stringify(commentLog));
+        
+        feedbackSent = true;
+        document.getElementById('feedback-comment').disabled = true;
+        document.getElementById('btn-send-feedback').disabled = true;
+        document.getElementById('btn-send-feedback').style.display = 'none';
+        document.getElementById('feedback-thanks').style.display = 'block';
+
+        setTimeout(() => {
+            document.getElementById('feedback-thanks').style.display = 'none';
+        }, 3000);
+    }
+
+    // Admin Panel Logic
+    function openAdminModal() {
+        document.getElementById('admin-password').value = '';
+        document.getElementById('admin-error').style.display = 'none';
+        document.getElementById('admin-modal').style.display = 'flex';
+    }
+
+    function closeAdminModal() {
+        document.getElementById('admin-modal').style.display = 'none';
+    }
+
+    function checkPassword() {
+        const input = document.getElementById('admin-password').value;
+        if (input === ADMIN_PASS) {
+            closeAdminModal();
+            showAdminPanel();
+        } else {
+            document.getElementById('admin-error').style.display = 'block';
+            document.getElementById('admin-password').value = '';
+        }
+    }
+
+    function showAdminPanel() {
+        renderAdminStats();
+        document.getElementById('admin-panel').style.display = 'flex';
+        document.getElementById('admin-datetime').innerText = formatDate(new Date());
+    }
+
+    function closeAdminPanel() {
+        document.getElementById('admin-panel').style.display = 'none';
+    }
+
+    function renderAdminStats() {
+        const visits = parseInt(localStorage.getItem('stats_visitas') || '0');
+        const completions = JSON.parse(localStorage.getItem('stats_consultas_completadas') || '[]');
+        const satisfaction = JSON.parse(localStorage.getItem('stats_satisfaccion') || '[]');
+        const comments = JSON.parse(localStorage.getItem('stats_comentarios') || '[]');
+        const visitLog = JSON.parse(localStorage.getItem('stats_visitas_log') || '[]');
+
+        // Summary Cards
+        document.getElementById('stat-visitas').innerText = visits;
+        document.getElementById('stat-completadas').innerText = completions.length;
+
+        const totalFeedback = satisfaction.length;
+        const positives = satisfaction.filter(s => s.respuesta === 'yes').length;
+        const negatives = satisfaction.filter(s => s.respuesta === 'no').length;
+
+        const posPerc = totalFeedback > 0 ? Math.round((positives / totalFeedback) * 100) : 0;
+        const negPerc = totalFeedback > 0 ? Math.round((negatives / totalFeedback) * 100) : 0;
+
+        document.getElementById('stat-positivas').innerText = `${posPerc}%`;
+        document.getElementById('stat-negativas').innerText = `${negPerc}%`;
+
+        // Chart
+        document.getElementById('chart-yes').style.width = `${posPerc}%`;
+        document.getElementById('chart-no').style.width = `${negPerc}%`;
+        document.getElementById('chart-yes-label').innerText = posPerc;
+        document.getElementById('chart-no-label').innerText = negPerc;
+
+        // Recommended Lines Table
+        const lineCounts = {};
+        completions.forEach(c => {
+            lineCounts[c.line] = (lineCounts[c.line] || 0) + 1;
+        });
+        const sortedLines = Object.entries(lineCounts).sort((a, b) => b[1] - a[1]);
+        
+        const linesBody = document.getElementById('recommended-lines-body');
+        linesBody.innerHTML = sortedLines.length > 0 
+            ? sortedLines.map(([name, count]) => `<tr><td>${name}</td><td>${count}</td></tr>`).join('')
+            : '<tr><td colspan="2" style="text-align:center">No hay datos aún</td></tr>';
+
+        // Comments History
+        const commentsList = document.getElementById('comments-history-list');
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<p style="text-align:center; color:var(--text-muted)">Aún no se recibieron comentarios.</p>';
+        } else {
+            commentsList.innerHTML = comments.slice().reverse().map(c => `
+                <div class="comment-item">
+                    <div class="comment-meta">
+                        <span>${c.fecha}</span>
+                        <span>Satisfacción: ${c.satisfaccion === 'yes' ? '✓' : (c.satisfaccion === 'no' ? '✗' : 'sin respuesta')}</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem; font-weight: 600;">Línea: ${c.lineaRecomendada}</div>
+                    <div class="comment-text">${c.texto || '<span style="color:#ccc">Sin comentario escrito</span>'}</div>
+                </div>
+            `).join('');
+        }
+
+        // Recent Visits
+        const visitsList = document.getElementById('visits-history-list');
+        const recentVisits = visitLog.slice(-20).reverse();
+        visitsList.innerHTML = recentVisits.length > 0
+            ? recentVisits.map(v => `
+                <div class="visit-item">
+                    <span>Visita registrada</span>
+                    <span style="color: var(--text-muted)">${v.date}</span>
+                </div>
+            `).join('')
+            : '<p style="text-align:center; padding: 1rem; color: var(--text-muted)">No hay registros de visitas</p>';
+    }
+
+    function clearAllData() {
+        if (confirm('¿Estás seguro de que querés borrar todos los datos de estadísticas e historial? Esta acción no se puede deshacer.')) {
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('stats_')) {
+                    localStorage.removeItem(key);
+                }
+            });
+            alert('Datos eliminados correctamente.');
+            location.reload();
+        }
+    }
+
+    // UI Helpers
+    function toggleGlossary(btn) {
+        const item = btn.parentElement;
+        item.classList.toggle('active');
+    }
+
+    function showMoreInfo(id) {
+        const line = financialLines.find(l => l.id === id);
+        document.getElementById('modal-title').innerText = line.name;
+        document.getElementById('modal-body').innerText = line.moreInfo;
+        document.getElementById('modal-overlay').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('modal-overlay').style.display = 'none';
+    }
+
+    function restart() {
+        location.reload(); // Simplest way to reset everything
+    }
+</script>
+
+
+</body>
+</html>
