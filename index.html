@@ -1600,6 +1600,7 @@
     // Initialize on load
     document.addEventListener('DOMContentLoaded', () => {
         // trackVisit moved to nextStep(1)
+        // Session ID is now generated per simulation in nextStep(1)
     });
 
     async function trackVisit() {
@@ -1628,6 +1629,10 @@
     // Navigation
     function nextStep(step) {
         if (step === 1) {
+            // Generate a unique ID for THIS simulation attempt
+            const newSessionId = 'sim_' + Math.random().toString(36).substr(2, 9) + Date.now();
+            localStorage.setItem('app_session_id', newSessionId);
+
             trackVisit(); // Count visit only when starting simulation
             document.getElementById('welcome-screen').classList.remove('active');
             document.getElementById('step-1').classList.add('active');
@@ -1969,12 +1974,14 @@
 
         // Save to Firebase
         const path = 'stats_feedback';
+        const sessionId = localStorage.getItem('app_session_id');
         try {
             addDoc(collection(db, path), {
                 line: recommendation,
                 satisfaction: currentSatisfaction === 'yes' ? 'good' : 'bad',
                 comment: comment,
-                date: feedbackData.fecha
+                date: feedbackData.fecha,
+                sessionId: sessionId
             });
         } catch (e) { 
             handleFirestoreError(e, OperationType.CREATE, path);
@@ -2028,13 +2035,14 @@
         }
 
         const now = new Date();
+        const sessionId = localStorage.getItem('app_session_id');
         const userInfoData = {
             fecha: formatDate(now),
             email: email,
             empresa: company,
             recomendacion: recommendation,
             resumen: getCaseSummary(answers),
-            uid: auth.currentUser ? auth.currentUser.uid : null
+            sessionId: sessionId
         };
 
         // Save to LocalStorage (backup)
@@ -2589,20 +2597,49 @@
             return;
         }
 
+        // Build a map of sessionId -> company name from adminData.userInfo for real-time lookup
+        const userMap = {};
+        adminData.userInfo.forEach(u => {
+            if (u.sessionId && !userMap[u.sessionId]) {
+                userMap[u.sessionId] = u.empresa;
+            }
+        });
+
         const displayComments = showAllComments ? comments : comments.slice(0, 5);
 
-        commentsList.innerHTML = displayComments.map(c => `
-            <div class="comment-card">
-                <div class="comment-header">
-                    <span class="badge" style="background: #eff6ff; color: #1d4ed8; border: none;">${c.line || 'No especificada'}</span>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">${c.date}</span>
+        commentsList.innerHTML = displayComments.map(c => {
+            const companyName = c.sessionId ? (userMap[c.sessionId] || 'Usuario no identificado') : 'Usuario no identificado';
+            return `
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                            <span style="font-weight: 700; color: white; font-size: 0.9rem;">${companyName}</span>
+                            <span class="badge" style="background: #eff6ff; color: #1d4ed8; border: none; width: fit-content;">${c.line || 'No especificada'}</span>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">${c.date}</span>
+                    </div>
+                    <div class="comment-body" style="margin-top: 0.5rem;">${c.comment}</div>
+                    <div style="margin-top: 0.75rem;">
+                        <span style="
+                            font-size: 0.7rem; 
+                            font-weight: 700; 
+                            color: white; 
+                            padding: 0.25rem 0.6rem; 
+                            border-radius: 4px; 
+                            text-transform: uppercase;
+                            letter-spacing: 0.025em;
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 0.3rem;
+                            background: ${c.satisfaction === 'good' ? '#10b981' : '#ef4444'};
+                            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                        ">
+                            ${c.satisfaction === 'good' ? '✓ Recomendación útil' : '✗ No fue lo que buscaba'}
+                        </span>
+                    </div>
                 </div>
-                <div class="comment-body">${c.comment}</div>
-                <div style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: 600; color: ${c.satisfaction === 'good' ? 'var(--secondary)' : 'white'}">
-                    ${c.satisfaction === 'good' ? '✓ Recomendación útil' : '✗ No fue lo que buscaba'}
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     function downloadUserInfoCSV() {

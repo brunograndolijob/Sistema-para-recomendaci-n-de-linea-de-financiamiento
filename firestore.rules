@@ -12,7 +12,7 @@ service cloud.firestore {
     //   - empresa: string (required, 1-100 chars)
     //   - recomendacion: string (required)
     //   - resumen: string (required)
-    //   - uid: string (optional)
+    //   - sessionId: string (optional)
     //
     // Collection: stats_consultas_completadas
     // Fields:
@@ -25,6 +25,7 @@ service cloud.firestore {
     //   - satisfaction: string (required, ['good', 'neutral', 'bad'])
     //   - comment: string (optional, max 500 chars)
     //   - date: string (required, ISO 8601)
+    //   - sessionId: string (optional)
     //
     // Collection: users
     // Fields:
