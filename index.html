@@ -966,7 +966,7 @@
 
     <!-- Welcome Screen -->
     <section id="welcome-screen" class="screen active">
-        <h1 style="font-size: 3rem; margin-bottom: 0.5rem; text-transform: uppercase;">Linea de Financiamiento para la Transición Energética</h1>
+        <h1 style="font-size: 3rem; margin-bottom: 0.5rem; text-transform: uppercase;">Lineas de financiamiento para la Transición Energética</h1>
         <h2 style="font-size: 1.5rem; font-weight: 400; margin-bottom: 2.5rem; opacity: 0.9; letter-spacing: 0.1em;">Busca impulsar tu negocio</h2>
         <p class="subtitle" style="color: white; font-weight: 500; line-height: 1.6; max-width: 700px;">
             Descubrí la linea de financiamiento ideal para tu empresa. Respondé unas breves preguntas y nuestro sistema te orientará hacia las mejores opciones que ofrece la Secretaría de Energía para potenciar tu crecimiento, innovación y sustentabilidad.
@@ -1039,7 +1039,7 @@
     <section id="results-screen" class="screen">
         <div class="results-header" style="text-align: center; margin-bottom: 3rem;">
             <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">¡Análisis Completo!</h2>
-            <p class="subtitle" style="color: white;">Basado en tu perfil industrial, estas son las mejores opciones del Ministerio.</p>
+            <p class="subtitle" style="color: white;">Basado en tu perfil industrial, estas son las mejores opciones de la Secretaria de Energía</p>
         </div>
 
         <h3 class="secondary-title">Tu línea recomendada</h3>
@@ -1561,20 +1561,28 @@
         }
     ];
 
-    // Load custom lines from Firestore
-    async function loadCustomLines() {
+    // Load custom lines from Firestore (Real-time)
+    function loadCustomLines() {
         const path = 'config_financial_lines';
         try {
             const q = query(collection(db, path));
-            const snapshot = await getDocs(q);
-            const customLines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            
-            if (customLines.length > 0) {
-                financialLines = customLines;
-            }
+            onSnapshot(q, (snapshot) => {
+                const customLines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                if (customLines.length > 0) {
+                    financialLines = customLines;
+                }
+                
+                // If admin panel is open, refresh it
+                if (document.getElementById('admin-panel').style.display === 'block') {
+                    refreshAdminUI();
+                }
+            }, (error) => {
+                handleFirestoreError(error, OperationType.GET, path);
+                console.error("Error loading custom lines:", error);
+            });
         } catch (e) {
-            handleFirestoreError(e, OperationType.GET, path);
-            console.error("Error loading custom lines:", e);
+            console.error("Error setting up custom lines listener:", e);
         }
     }
     loadCustomLines();
@@ -1591,7 +1599,7 @@
 
     // Initialize on load
     document.addEventListener('DOMContentLoaded', () => {
-        trackVisit();
+        // trackVisit moved to nextStep(1)
     });
 
     async function trackVisit() {
@@ -1620,6 +1628,7 @@
     // Navigation
     function nextStep(step) {
         if (step === 1) {
+            trackVisit(); // Count visit only when starting simulation
             document.getElementById('welcome-screen').classList.remove('active');
             document.getElementById('step-1').classList.add('active');
             document.getElementById('progress-container').style.display = 'block';
@@ -1732,6 +1741,24 @@
     }
 
     // Recommendation Logic
+    async function trackCompletion(lineName, reasoning, answers) {
+        const completionData = { 
+            line: lineName || "No especificada", 
+            date: formatDate(new Date()),
+            reasoning: reasoning || "Recomendación automática",
+            answers: answers || userAnswers
+        };
+        
+        const path = 'stats_consultas_completadas';
+        try {
+            await addDoc(collection(db, path), completionData);
+            console.log("Consulta completada trackeada con éxito.");
+        } catch (e) { 
+            handleFirestoreError(e, OperationType.CREATE, path);
+            console.error("Error saving completion to Firebase:", e); 
+        }
+    }
+
     async function calculateResults() {
         if (!validateStep(2)) return;
 
@@ -1774,24 +1801,10 @@
             const altLines = (result.alternatives || []).map(id => financialLines.find(l => l.id === id)).filter(Boolean);
 
             renderResults(mainLine, altLines, result.reasoning);
-            currentRecommendedLine = mainLine.name;
+            currentRecommendedLine = mainLine ? mainLine.name : "No especificada";
             
             // Track completion
-            const completionData = { 
-                line: currentRecommendedLine, 
-                date: formatDate(new Date()),
-                reasoning: result.reasoning,
-                answers: userAnswers
-            };
-            
-            // Save to Firebase
-            const path = 'stats_consultas_completadas';
-            try {
-                addDoc(collection(db, path), completionData);
-            } catch (e) { 
-                handleFirestoreError(e, OperationType.CREATE, path);
-                console.error("Error saving to Firebase:", e); 
-            }
+            await trackCompletion(currentRecommendedLine, result.reasoning, userAnswers);
 
             // Save current session answers temporarily
             localStorage.setItem('temp_current_answers', JSON.stringify(userAnswers));
@@ -1817,7 +1830,21 @@
             return { ...line, score };
         });
         scores.sort((a, b) => b.score - a.score);
-        renderResults(scores[0], scores.slice(1, 3), scores[0].idealFor);
+        
+        const mainLine = scores[0] || financialLines[0];
+        const reasoning = mainLine ? (mainLine.idealFor || "Esta línea se ajusta a tu perfil.") : "No se encontró una recomendación exacta.";
+        
+        renderResults(mainLine, scores.slice(1, 3), reasoning);
+        currentRecommendedLine = mainLine ? mainLine.name : "No especificada";
+        
+        // Track completion even in fallback
+        trackCompletion(currentRecommendedLine, reasoning, userAnswers);
+        
+        // Save current session answers temporarily
+        localStorage.setItem('temp_current_answers', JSON.stringify(userAnswers));
+        localStorage.setItem('temp_current_recommendation', currentRecommendedLine);
+        
+        updateProgress(100);
     }
 
     function renderResults(main, alts, reasoning) {
@@ -1921,11 +1948,18 @@
 
         const comment = document.getElementById('feedback-comment').value;
         const now = new Date();
+        
+        // Recover recommendation if lost
+        let recommendation = currentRecommendedLine;
+        if (!recommendation) {
+            recommendation = localStorage.getItem('temp_current_recommendation') || "No especificada";
+        }
+
         const feedbackData = {
             texto: comment,
             fecha: formatDate(now),
             satisfaccion: currentSatisfaction,
-            lineaRecomendada: currentRecommendedLine
+            lineaRecomendada: recommendation
         };
         
         // Save to LocalStorage (backup)
@@ -1937,7 +1971,7 @@
         const path = 'stats_feedback';
         try {
             addDoc(collection(db, path), {
-                line: currentRecommendedLine,
+                line: recommendation,
                 satisfaction: currentSatisfaction === 'yes' ? 'good' : 'bad',
                 comment: comment,
                 date: feedbackData.fecha
@@ -2219,25 +2253,28 @@
             const compElem = document.getElementById('stat-completadas');
             const visitElem = document.getElementById('stat-visitas');
             
-            if (compElem) compElem.innerText = filteredCompletions.length;
-            
-            // If filtering, show filtered count. If not, show total from server for accuracy.
-            if (visitElem) {
-                if (currentAdminFilter === 'all') {
-                    const path = 'stats_visitas_log';
-                    try {
-                        const coll = collection(db, path);
-                        const snapshot = await getDocs(query(coll, limit(1)));
-                        const countSnapshot = await getCountFromServer(coll);
-                        visitElem.innerText = countSnapshot.data().count;
-                    } catch (err) {
-                        handleFirestoreError(err, OperationType.GET, path);
-                        console.warn("Could not fetch server count, using local data:", err);
-                        visitElem.innerText = adminData.visitas.length;
-                    }
-                } else {
-                    visitElem.innerText = filteredVisitas.length;
+            // Real-time counters from server for accuracy when not filtering
+            if (currentAdminFilter === 'all') {
+                // Completions
+                const pathComp = 'stats_consultas_completadas';
+                try {
+                    const countSnapshot = await getCountFromServer(collection(db, pathComp));
+                    if (compElem) compElem.innerText = countSnapshot.data().count;
+                } catch (err) {
+                    if (compElem) compElem.innerText = adminData.completions.length;
                 }
+
+                // Visits
+                const pathVisits = 'stats_visitas_log';
+                try {
+                    const countSnapshot = await getCountFromServer(collection(db, pathVisits));
+                    if (visitElem) visitElem.innerText = countSnapshot.data().count;
+                } catch (err) {
+                    if (visitElem) visitElem.innerText = adminData.visitas.length;
+                }
+            } else {
+                if (compElem) compElem.innerText = filteredCompletions.length;
+                if (visitElem) visitElem.innerText = filteredVisitas.length;
             }
         } catch (e) {
             console.error("Error refreshing Admin UI:", e);
@@ -2327,35 +2364,48 @@
         
         // Initialize all available lines with 0
         financialLines.forEach(line => {
-            lineCounts[line.name] = 0;
+            if (line && line.name) {
+                lineCounts[line.name] = 0;
+            }
         });
 
         // Count recommendations from completions
         completions.forEach(c => {
-            if (c.line && lineCounts.hasOwnProperty(c.line)) {
-                lineCounts[c.line]++;
-            } else if (c.line) {
-                // If for some reason the line name is not in financialLines (e.g. old data)
-                lineCounts[c.line] = (lineCounts[c.line] || 0) + 1;
+            const lineName = c.line || "No especificada";
+            if (lineCounts.hasOwnProperty(lineName)) {
+                lineCounts[lineName]++;
+            } else {
+                lineCounts[lineName] = 1;
             }
         });
 
-        // Sort alphabetically by line name
-        const sortedLines = Object.entries(lineCounts).sort((a, b) => a[0].localeCompare(b[0]));
+        // Sort alphabetically by line name, but keep "No especificada" at the end
+        const sortedLines = Object.entries(lineCounts).sort((a, b) => {
+            if (a[0] === "No especificada") return 1;
+            if (b[0] === "No especificada") return -1;
+            return a[0].localeCompare(b[0]);
+        });
         
         const linesList = document.getElementById('recommended-lines-list');
         linesList.innerHTML = sortedLines.length > 0 
             ? sortedLines.map(([name, count], index) => {
                 const lineObj = financialLines.find(l => l.name === name);
+                const isUnknown = !lineObj && name !== "No especificada";
+                
                 return `
-                <div style="padding: 1.25rem; background: rgba(255,255,255,0.1); border-radius: 16px; border-left: 5px solid #7c3aed; color: white; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative;">
+                <div style="padding: 1.25rem; background: rgba(255,255,255,0.1); border-radius: 16px; border-left: 5px solid #7c3aed; color: white; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative; ${isUnknown ? 'border: 1px dashed rgba(255,255,255,0.3);' : ''}">
                     <div style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem;">
-                        <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: white; border: none;" onclick="openLineModal('${lineObj ? lineObj.id : ''}')">✏️</button>
-                        <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4);" onclick="deleteLine('${lineObj ? lineObj.id : ''}')">🗑️</button>
+                        ${lineObj ? `
+                            <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: white; border: none;" onclick="openLineModal('${lineObj.id}')">✏️</button>
+                            <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4);" onclick="deleteLine('${lineObj.id}')">🗑️</button>
+                        ` : ''}
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem; padding-right: 4rem;">
                         <span style="font-weight: 800; color: white; font-size: 1.1rem;">Línea ${index + 1}:</span>
-                        <span style="font-weight: 600; font-size: 1.1rem;">${name}</span>
+                        <span style="font-weight: 600; font-size: 1.1rem;">
+                            ${name}
+                            ${isUnknown ? '<span style="font-size: 0.6rem; background: rgba(255,255,255,0.1); padding: 2px 4px; border-radius: 4px; margin-left: 5px; font-weight: 400; opacity: 0.7;">(Línea antigua o eliminada)</span>' : ''}
+                        </span>
                     </div>
                     <p style="font-size: 1rem; opacity: 0.9;">
                         "Esta línea se recomendó a <span style="font-weight: 800; color: #7c3aed; background: white; padding: 0.1rem 0.6rem; border-radius: 8px; margin: 0 0.2rem;">${count}</span> usuarios"
@@ -2544,7 +2594,7 @@
         commentsList.innerHTML = displayComments.map(c => `
             <div class="comment-card">
                 <div class="comment-header">
-                    <span class="badge" style="background: #eff6ff; color: #1d4ed8; border: none;">${c.line}</span>
+                    <span class="badge" style="background: #eff6ff; color: #1d4ed8; border: none;">${c.line || 'No especificada'}</span>
                     <span style="font-size: 0.75rem; color: var(--text-muted);">${c.date}</span>
                 </div>
                 <div class="comment-body">${c.comment}</div>
