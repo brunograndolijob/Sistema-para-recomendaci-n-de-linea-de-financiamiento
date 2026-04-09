@@ -31,6 +31,18 @@ service cloud.firestore {
     //   - email: string (required)
     //   - role: string (required, ['admin'])
     //
+    // Collection: config_financial_lines
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (required)
+    //   - desc: string
+    //   - maxAmount: string
+    //   - term: string
+    //   - rate: string
+    //   - idealFor: string
+    //   - moreInfo: string
+    //   - criteria: map
+    //
     // ===============================================================
 
     // ===============================================================
@@ -42,8 +54,10 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() &&
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
-         (request.auth.token.email == "brunograndolijob@gmail.com" && request.auth.token.email_verified == true));
+        (
+          (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+          (request.auth.token.email == "brunograndolijob@gmail.com" && request.auth.token.email_verified == true)
+        );
     }
 
     function isValidEmail(email) {
@@ -68,6 +82,7 @@ service cloud.firestore {
         request.resource.data.recomendacion is string &&
         request.resource.data.resumen is string;
       allow read: if true;
+      allow delete: if true;
     }
 
     // Consultation Stats: Public can create and read
@@ -77,6 +92,16 @@ service cloud.firestore {
         request.resource.data.line is string &&
         request.resource.data.date is string;
       allow read: if true;
+      allow delete: if true;
+    }
+
+    // Visits Log: Public can create and read
+    match /stats_visitas_log/{docId} {
+      allow create: if 
+        request.resource.data.keys().hasAll(['date']) &&
+        request.resource.data.date is string;
+      allow read: if true;
+      allow delete: if true;
     }
 
     // Feedback: Public can create and read
@@ -88,11 +113,18 @@ service cloud.firestore {
         request.resource.data.date is string &&
         (!('comment' in request.resource.data) || (request.resource.data.comment is string && request.resource.data.comment.size() <= 1000));
       allow read: if true;
+      allow delete: if true;
     }
 
     // Users: Only admin can read/write
     match /users/{userId} {
       allow read, write: if isAdmin();
+    }
+
+    // Financial Lines Configuration: Public read, Admin write
+    match /config_financial_lines/{lineId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
     
     // Test connection

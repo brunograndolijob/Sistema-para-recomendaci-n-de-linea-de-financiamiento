@@ -3,20 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanciAR - Simulador de Créditos</title>
+    <title>Linea de Financiamiento para la Transición Energética</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         :root {
-            --primary: #1a56db;
-            --primary-dark: #1e429f;
-            --secondary: #0f9d58;
-            --bg: #f9fafb;
-            --text-main: #111827;
-            --text-muted: #6b7280;
+            --primary: #ffffff;
+            --primary-dark: #f3f4f6;
+            --secondary: #ffffff;
+            --accent: #f97316;
+            --bg-gradient: linear-gradient(135deg, #f97316 0%, #db2777 35%, #7c3aed 70%, #2563eb 100%);
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.8);
+            --text-dark: #1f2937;
             --white: #ffffff;
-            --border: #e5e7eb;
+            --border: rgba(255, 255, 255, 0.2);
+            --card-bg: rgba(255, 255, 255, 0.1);
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
@@ -29,10 +47,12 @@
         }
 
         body {
-            background-color: var(--bg);
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             color: var(--text-main);
             line-height: 1.5;
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
         .container {
@@ -51,37 +71,80 @@
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            letter-spacing: -0.025em;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            padding: 1rem;
         }
 
-        .logo span {
-            color: var(--secondary);
+        .santa-fe-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        .brand-icon {
+            width: 60px;
+            height: auto;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-text-main {
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text-sub {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-top: 0.2rem;
+            opacity: 0.9;
+        }
+
+        .brand-divider {
+            width: 1px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .ministerio-brand {
+            text-align: left;
+            color: white;
+            font-size: 1.1rem;
+            line-height: 1.2;
+            font-weight: 500;
+        }
+
+        .ministerio-brand .dept {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.2rem;
         }
 
         /* Progress Bar */
         .progress-container {
             width: 100%;
-            height: 8px;
-            background: var(--border);
-            border-radius: 4px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
             margin-bottom: 2.5rem;
             display: none;
         }
 
         .progress-bar {
             height: 100%;
-            background: var(--primary);
-            border-radius: 4px;
+            background: white;
+            border-radius: 3px;
             transition: width 0.4s ease;
             width: 0%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         /* Screens */
@@ -137,14 +200,15 @@
         }
 
         .btn-primary {
-            background-color: var(--primary);
-            color: var(--white);
+            background-color: white;
+            color: #db2777;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .btn-primary:hover {
-            background-color: var(--primary-dark);
+            background-color: #f9fafb;
             transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
 
         .btn-block {
@@ -171,30 +235,36 @@
         }
 
         .option-card {
-            background: var(--white);
-            border: 2px solid var(--border);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             padding: 1.25rem;
-            border-radius: 12px;
+            border-radius: 16px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 80px;
+            color: white;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .option-card:hover {
-            border-color: var(--primary);
-            background-color: #eff6ff;
+            border-color: white;
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
         .option-card.selected {
-            border-color: var(--primary);
-            background-color: #eff6ff;
-            color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.1);
+            border-color: white;
+            background-color: white;
+            color: #7c3aed;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
         }
 
         /* Results Screen */
@@ -204,14 +274,15 @@
         }
 
         .main-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2rem;
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
             box-shadow: var(--shadow-lg);
             border: 1px solid var(--border);
             margin-bottom: 3rem;
             position: relative;
             overflow: hidden;
+            color: var(--text-dark);
         }
 
         .main-card::before {
@@ -221,14 +292,14 @@
             left: 0;
             width: 100%;
             height: 6px;
-            background: var(--secondary);
+            background: #7c3aed;
         }
 
         .badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
-            background: #dcfce7;
-            color: #166534;
+            background: #f3f4f6;
+            color: #4b5563;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 700;
@@ -240,11 +311,11 @@
             font-size: 1.75rem;
             font-weight: 800;
             margin-bottom: 0.75rem;
-            color: var(--primary);
+            color: #7c3aed;
         }
 
         .line-desc {
-            color: var(--text-muted);
+            color: #4b5563;
             margin-bottom: 1.5rem;
             font-size: 1.1rem;
         }
@@ -255,32 +326,32 @@
             gap: 1.5rem;
             margin-bottom: 1.5rem;
             padding: 1.5rem 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border-top: 1px solid #f3f4f6;
+            border-bottom: 1px solid #f3f4f6;
         }
 
         .detail-item span {
             display: block;
             font-size: 0.875rem;
-            color: var(--text-muted);
+            color: #6b7280;
             margin-bottom: 0.25rem;
         }
 
         .detail-item strong {
             font-size: 1.125rem;
-            color: var(--text-main);
+            color: #1f2937;
         }
 
         .why-ideal {
-            background: #f0fdf4;
+            background: #f9fafb;
             padding: 1.25rem;
             border-radius: 12px;
             margin-bottom: 1.5rem;
-            border-left: 4px solid var(--secondary);
+            border-left: 4px solid #7c3aed;
         }
 
         .why-ideal h4 {
-            color: #166534;
+            color: #4b5563;
             font-size: 0.9rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
@@ -289,7 +360,7 @@
 
         .why-ideal p {
             font-size: 0.95rem;
-            color: #14532d;
+            color: #1f2937;
         }
 
         /* Secondary Options */
@@ -307,16 +378,21 @@
         }
 
         .alt-card {
-            background: var(--white);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
             padding: 1.5rem;
-            border: 1px solid var(--border);
-            transition: transform 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s ease;
+            backdrop-filter: blur(12px);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         .alt-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .alt-title {
@@ -325,30 +401,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 1.1rem;
         }
 
         .compatibility {
             font-size: 0.875rem;
-            color: var(--secondary);
+            color: #f97316;
+            font-weight: 700;
         }
 
         .alt-desc {
             font-size: 0.875rem;
-            color: var(--text-muted);
+            opacity: 0.9;
         }
 
         /* Glossary */
         .glossary {
-            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            border-radius: 24px;
+            margin-top: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .glossary-item {
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .glossary-trigger {
             width: 100%;
-            padding: 1rem 0;
+            padding: 1.25rem 0;
             background: none;
             border: none;
             text-align: left;
@@ -357,15 +441,17 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            color: var(--text-main);
+            color: white;
+            font-size: 1rem;
         }
 
         .glossary-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.8);
             font-size: 0.9rem;
+            line-height: 1.6;
         }
 
         .glossary-item.active .glossary-content {
@@ -385,52 +471,49 @@
         /* Feedback Section */
         .feedback-section {
             margin-top: 3rem;
-            padding: 2rem;
-            background: var(--white);
-            border-radius: 16px;
-            border: 1px solid var(--border);
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             text-align: center;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .feedback-title {
-            font-size: 1.125rem;
+            font-size: 1.25rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
+            color: white;
         }
 
         .feedback-buttons {
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .feedback-btn {
             width: 64px;
             height: 64px;
-            border-radius: 12px;
-            border: 2px solid var(--border);
-            background: var(--white);
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
             cursor: pointer;
             transition: all 0.2s ease;
+            color: white;
         }
 
-        .feedback-btn.yes { color: var(--secondary); }
-        .feedback-btn.no { color: #e53935; }
+        .feedback-btn.yes:hover { background: rgba(34, 197, 94, 0.2); border-color: #22c55e; }
+        .feedback-btn.no:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
 
-        .feedback-btn.yes:hover { background: #f0fdf4; border-color: var(--secondary); }
-        .feedback-btn.no:hover { background: #fef2f2; border-color: #e53935; }
-
-        .feedback-btn.selected {
-            border-width: 4px;
-            transform: scale(1.1);
-        }
-        .feedback-btn.selected.yes { background: #f0fdf4; border-color: var(--secondary); }
-        .feedback-btn.selected.no { background: #fef2f2; border-color: #e53935; }
+        .feedback-btn.selected.yes { background: #22c55e; border-color: #22c55e; }
+        .feedback-btn.selected.no { background: #ef4444; border-color: #ef4444; }
 
         .feedback-btn.inactive {
             opacity: 0.3;
@@ -450,17 +533,40 @@
             width: 100%;
             height: 100px;
             padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
             resize: none;
             margin-bottom: 0.5rem;
             font-size: 0.9rem;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .comment-textarea.dark-text {
+            color: #1f2937;
+            border-color: #d1d5db;
+            background: #f9fafb;
+        }
+
+        .comment-textarea.dark-text::placeholder {
+            color: #9ca3af;
+        }
+
+        .comment-textarea.dark-text:focus {
+            border-color: #7c3aed;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+        }
+
+        .comment-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .comment-textarea:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: white;
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .char-counter {
@@ -478,23 +584,26 @@
             min-width: 36px;
             height: 36px;
             border-radius: 18px;
-            background: var(--white);
-            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease;
             z-index: 900;
             font-size: 1rem;
             padding: 0 10px;
             gap: 5px;
+            backdrop-filter: blur(10px);
+            color: white;
         }
 
         .lock-btn:hover {
-            border-color: var(--primary);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+            transform: translateY(-2px);
         }
 
         /* Admin Panel */
@@ -504,12 +613,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--bg);
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             z-index: 2000;
             display: none;
             flex-direction: column;
             padding: 2rem;
             overflow-y: auto;
+            color: white;
         }
 
         .admin-header {
@@ -529,43 +640,53 @@
         }
 
         .stat-card {
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.2);
             padding: 1.5rem;
             border-radius: 16px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             text-align: center;
-            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .stat-value {
             font-size: 2rem;
             font-weight: 800;
-            color: var(--primary);
+            color: white;
             margin-bottom: 0.25rem;
         }
 
         .stat-label {
             font-size: 0.875rem;
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.8);
             font-weight: 600;
         }
 
         .chart-section {
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.2);
             padding: 2rem;
             border-radius: 16px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             margin-bottom: 2.5rem;
+            backdrop-filter: blur(12px);
         }
 
         .bar-chart-container {
             height: 40px;
             width: 100%;
-            background: #eee;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             overflow: hidden;
             display: flex;
             margin: 1.5rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-count {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
         }
 
         .bar-segment {
@@ -577,6 +698,7 @@
             color: white;
             font-size: 0.75rem;
             font-weight: 700;
+            pointer-events: none;
         }
 
         .admin-section-title {
@@ -586,54 +708,74 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            color: white;
         }
 
         .table-container {
-            background: var(--white);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 16px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
             margin-bottom: 2.5rem;
+            backdrop-filter: blur(12px);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            color: white;
         }
 
         th, td {
-            padding: 1rem 1.5rem;
+            padding: 1.25rem 1.5rem;
             text-align: left;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         th {
-            background: #f9fafb;
-            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
             font-weight: 700;
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.9);
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .comment-item {
-            background: var(--white);
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .line-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .comment-card {
+            background: rgba(255, 255, 255, 0.2);
             padding: 1.5rem;
             border-radius: 12px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             margin-bottom: 1rem;
+            backdrop-filter: blur(12px);
         }
 
-        .comment-meta {
+        .comment-header {
             display: flex;
             justify-content: space-between;
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 0.75rem;
         }
 
-        .comment-text {
+        .comment-body {
             font-size: 0.95rem;
-            color: var(--text-main);
+            color: white;
             line-height: 1.4;
         }
 
@@ -641,8 +783,9 @@
             display: flex;
             justify-content: space-between;
             padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .visit-item:last-child { border-bottom: none; }
@@ -666,17 +809,19 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 3000;
             padding: 1rem;
         }
 
         .modal {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 16px;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
             max-width: 500px;
             width: 100%;
             position: relative;
+            box-shadow: var(--shadow-lg);
+            color: var(--text-dark);
         }
 
         .modal-close {
@@ -687,13 +832,133 @@
             font-size: 1.5rem;
             color: var(--text-muted);
         }
+
+        /* Contact Footer */
+        .main-footer {
+            background: rgba(0, 0, 0, 0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 2rem 1.5rem;
+            margin-top: 4rem;
+            color: white;
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+            color: white;
+        }
+
+        .contact-item {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .contact-icon-box {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .contact-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .contact-text strong {
+            display: block;
+            font-size: 1.05rem;
+            margin-bottom: 0.2rem;
+            font-weight: 700;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            opacity: 0.8;
+            letter-spacing: 0.05em;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .contact-item {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+            .contact-icon-box {
+                margin: 0 auto;
+            }
+            .footer-right-items .contact-item {
+                flex-direction: column;
+                align-items: center !important;
+            }
+            .footer-right-items .contact-text {
+                text-align: center !important;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <div class="logo">Financi<span>AR</span></div>
+        <div class="logo">
+            <div class="santa-fe-brand">
+                <svg class="brand-icon" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 15C25 5 45 25 65 15C85 5 95 15 95 15" stroke="url(#grad1)" stroke-width="8" stroke-linecap="round"/>
+                    <path d="M10 30C25 20 45 40 65 30C85 20 95 30 95 30" stroke="url(#grad2)" stroke-width="8" stroke-linecap="round"/>
+                    <path d="M10 45C25 35 45 55 65 45C85 35 95 45 95 45" stroke="url(#grad3)" stroke-width="8" stroke-linecap="round"/>
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="brand-text-main">Santa Fe</div>
+                <div class="brand-text-sub">PROVINCIA</div>
+            </div>
+            <div class="brand-divider"></div>
+            <div class="ministerio-brand">
+                <div>Ministerio de<br>Desarrollo Productivo</div>
+                <div class="dept">Secretaría de Energía</div>
+            </div>
+        </div>
         <div class="progress-container" id="progress-container">
             <div class="progress-bar" id="progress-bar"></div>
         </div>
@@ -701,41 +966,46 @@
 
     <!-- Welcome Screen -->
     <section id="welcome-screen" class="screen active">
-        <h1>Encontrá la línea de crédito ideal para vos</h1>
-        <p class="subtitle">Respondé unas breves preguntas y nuestro algoritmo te recomendará la mejor opción de financiamiento para potenciar tu negocio.</p>
-        <button class="btn btn-primary" onclick="nextStep(1)">Comenzar</button>
+        <h1 style="font-size: 3rem; margin-bottom: 0.5rem; text-transform: uppercase;">Linea de Financiamiento para la Transición Energética</h1>
+        <h2 style="font-size: 1.5rem; font-weight: 400; margin-bottom: 2.5rem; opacity: 0.9; letter-spacing: 0.1em;">Busca impulsar tu negocio</h2>
+        <p class="subtitle" style="color: white; font-weight: 500; line-height: 1.6; max-width: 700px;">
+            Descubrí la linea de financiamiento ideal para tu empresa. Respondé unas breves preguntas y nuestro sistema te orientará hacia las mejores opciones que ofrece la Secretaría de Energía para potenciar tu crecimiento, innovación y sustentabilidad.
+        </p>
+        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="nextStep(1)">Comenzar simulación →</button>
     </section>
 
     <!-- Form Step 1 -->
     <section id="step-1" class="screen">
         <div class="question-group">
-            <label class="question-title">1. ¿Para qué necesitás el financiamiento?</label>
-            <div class="options-grid" data-question="purpose">
-                <div class="option-card" data-value="working_capital">Capital de trabajo / insumos</div>
-                <div class="option-card" data-value="machinery">Compra de maquinaria o equipamiento</div>
-                <div class="option-card" data-value="expansion">Ampliación o refacción</div>
-                <div class="option-card" data-value="export">Proyecto de exportación</div>
-                <div class="option-card" data-value="other">Otro</div>
-            </div>
-        </div>
-
-        <div class="question-group">
-            <label class="question-title">2. ¿Cuánto necesitás?</label>
+            <label class="question-title">1. ¿Cual es el importe requerido?</label>
             <div class="options-grid" data-question="amount">
-                <div class="option-card" data-value="low">Hasta $5.000.000</div>
-                <div class="option-card" data-value="medium">Entre $5M y $20M</div>
-                <div class="option-card" data-value="high">Entre $20M y $100M</div>
-                <div class="option-card" data-value="very_high">Más de $100M</div>
+                <div class="option-card" data-value="range_10">Hasta 10Millones</div>
+                <div class="option-card" data-value="range_50">Entre 10M y 50M</div>
+                <div class="option-card" data-value="range_100">Entre 50M y 100M</div>
+                <div class="option-card" data-value="range_150">Entre 100M y 150M</div>
+                <div class="option-card" data-value="range_200">Entre 150M y 200M</div>
             </div>
         </div>
 
         <div class="question-group">
-            <label class="question-title">3. ¿Cuál es el tamaño de tu empresa?</label>
-            <div class="options-grid" data-question="size">
-                <div class="option-card" data-value="entrepreneur">Emprendedor / Persona física</div>
-                <div class="option-card" data-value="micro">Micro empresa</div>
-                <div class="option-card" data-value="sme">PyME (pequeña o mediana)</div>
-                <div class="option-card" data-value="large">Gran empresa</div>
+            <label class="question-title">2. ¿En cuántas cuotas desea cancelar el crédito?</label>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: -0.5rem; margin-bottom: 1rem;">* Cada cuota es equivalente a un mes.</p>
+            <div class="options-grid" data-question="installments">
+                <div class="option-card" data-value="up_to_36">Hasta 36 Cuotas</div>
+                <div class="option-card" data-value="up_to_60">Hasta 60 Cuotas</div>
+                <div class="option-card" data-value="range_37_61">Entre 37 y 61 Cuotas</div>
+            </div>
+        </div>
+
+        <div class="question-group">
+            <label class="question-title">3. ¿Que porcentaje del proyecto desea financiar?</label>
+            <div class="options-grid" data-question="percentage">
+                <div class="option-card" data-value="perc_25">Entre 10% y 25%</div>
+                <div class="option-card" data-value="perc_50">Entre 25% y 50%</div>
+                <div class="option-card" data-value="perc_60">Entre 50% y 60%</div>
+                <div class="option-card" data-value="perc_70">Entre 60% y 70%</div>
+                <div class="option-card" data-value="perc_80">Entre 70% y 80%</div>
+                <div class="option-card" data-value="perc_95">Entre 80% y 95%</div>
             </div>
         </div>
 
@@ -745,33 +1015,20 @@
     <!-- Form Step 2 -->
     <section id="step-2" class="screen">
         <div class="question-group">
-            <label class="question-title">4. ¿En qué sector operás?</label>
-            <div class="options-grid" data-question="sector">
-                <div class="option-card" data-value="industry">Industria / Manufactura</div>
-                <div class="option-card" data-value="agro">Agro / Ganadería</div>
-                <div class="option-card" data-value="commerce">Comercio / Servicios</div>
-                <div class="option-card" data-value="tech">Tecnología / Software</div>
-                <div class="option-card" data-value="construction">Construcción</div>
-                <div class="option-card" data-value="other">Otro</div>
+            <label class="question-title">4. ¿Cual es el tipo de proyecto a financiar?</label>
+            <div class="options-grid" data-question="purpose">
+                <div class="option-card" data-value="renewable_gen">Generación de energía renovable</div>
+                <div class="option-card" data-value="renewable_equip">Producción de equipos para energías renovables</div>
+                <div class="option-card" data-value="energy_efficiency">Eficiencia energética Industrial</div>
+                <div class="option-card" data-value="capital_goods">Adquisición de bienes de capital que permitan el ahorro de energético o generación de energía renovable</div>
+                <div class="option-card" data-value="sustainable_transport">Adquisición de transporte sostenible</div>
             </div>
         </div>
 
-        <div class="question-group">
-            <label class="question-title">5. ¿Con qué plazo de devolución te sentirías cómodo?</label>
-            <div class="options-grid" data-question="term">
-                <div class="option-card" data-value="short">Hasta 12 meses</div>
-                <div class="option-card" data-value="medium">Entre 1 y 3 años</div>
-                <div class="option-card" data-value="long">Entre 3 y 5 años</div>
-                <div class="option-card" data-value="very_long">Más de 5 años</div>
-            </div>
-        </div>
-
-        <div class="question-group">
-            <label class="question-title">6. ¿Tenés garantías para ofrecer?</label>
-            <div class="options-grid" data-question="guarantees">
-                <div class="option-card" data-value="real">Sí, tengo garantías reales o SGR</div>
-                <div class="option-card" data-value="personal">Solo tengo garantías personales</div>
-                <div class="option-card" data-value="none">No cuento con garantías por ahora</div>
+        <div id="question-5-container" class="question-group" style="display: none;">
+            <label class="question-title">5. Especifique la actividad que desea realizar</label>
+            <div id="options-grid-q5" class="options-grid" data-question="activity">
+                <!-- Dynamically populated -->
             </div>
         </div>
 
@@ -780,9 +1037,9 @@
 
     <!-- Results Screen -->
     <section id="results-screen" class="screen">
-        <div class="results-header">
-            <h2 style="font-size: 2rem; font-weight: 800;">¡Listo! Analizamos tu perfil</h2>
-            <p class="subtitle">Basado en tus respuestas, estas son las mejores opciones para vos.</p>
+        <div class="results-header" style="text-align: center; margin-bottom: 3rem;">
+            <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">¡Análisis Completo!</h2>
+            <p class="subtitle" style="color: white;">Basado en tu perfil industrial, estas son las mejores opciones del Ministerio.</p>
         </div>
 
         <h3 class="secondary-title">Tu línea recomendada</h3>
@@ -831,29 +1088,27 @@
             </div>
         </div>
 
-        <!-- User Info Form -->
-        <div id="user-info-section" class="feedback-section" style="margin-top: 0; margin-bottom: 3rem; text-align: left;">
-            <h3 class="feedback-title" style="text-align: center;">Continuar con el proceso</h3>
-            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">
-                Para poder continuar con el proceso y brindarte un acompañamiento más personalizado, por favor indícanos:
-            </p>
+        <div id="user-info-section" class="feedback-section" style="background: white; padding: 2.5rem; border-radius: 24px; margin-top: 0; margin-bottom: 3rem; text-align: left; color: var(--text-dark); box-shadow: var(--shadow-lg);">
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #7c3aed; text-align: center;">¿Querés avanzar con esta línea?</h3>
+            <p style="color: #4b5563; margin-bottom: 2rem; text-align: center;">Dejanos tus datos y un asesor se contactará para guiarte en el proceso.</p>
             
-            <div class="question-group" style="margin-bottom: 1rem;">
-                <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem;">Correo electrónico</label>
-                <input type="email" id="user-email" class="comment-textarea" style="height: 44px; margin-bottom: 0;" placeholder="ejemplo@correo.com">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Nombre de la empresa</label>
+                    <input type="text" id="user-company" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Nombre de tu organización">
+                </div>
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Email de contacto</label>
+                    <input type="email" id="user-email" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="ejemplo@correo.com">
+                </div>
             </div>
             
-            <div class="question-group" style="margin-bottom: 1.5rem;">
-                <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem;">Nombre de la empresa, emprendimiento o compañía</label>
-                <input type="text" id="user-company" class="comment-textarea" style="height: 44px; margin-bottom: 0;" placeholder="Nombre de tu organización">
-            </div>
-            
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.4; font-style: italic;">
-                "Estos datos podrían ser utilizados por un responsable del área de la Secretaría de Energía que se comunicara con usted para brindarle información correspondiente para avanzar en la gestión de la línea de financiamiento."
+            <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 1.5rem; line-height: 1.4; font-style: italic;">
+                "Estos datos serán utilizados por el Ministerio de Desarrollo Productivo para brindarle información correspondiente para avanzar en la gestión."
             </p>
             
-            <button class="btn btn-primary btn-block" id="btn-save-user-info" onclick="saveUserInfo()">Enviar información y finalizar</button>
-            <p id="user-info-thanks" style="display: none; color: var(--secondary); font-weight: 700; margin-top: 1rem; text-align: center;">¡Información enviada correctamente!</p>
+            <button class="btn btn-primary btn-block" id="btn-save-user-info" onclick="saveUserInfo()" style="background: #7c3aed; color: white; margin-top: 0;">Enviar información y finalizar</button>
+            <p id="user-info-thanks" style="display: none; color: #059669; font-weight: 700; margin-top: 1rem; text-align: center;">¡Información enviada correctamente!</p>
         </div>
 
         <!-- Feedback Section -->
@@ -867,40 +1122,40 @@
             <div class="comment-area">
                 <textarea id="feedback-comment" class="comment-textarea" placeholder="¿Tenés alguna sugerencia o comentario para mejorar el sistema? (opcional)" maxlength="500" oninput="updateCharCount()"></textarea>
                 <div class="char-counter"><span id="char-count">0</span>/500</div>
-                <button class="btn btn-primary btn-block" id="btn-send-feedback" onclick="sendFeedback()">Enviar comentario</button>
+                <button class="btn btn-primary btn-block" id="btn-send-feedback" onclick="sendFeedback()">Enviar respuesta</button>
                 <p id="feedback-thanks" style="display: none; color: var(--secondary); font-weight: 700; margin-top: 1rem;">¡Gracias por tu comentario!</p>
             </div>
         </div>
 
-        <button class="btn btn-primary btn-block" style="background-color: var(--text-muted); margin-bottom: 5rem;" onclick="restart()">Volver a empezar</button>
+        <button class="btn btn-primary btn-block" style="background-color: rgba(255,255,255,0.2); color: white; margin-bottom: 5rem; border: 1px solid rgba(255,255,255,0.3);" onclick="restart()">Volver a empezar</button>
     </section>
 </div>
 
 <!-- Lock Button -->
 <div class="lock-btn" onclick="openAdminModal()" title="Acceso Administrador">
     <span>🔒</span>
-    <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">Admin</span>
+    <span style="font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.9);">Admin</span>
 </div>
 
     <!-- Admin Auth Modal -->
     <div id="admin-modal" class="modal-overlay" onclick="closeAdminModal()">
         <div class="modal" onclick="event.stopPropagation()" style="text-align: center;">
             <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔒</div>
-            <h3 style="margin-bottom: 0.5rem; color: var(--primary); font-size: 1.5rem; font-weight: 800;">Acceso Restringido</h3>
-            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">Ingresá la contraseña para acceder al panel de estadísticas.</p>
+            <h3 style="margin-bottom: 0.5rem; color: #7c3aed; font-size: 1.5rem; font-weight: 800;">Acceso Restringido</h3>
+            <p style="color: #4b5563; margin-bottom: 1.5rem; font-size: 0.95rem;">Ingresá la contraseña para acceder al panel de estadísticas.</p>
             
             <div class="question-group" style="margin-bottom: 1.5rem;">
-                <input type="password" id="admin-password" class="comment-textarea" style="height: 50px; text-align: center; font-size: 1.2rem; letter-spacing: 0.2rem;" placeholder="••••••••">
+                <input type="password" id="admin-password" class="comment-textarea dark-text" style="height: 50px; text-align: center; font-size: 1.2rem; letter-spacing: 0.2rem;" placeholder="••••••••">
             </div>
             
-            <button class="btn btn-primary btn-block" style="height: 50px; font-size: 1.1rem;" onclick="handleAdminLogin()">
+            <button class="btn btn-primary btn-block" style="height: 50px; font-size: 1.1rem; background: #7c3aed; color: white;" onclick="handleAdminLogin()">
                 Ingresar
             </button>
             
             <p id="admin-error" class="error-msg" style="margin-top: 1rem; display: none;">Contraseña incorrecta. Intentá de nuevo.</p>
             
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                <button class="btn" style="flex: 1; border: 1px solid var(--border);" onclick="closeAdminModal()">Cancelar</button>
+                <button class="btn" style="flex: 1; border: 1px solid #d1d5db; color: #4b5563;" onclick="closeAdminModal()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -909,12 +1164,44 @@
     <!-- Admin Panel -->
     <div id="admin-panel" class="admin-panel">
         <div class="admin-header">
-            <div>
-                <h2 style="font-size: 1.75rem; font-weight: 800;">Panel de administración</h2>
-                <p id="admin-datetime" style="color: var(--text-muted); font-size: 0.9rem;"></p>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div class="santa-fe-brand" style="transform: scale(0.7); transform-origin: left center;">
+                    <svg class="brand-icon" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 15C25 5 45 25 65 15C85 5 95 15 95 15" stroke="url(#grad1_admin)" stroke-width="8" stroke-linecap="round"/>
+                        <path d="M10 30C25 20 45 40 65 30C85 20 95 30 95 30" stroke="url(#grad2_admin)" stroke-width="8" stroke-linecap="round"/>
+                        <path d="M10 45C25 35 45 55 65 45C85 35 95 45 95 45" stroke="url(#grad3_admin)" stroke-width="8" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="grad1_admin" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="grad2_admin" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="grad3_admin" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="brand-text-main">Santa Fe</div>
+                    <div class="brand-text-sub">PROVINCIA</div>
+                </div>
+                <div class="brand-divider" style="height: 50px;"></div>
+                <div>
+                    <h2 style="font-size: 1.5rem; font-weight: 800; color: white;">Panel de administración</h2>
+                    <p id="admin-datetime" style="color: rgba(255,255,255,0.7); font-size: 0.8rem;"></p>
+                </div>
             </div>
-            <div style="display: flex; gap: 1rem;">
-                <button class="btn" style="border: 1px solid var(--border);" onclick="handleLogout()">Cerrar sesión</button>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="filter-group" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                    <label for="admin-filter-month" style="font-size: 0.8rem; font-weight: 600; color: white; white-space: nowrap;">Filtrar:</label>
+                    <select id="admin-filter-month" style="background: transparent; border: none; color: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; outline: none;">
+                        <option value="all" style="color: black;">Todos los meses</option>
+                    </select>
+                </div>
+                <button class="btn" style="border: 1px solid rgba(255,255,255,0.3); color: white; background: rgba(255,255,255,0.1);" onclick="handleLogout()">Cerrar sesión</button>
             </div>
         </div>
 
@@ -930,10 +1217,12 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="stat-positivas">0%</div>
+                <div class="stat-count" id="stat-positivas-count">0 respuestas</div>
                 <div class="stat-label">Respuestas positivas (✓)</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="stat-negativas">0%</div>
+                <div class="stat-count" id="stat-negativas-count">0 respuestas</div>
                 <div class="stat-label">Respuestas negativas (✗)</div>
             </div>
         </div>
@@ -942,19 +1231,30 @@
         <div class="chart-section">
             <h3 class="admin-section-title">Nivel de satisfacción</h3>
             <div class="bar-chart-container">
-                <div id="chart-yes" class="bar-segment" style="background: var(--secondary); width: 0%;"></div>
-                <div id="chart-no" class="bar-segment" style="background: #e53935; width: 0%;"></div>
+                <div id="chart-yes" class="bar-segment" style="background: #22c55e; width: 0%;"></div>
+                <div id="chart-no" class="bar-segment" style="background: #ef4444; width: 0%;"></div>
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600;">
-                <span style="color: var(--secondary);">Positivas: <span id="chart-yes-label">0</span>%</span>
-                <span style="color: #e53935;">Negativas: <span id="chart-no-label">0</span>%</span>
+                <span style="color: #4ade80;">Positivas: <span id="chart-yes-label">0</span>%</span>
+                <span style="color: #f87171;">Negativas: <span id="chart-no-label">0</span>%</span>
             </div>
+        </div>
+
+        <!-- Available Lines -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+            <h3 class="admin-section-title" style="margin-bottom: 0; color: white;">Líneas Disponibles</h3>
+            <button class="btn" style="font-size: 0.8rem; padding: 0.4rem 1rem; border: 1px solid #4ade80; color: #4ade80; background: rgba(74, 222, 128, 0.1);" onclick="openLineModal()">
+                ➕ Agregar Línea
+            </button>
+        </div>
+        <div id="recommended-lines-list" style="margin-bottom: 2.5rem; display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Injected by JS -->
         </div>
 
         <!-- User Info History -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h3 class="admin-section-title" style="margin-bottom: 0;">Información de los usuarios</h3>
-            <button class="btn" style="font-size: 0.8rem; padding: 0.4rem 1rem; border: 1px solid var(--secondary); color: var(--secondary); background: none;" onclick="downloadUserInfoCSV()">
+            <h3 class="admin-section-title" style="margin-bottom: 0; color: white;">Información de los usuarios</h3>
+            <button class="btn" style="font-size: 0.8rem; padding: 0.4rem 1rem; border: 1px solid white; color: white; background: rgba(255,255,255,0.1);" onclick="downloadUserInfoCSV()">
                 📥 Descargar CSV
             </button>
         </div>
@@ -975,137 +1275,309 @@
             </table>
         </div>
 
-        <!-- Most Recommended Lines -->
-        <h3 class="admin-section-title">Líneas más recomendadas</h3>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Línea de financiamiento</th>
-                        <th>Recomendaciones</th>
-                    </tr>
-                </thead>
-                <tbody id="recommended-lines-body">
-                    <!-- Injected by JS -->
-                </tbody>
-            </table>
-        </div>
-
         <!-- Comment History -->
-        <h3 class="admin-section-title">Historial de comentarios</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 class="admin-section-title" style="margin-bottom: 0;">Historial de comentarios</h3>
+            <button id="toggle-all-comments" class="btn" style="font-size: 0.8rem; padding: 0.4rem 1rem; border: 1px solid rgba(255,255,255,0.3); color: white; background: rgba(255,255,255,0.1);" onclick="toggleAllComments()">
+                Ver historial completo
+            </button>
+        </div>
         <div id="comments-history-list" style="margin-bottom: 2.5rem;">
             <!-- Injected by JS -->
         </div>
 
-        <!-- Visit History -->
-        <h3 class="admin-section-title">Últimas 20 visitas</h3>
-        <div class="table-container">
-            <div id="visits-history-list">
-                <!-- Injected by JS -->
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2); text-align: center;">
+            <button id="btn-clear-all" class="btn" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid #ef4444; position: relative; z-index: 2100;" onclick="clearAllData(this)">Borrar todos los datos</button>
+        </div>
+
+        <!-- Contact Footer in Admin -->
+        <footer class="main-footer" style="margin-top: 5rem; background: rgba(0,0,0,0.2);">
+            <div class="footer-content">
+                <div>
+                    <h3 class="footer-section-title">Contacto</h3>
+                    <div class="contact-item">
+                        <div class="contact-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        </div>
+                        <div class="contact-text">
+                            <strong>Secretaría de Energía</strong>
+                            Francisco Miguens 260. Torre 2. Piso 4.<br>
+                            Ciudad de Santa Fe
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        </div>
+                        <div class="contact-text">
+                            <strong>Secretaría de Energía</strong>
+                            San Lorenzo 1949. Piso 2. Oficina 228.<br>
+                            Ciudad de Rosario
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-right-items" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 0.5rem;">
+                    <div class="contact-item" style="margin-bottom: 1rem; justify-content: flex-end;">
+                        <div class="contact-text" style="text-align: right; font-weight: 600;">
+                            Cel: (0342) 4505882 | Interno 1303
+                        </div>
+                        <div class="contact-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.18-2.18a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="contact-item" style="margin-bottom: 1rem; justify-content: flex-end;">
+                        <div class="contact-text" style="text-align: right; font-weight: 600;">
+                            Cel: (0342) 6400825
+                        </div>
+                        <div class="contact-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.18-2.18a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="contact-item" style="margin-bottom: 1rem; justify-content: flex-end;">
+                        <div class="contact-text" style="text-align: right; font-weight: 600;">
+                            financiamientorenovables@santafevirtual.edu.ar
+                        </div>
+                        <div class="contact-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                © 2026 Gobierno de Santa Fe
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h3 id="modal-title" style="margin-bottom: 1rem; color: #7c3aed;"></h3>
+            <div id="modal-body" style="color: #4b5563;"></div>
+            <div id="modal-footer" style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button id="modal-ok-btn" class="btn btn-primary btn-block" style="background: #7c3aed; color: white;" onclick="closeModal()">Entendido</button>
+                <button id="modal-cancel-btn" class="btn btn-block" style="display: none; background: #f3f4f6; color: #4b5563;" onclick="closeModal()">Cancelar</button>
             </div>
         </div>
+    </div>
 
-        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); text-align: center;">
-            <button class="btn" style="background: #fef2f2; color: #e53935; border: 1px solid #fecaca;" onclick="clearAllData()">Borrar todos los datos</button>
+    <!-- Line Editor Modal -->
+    <div id="line-modal-overlay" class="modal-overlay" style="z-index: 3000;">
+        <div class="modal" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <span class="modal-close" onclick="closeLineModal()">&times;</span>
+            <h3 id="line-modal-title" style="margin-bottom: 1.5rem; color: #7c3aed;">Agregar/Editar Línea</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Nombre de la línea</label>
+                    <input type="text" id="line-name" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Ej: Financiamiento Verde (Banco CFI)">
+                </div>
+                
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Descripción corta</label>
+                    <textarea id="line-desc" class="comment-textarea" style="height: 80px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Breve descripción de la línea..."></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="question-group" style="margin-bottom: 0;">
+                        <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Monto Máximo</label>
+                        <input type="text" id="line-maxAmount" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Ej: $200.000.000">
+                    </div>
+                    <div class="question-group" style="margin-bottom: 0;">
+                        <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Plazo</label>
+                        <input type="text" id="line-term" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Ej: Hasta 60 meses">
+                    </div>
+                </div>
+
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Tasa</label>
+                    <input type="text" id="line-rate" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Ej: 21% Fija">
+                </div>
+
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">¿Por qué es ideal? (Para el análisis IA)</label>
+                    <textarea id="line-idealFor" class="comment-textarea" style="height: 80px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Explicación de por qué elegir esta línea..."></textarea>
+                </div>
+
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Información Detallada (HTML permitido)</label>
+                    <textarea id="line-moreInfo" class="comment-textarea" style="height: 120px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Detalles técnicos, proyectos elegibles..."></textarea>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button class="btn btn-primary style-btn" style="flex: 1; background: #7c3aed; color: white;" onclick="saveLine()">Guardar Línea</button>
+                <button class="btn style-btn" style="flex: 1; background: #f3f4f6; color: #4b5563;" onclick="closeLineModal()">Cancelar</button>
+            </div>
         </div>
     </div>
-
-
-<!-- Modal -->
-<div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
-    <div class="modal" onclick="event.stopPropagation()">
-        <span class="modal-close" onclick="closeModal()">&times;</span>
-        <h3 id="modal-title" style="margin-bottom: 1rem; color: var(--primary);"></h3>
-        <p id="modal-body" style="color: var(--text-muted);"></p>
-        <button class="btn btn-primary btn-block" style="margin-top: 2rem;" onclick="closeModal()">Entendido</button>
-    </div>
-</div>
 
 <script type="module">
     import { db, auth, loginWithGoogle, logout } from './src/firebase.ts';
-    import { collection, addDoc, query, orderBy, onSnapshot, limit, getDoc, doc } from 'firebase/firestore';
+    import { collection, addDoc, query, orderBy, onSnapshot, limit, getDoc, doc, getDocs, deleteDoc, writeBatch, getCountFromServer, setDoc } from 'firebase/firestore';
     import { onAuthStateChanged } from 'firebase/auth';
+    import { GoogleGenAI, Type } from "@google/genai";
+
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+
+    const OperationType = {
+        CREATE: 'create',
+        UPDATE: 'update',
+        DELETE: 'delete',
+        LIST: 'list',
+        GET: 'get',
+        WRITE: 'write',
+    };
+
+    function handleFirestoreError(error, operationType, path) {
+        const errInfo = {
+            error: error instanceof Error ? error.message : String(error),
+            authInfo: {
+                userId: auth.currentUser?.uid,
+                email: auth.currentUser?.email,
+                emailVerified: auth.currentUser?.emailVerified,
+                isAnonymous: auth.currentUser?.isAnonymous,
+                tenantId: auth.currentUser?.tenantId,
+                providerInfo: auth.currentUser?.providerData.map(provider => ({
+                    providerId: provider.providerId,
+                    displayName: provider.displayName,
+                    email: provider.email,
+                    photoUrl: provider.photoURL
+                })) || []
+            },
+            operationType,
+            path
+        };
+        console.error('Firestore Error: ', JSON.stringify(errInfo));
+        // We don't always want to throw if we want to handle it gracefully in the UI
+        return errInfo;
+    }
+
+    async function getGeminiResponse(prompt, retries = 2) {
+        if (!process.env.GEMINI_API_KEY) {
+            throw new Error("GEMINI_API_KEY is not defined in the environment.");
+        }
+
+        for (let i = 0; i <= retries; i++) {
+            try {
+                return await ai.models.generateContent({
+                    model: "gemini-3-flash-preview",
+                    contents: prompt,
+                    config: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                recommendedLineId: { type: Type.STRING },
+                                reasoning: { type: Type.STRING },
+                                alternatives: { 
+                                    type: Type.ARRAY,
+                                    items: { type: Type.STRING }
+                                }
+                            },
+                            required: ["recommendedLineId", "reasoning"]
+                        }
+                    }
+                });
+            } catch (err) {
+                if (i === retries) throw err;
+                console.warn(`Gemini API call failed (attempt ${i + 1}), retrying...`, err);
+                await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+            }
+        }
+    }
 
     // Data: Financial Lines
-    const financialLines = [
+    let financialLines = [
         {
-            id: 'pyme_inversion',
-            name: 'Línea PyME Inversión',
-            desc: 'Financiamiento de largo plazo destinado a la adquisición de bienes de capital y proyectos de expansión productiva.',
-            maxAmount: '$150.000.000',
+            id: 'eficiencia_energetica_bmr',
+            name: 'Eficiencia Energética (Banco Municipal de Rosario)',
+            desc: 'Línea destinada a proyectos de generación renovable, producción de equipos y eficiencia energética industrial.',
+            maxAmount: 'Máx por empresa $100.000.000 (Cupo total $4.000.000)',
+            term: 'Hasta 36 meses',
+            rate: '22% (Variable) - Bonificación 20 ppa',
+            idealFor: 'Esta línea es ideal para proyectos de eficiencia energética y renovables con un plazo de hasta 3 años y una tasa altamente competitiva gracias a la bonificación provincial.',
+            moreInfo: `
+                <strong>Sistema de amortización:</strong> Alemán<br>
+                <strong>Financiamiento:</strong> Hasta el 80% del proyecto<br>
+                <strong>Bonificación:</strong> 20 ppa (Provincia)<br><br>
+                <strong>Proyectos elegibles:</strong><br>
+                - Generación de energía renovable: Paneles fotovoltaicos, generadores eólicos, biodigestores y calderas a biomasa.<br>
+                - Producción de equipos: Fabricación y ensamble de calefones solares, luminarias, aerogeneradores y paneles solares.<br>
+                - Eficiencia energética industrial: Sustitución de maquinaria, iluminación LED, motores eficientes y certificaciones energéticas.
+            `,
+            criteria: {
+                purpose: ['renewable_gen', 'renewable_equip', 'energy_efficiency'],
+                installments: ['up_to_36'],
+                amount: ['range_10', 'range_50', 'range_100'],
+                percentage: ['perc_25', 'perc_50', 'perc_60', 'perc_70', 'perc_80']
+            }
+        },
+        {
+            id: 'leasing_sustentable_bsf',
+            name: 'Leasing Sustentable (Banco Santa Fe)',
+            desc: 'Financiamiento mediante leasing para la adquisición de bienes de capital y transporte sostenible.',
+            maxAmount: 'Máx por empresa $100.000.000 (Cupo total $1.000 Millones)',
+            term: 'Entre 37 y hasta 61 meses',
+            rate: '31% (Variable)',
+            idealFor: 'Es la opción perfecta para adquirir bienes de capital o transporte sostenible con plazos extendidos y una tasa final bonificada por la provincia.',
+            moreInfo: `
+                <strong>Sistema de amortización:</strong> Francés<br>
+                <strong>Financiamiento:</strong> Desde el 75% hasta el 95% del proyecto<br>
+                <strong>Bonificación:</strong> La provincia bonifica los ppa necesarios hasta tasa TAMAR sin corrección.<br><br>
+                <strong>Proyectos elegibles:</strong><br>
+                - Adquisición de bienes de capital que permitan el ahorro energético o generación de energías renovables.<br>
+                - Adquisición de transporte sostenible (bienes nacionales o importados).
+            `,
+            criteria: {
+                purpose: ['capital_goods', 'sustainable_transport'],
+                installments: ['range_37_61'],
+                amount: ['range_10', 'range_50', 'range_100'],
+                percentage: ['perc_80', 'perc_95']
+            }
+        },
+        {
+            id: 'financiamiento_verde_cfi',
+            name: 'Financiamiento Verde (Banco CFI)',
+            desc: 'Línea de financiamiento para proyectos de energías renovables y eficiencia energética con tasas preferenciales.',
+            maxAmount: '$200.000.000',
             term: 'Hasta 60 meses',
-            rate: '42% TNA',
-            idealFor: 'Es ideal para vos porque buscás invertir en maquinaria o infraestructura a largo plazo y contás con el respaldo necesario.',
-            moreInfo: 'Esta línea cuenta con beneficios de tasa subsidiada para proyectos que incrementen la capacidad productiva nacional. Requiere presentación de proyecto técnico y garantías reales.',
+            rate: 'Años 1-2: 21% Fija | Año 3+: TAMAR + 2 ppa',
+            idealFor: 'Es ideal para proyectos de gran envergadura que requieren plazos de hasta 5 años y una tasa fija inicial muy competitiva.',
+            moreInfo: `
+                <strong>Sistema de amortización:</strong> Alemán<br>
+                <strong>Financiamiento:</strong> Hasta el 80% del proyecto<br><br>
+                <strong>Proyectos elegibles:</strong><br>
+                - Energías renovables: Equipos solar, eólica, hidro, biogás, almacenamiento, colectores y obras complementarias.<br>
+                - Eficiencia Energética: Infraestructura, tecnología o maquinaria para mejora de la eficiencia energética (con certificación o aval de organismo competente).
+            `,
             criteria: {
-                purpose: ['machinery', 'expansion'],
-                size: ['sme', 'large'],
-                term: ['long', 'very_long'],
-                guarantees: ['real']
-            }
-        },
-        {
-            id: 'capital_express',
-            name: 'Capital de Trabajo Express',
-            desc: 'Crédito ágil para cubrir necesidades inmediatas de liquidez, compra de insumos o pago a proveedores.',
-            maxAmount: '$25.000.000',
-            term: 'Hasta 18 meses',
-            rate: '55% TNA',
-            idealFor: 'Es perfecta para tu necesidad de liquidez inmediata y ciclos operativos cortos, con mínimos requisitos de entrada.',
-            moreInfo: 'Aprobación en 48hs hábiles. No requiere garantías reales, se otorga a sola firma o con fianza personal de los socios.',
-            criteria: {
-                purpose: ['working_capital', 'other'],
-                size: ['micro', 'sme'],
-                term: ['short', 'medium'],
-                guarantees: ['personal', 'none']
-            }
-        },
-        {
-            id: 'exporta_plus',
-            name: 'Línea Exporta+',
-            desc: 'Financiamiento en dólares o pesos para pre-financiación y post-financiación de exportaciones.',
-            maxAmount: 'USD 500.000',
-            term: 'Hasta 360 días',
-            rate: '4% (USD) / 48% (ARS)',
-            idealFor: 'Al tener un perfil exportador, esta línea te permite calzar tu deuda con tus ingresos en moneda extranjera.',
-            moreInfo: 'Destinado exclusivamente a empresas con contratos de exportación vigentes. Ofrece tasas competitivas para fomentar la salida de productos al exterior.',
-            criteria: {
-                purpose: ['export'],
-                sector: ['industry', 'agro', 'tech'],
-                size: ['sme', 'large'],
-                guarantees: ['real', 'personal']
-            }
-        },
-        {
-            id: 'micro_credito',
-            name: 'Crédito Microempresa',
-            desc: 'Financiamiento diseñado para emprendedores y micro-negocios que buscan dar su primer salto de crecimiento.',
-            maxAmount: '$8.000.000',
-            term: 'Hasta 24 meses',
-            rate: '60% TNA',
-            idealFor: 'Se adapta a tu escala actual, ofreciendo montos acordes a tu facturación y flexibilidad en las garantías.',
-            moreInfo: 'Incluye un programa de educación financiera gratuito. Los requisitos son mínimos: DNI, constancia de inscripción y 6 meses de actividad.',
-            criteria: {
-                size: ['entrepreneur', 'micro'],
-                amount: ['low'],
-                guarantees: ['none', 'personal']
-            }
-        },
-        {
-            id: 'fondo_industrial',
-            name: 'Fondo de Desarrollo Industrial',
-            desc: 'Programa de fomento para el sector manufacturero con tasas bonificadas por el Ministerio de Producción.',
-            maxAmount: '$300.000.000',
-            term: 'Hasta 84 meses',
-            rate: '35% TNA',
-            idealFor: 'Como pertenecés al sector industrial, podés acceder a esta tasa subsidiada para proyectos estratégicos de gran escala.',
-            moreInfo: 'Requiere certificado MiPyME vigente. El destino debe ser adquisición de tecnología 4.0 o adecuación ambiental de plantas industriales.',
-            criteria: {
-                sector: ['industry'],
-                size: ['sme', 'large']
+                purpose: ['renewable_gen', 'energy_efficiency'],
+                installments: ['up_to_60'],
+                amount: ['range_10', 'range_50', 'range_100', 'range_150', 'range_200'],
+                percentage: ['perc_25', 'perc_50', 'perc_60', 'perc_70', 'perc_80']
             }
         }
     ];
+
+    // Load custom lines from Firestore
+    async function loadCustomLines() {
+        const path = 'config_financial_lines';
+        try {
+            const q = query(collection(db, path));
+            const snapshot = await getDocs(q);
+            const customLines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            if (customLines.length > 0) {
+                financialLines = customLines;
+            }
+        } catch (e) {
+            handleFirestoreError(e, OperationType.GET, path);
+            console.error("Error loading custom lines:", e);
+        }
+    }
+    loadCustomLines();
 
     let currentStep = 0;
 
@@ -1122,18 +1594,23 @@
         trackVisit();
     });
 
-    function trackVisit() {
+    async function trackVisit() {
         const now = new Date();
         const dateStr = formatDate(now);
         
+        // Local stats
         let totalVisits = parseInt(localStorage.getItem('stats_visitas') || '0');
         totalVisits++;
         localStorage.setItem('stats_visitas', totalVisits.toString());
 
-        let visitLog = JSON.parse(localStorage.getItem('stats_visitas_log') || '[]');
-        visitLog.push({ date: dateStr });
-        // Keep only last 100 for performance if needed, but request says history
-        localStorage.setItem('stats_visitas_log', JSON.stringify(visitLog));
+        // Firestore stats
+        const path = 'stats_visitas_log';
+        try {
+            await addDoc(collection(db, path), { date: dateStr });
+        } catch (e) {
+            handleFirestoreError(e, OperationType.CREATE, path);
+            console.error("Error tracking visit in Firestore:", e);
+        }
     }
 
     function formatDate(date) {
@@ -1173,11 +1650,78 @@
             // Select this one
             this.classList.add('selected');
             userAnswers[question] = value;
+
+            // Conditional logic for Question 5
+            if (question === 'purpose') {
+                updateQuestion5(value);
+            }
         });
     });
 
+    function updateQuestion5(purposeValue) {
+        const container = document.getElementById('question-5-container');
+        const grid = document.getElementById('options-grid-q5');
+        
+        const activities = {
+            'renewable_gen': [
+                'Equipos de generación solar',
+                'Equipos de generación eólica',
+                'Pequeños aprovechamientos hidroeléctricos',
+                'Generación eléctrica a partir de biogás',
+                'Sistemas Off y On Grid',
+                'Sistemas de almacenamiento',
+                'Otros componentes requeridos para la instalación',
+                'Colectores solares',
+                'Energía térmica en base a biogás o biomasa',
+                'Obras complementarias',
+                'Biodigestores',
+                'Calderas a biomasa'
+            ],
+            'renewable_equip': [
+                'Fabricación calefones solares, luminarias, aerogeneradores y paneles solares.',
+                'Ensamble de calefones solares, luminarias, aerogeneradores y paneles solares.'
+            ],
+            'energy_efficiency': [
+                'Sustitución de maquinaria por equipos más eficientes',
+                'Recambio a iluminación LED o de bajo consumo',
+                'Reemplazo de motores eléctricos por otros de mayor eficiencia',
+                'Gestión para certificaciones energéticas.'
+            ],
+            'sustainable_transport': [
+                'Bienes Nacionales',
+                'Importados'
+            ]
+        };
+
+        const currentActivities = activities[purposeValue];
+        
+        if (currentActivities) {
+            grid.innerHTML = currentActivities.map(activity => `
+                <div class="option-card" data-value="${activity}">${activity}</div>
+            `).join('');
+            
+            // Re-attach listeners to new cards
+            grid.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    userAnswers['activity'] = this.dataset.value;
+                });
+            });
+
+            container.style.display = 'block';
+            delete userAnswers['activity']; // Reset if purpose changed
+        } else {
+            container.style.display = 'none';
+            delete userAnswers['activity'];
+        }
+    }
+
     function validateStep(step) {
-        const questions = step === 1 ? ['purpose', 'amount', 'size'] : ['sector', 'term', 'guarantees'];
+        const questions = step === 1 ? ['installments', 'amount', 'percentage'] : ['purpose'];
+        if (step === 2 && document.getElementById('question-5-container').style.display !== 'none') {
+            questions.push('activity');
+        }
         for (const q of questions) {
             if (!userAnswers[q]) {
                 alert('Por favor, respondé todas las preguntas para continuar.');
@@ -1188,69 +1732,98 @@
     }
 
     // Recommendation Logic
-    function calculateResults() {
+    async function calculateResults() {
         if (!validateStep(2)) return;
 
-        const scores = financialLines.map(line => {
-            let score = 0;
+        // Show loading state
+        document.getElementById('step-2').classList.remove('active');
+        const resultsScreen = document.getElementById('results-screen');
+        resultsScreen.classList.add('active');
+        document.getElementById('main-recommendation').innerHTML = `
+            <div style="text-align: center; padding: 3rem;">
+                <div class="loader" style="margin: 0 auto 1.5rem;"></div>
+                <p style="color: white; font-weight: 600;">Analizando tu perfil con inteligencia artificial...</p>
+                <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 0.5rem;">Buscando la mejor opción para tu proyecto.</p>
+            </div>
+        `;
+        document.getElementById('alternatives-container').innerHTML = '';
+        updateProgress(90);
+        window.scrollTo(0, 0);
+
+        try {
+            const prompt = `
+                Eres un asesor experto en financiamiento productivo del Ministerio de Desarrollo Productivo de Santa Fe. 
+                Tu tarea es analizar el perfil de una empresa y recomendar la MEJOR línea de financiamiento disponible.
+
+                DATOS DEL USUARIO:
+                ${JSON.stringify(userAnswers, null, 2)}
+
+                LÍNEAS DISPONIBLES:
+                ${JSON.stringify(financialLines, null, 2)}
+
+                INSTRUCCIONES:
+                1. Analiza críticamente cómo cada línea se ajusta al propósito, monto, cuotas y actividad del usuario.
+                2. Selecciona la línea con el ID que mejor coincida.
+                3. Proporciona un razonamiento detallado y profesional (en español) explicando por qué es la mejor opción.
+                4. Identifica hasta 2 alternativas si existen.
+            `;
+
+            const response = await getGeminiResponse(prompt);
+            const result = JSON.parse(response.text);
+            const mainLine = financialLines.find(l => l.id === result.recommendedLineId) || financialLines[0];
+            const altLines = (result.alternatives || []).map(id => financialLines.find(l => l.id === id)).filter(Boolean);
+
+            renderResults(mainLine, altLines, result.reasoning);
+            currentRecommendedLine = mainLine.name;
             
-            // Check each criteria
-            for (const [key, values] of Object.entries(line.criteria)) {
-                if (values.includes(userAnswers[key])) {
-                    score += 10;
-                }
+            // Track completion
+            const completionData = { 
+                line: currentRecommendedLine, 
+                date: formatDate(new Date()),
+                reasoning: result.reasoning,
+                answers: userAnswers
+            };
+            
+            // Save to Firebase
+            const path = 'stats_consultas_completadas';
+            try {
+                addDoc(collection(db, path), completionData);
+            } catch (e) { 
+                handleFirestoreError(e, OperationType.CREATE, path);
+                console.error("Error saving to Firebase:", e); 
             }
 
-            // Bonus points for specific combinations
-            if (line.id === 'pyme_inversion' && userAnswers.purpose === 'machinery' && userAnswers.guarantees === 'real') score += 5;
-            if (line.id === 'capital_express' && userAnswers.purpose === 'working_capital' && userAnswers.term === 'short') score += 5;
-            if (line.id === 'exporta_plus' && userAnswers.purpose === 'export') score += 15; // Strong weight for export
-            if (line.id === 'micro_credito' && userAnswers.size === 'entrepreneur' && userAnswers.amount === 'low') score += 5;
-            if (line.id === 'fondo_industrial' && userAnswers.sector === 'industry' && userAnswers.amount === 'very_high') score += 5;
+            // Save current session answers temporarily
+            localStorage.setItem('temp_current_answers', JSON.stringify(userAnswers));
+            localStorage.setItem('temp_current_recommendation', currentRecommendedLine);
 
-            return { ...line, score };
-        });
+            currentSatisfaction = null;
+            feedbackSent = false;
+            resetFeedbackUI();
+            updateProgress(100);
 
-        // Sort by score
-        scores.sort((a, b) => b.score - a.score);
-
-        renderResults(scores);
-        currentRecommendedLine = scores[0].name;
-        
-        // Track completion
-        const completionData = { line: currentRecommendedLine, date: formatDate(new Date()) };
-        
-        // Save to LocalStorage (backup)
-        let completions = JSON.parse(localStorage.getItem('stats_consultas_completadas') || '[]');
-        completions.push(completionData);
-        localStorage.setItem('stats_consultas_completadas', JSON.stringify(completions));
-
-        // Save to Firebase
-        try {
-            addDoc(collection(db, 'stats_consultas_completadas'), completionData);
-        } catch (e) { console.error("Error saving to Firebase:", e); }
-
-        // Save current session answers temporarily for the user info form
-        localStorage.setItem('temp_current_answers', JSON.stringify(userAnswers));
-        localStorage.setItem('temp_current_recommendation', currentRecommendedLine);
-
-        currentSatisfaction = null;
-        feedbackSent = false;
-        resetFeedbackUI();
-        
-        document.getElementById('step-2').classList.remove('active');
-        document.getElementById('results-screen').classList.add('active');
-        updateProgress(100);
-        window.scrollTo(0, 0);
+        } catch (error) {
+            console.error("Error in AI recommendation:", error);
+            // Fallback to deterministic logic if AI fails
+            fallbackRecommendation();
+        }
     }
 
-    function renderResults(scores) {
-        const main = scores[0];
-        const alts = scores.slice(1, 3);
+    function fallbackRecommendation() {
+        const scores = financialLines.map(line => {
+            let score = 0;
+            if (line.criteria.purpose && line.criteria.purpose.includes(userAnswers.purpose)) score += 20;
+            if (line.criteria.installments && line.criteria.installments.includes(userAnswers.installments)) score += 15;
+            return { ...line, score };
+        });
+        scores.sort((a, b) => b.score - a.score);
+        renderResults(scores[0], scores.slice(1, 3), scores[0].idealFor);
+    }
 
+    function renderResults(main, alts, reasoning) {
         // Render Main
         document.getElementById('main-recommendation').innerHTML = `
-            <span class="badge">Mejor coincidencia</span>
+            <span class="badge">Recomendación Inteligente</span>
             <h4 class="line-title">${main.name}</h4>
             <p class="line-desc">${main.desc}</p>
             
@@ -1270,24 +1843,21 @@
             </div>
 
             <div class="why-ideal">
-                <h4>¿Por qué es ideal para vos?</h4>
-                <p>${main.idealFor}</p>
+                <h4 style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.2rem;">🧠</span> Análisis del Asesor
+                </h4>
+                <p>${reasoning}</p>
             </div>
-
-            <button class="btn btn-primary" onclick="showMoreInfo('${main.id}')">Quiero saber más</button>
         `;
 
         // Render Alternatives
         document.getElementById('alternatives-container').innerHTML = alts.map(alt => {
-            const stars = getStars(alt.score);
             return `
                 <div class="alt-card">
                     <div class="alt-title">
                         ${alt.name}
-                        <span class="compatibility">${stars}</span>
                     </div>
                     <p class="alt-desc">${alt.desc}</p>
-                    <button class="btn" style="padding: 0.5rem 0; color: var(--primary); font-size: 0.875rem;" onclick="showMoreInfo('${alt.id}')">Ver detalles →</button>
                 </div>
             `;
         }).join('');
@@ -1303,40 +1873,22 @@
 
     // Feedback Logic
     function selectSatisfaction(val) {
-        if (currentSatisfaction !== null) return;
-        
+        // Allow changing selection
         currentSatisfaction = val;
         const btnYes = document.getElementById('feedback-yes');
         const btnNo = document.getElementById('feedback-no');
 
         if (val === 'yes') {
             btnYes.classList.add('selected');
+            btnYes.classList.remove('inactive');
+            btnNo.classList.remove('selected');
             btnNo.classList.add('inactive');
         } else {
             btnNo.classList.add('selected');
+            btnNo.classList.remove('inactive');
+            btnYes.classList.remove('selected');
             btnYes.classList.add('inactive');
         }
-
-        // Save satisfaction immediately
-        const satisfactionData = {
-            respuesta: val,
-            fecha: formatDate(new Date()),
-            lineaRecomendada: currentRecommendedLine
-        };
-
-        // Save to LocalStorage (backup)
-        const satLog = JSON.parse(localStorage.getItem('stats_satisfaccion') || '[]');
-        satLog.push(satisfactionData);
-        localStorage.setItem('stats_satisfaccion', JSON.stringify(satLog));
-
-        // Save to Firebase
-        try {
-            addDoc(collection(db, 'stats_feedback'), {
-                line: currentRecommendedLine,
-                satisfaction: val === 'yes' ? 'good' : 'bad',
-                date: satisfactionData.fecha
-            });
-        } catch (e) { console.error("Error saving satisfaction to Firebase:", e); }
     }
 
     function updateCharCount() {
@@ -1347,23 +1899,32 @@
     function resetFeedbackUI() {
         document.getElementById('feedback-yes').classList.remove('selected', 'inactive');
         document.getElementById('feedback-no').classList.remove('selected', 'inactive');
+        document.getElementById('feedback-yes').style.pointerEvents = 'auto';
+        document.getElementById('feedback-no').style.pointerEvents = 'auto';
         document.getElementById('feedback-comment').value = '';
         document.getElementById('feedback-comment').disabled = false;
         document.getElementById('char-count').innerText = '0';
         document.getElementById('btn-send-feedback').disabled = false;
         document.getElementById('btn-send-feedback').style.display = 'block';
         document.getElementById('feedback-thanks').style.display = 'none';
+        currentSatisfaction = null;
+        feedbackSent = false;
     }
 
     function sendFeedback() {
         if (feedbackSent) return;
         
+        if (!currentSatisfaction) {
+            alert('Por favor, seleccioná si la respuesta fue útil (✓ o ✗) antes de enviar.');
+            return;
+        }
+
         const comment = document.getElementById('feedback-comment').value;
         const now = new Date();
         const feedbackData = {
             texto: comment,
             fecha: formatDate(now),
-            satisfaccion: currentSatisfaction || "sin_respuesta",
+            satisfaccion: currentSatisfaction,
             lineaRecomendada: currentRecommendedLine
         };
         
@@ -1373,17 +1934,23 @@
         localStorage.setItem('stats_comentarios', JSON.stringify(commentLog));
 
         // Save to Firebase
+        const path = 'stats_feedback';
         try {
-            addDoc(collection(db, 'stats_feedback'), {
+            addDoc(collection(db, path), {
                 line: currentRecommendedLine,
-                satisfaction: currentSatisfaction === 'yes' ? 'good' : (currentSatisfaction === 'no' ? 'bad' : 'neutral'),
+                satisfaction: currentSatisfaction === 'yes' ? 'good' : 'bad',
                 comment: comment,
                 date: feedbackData.fecha
             });
-        } catch (e) { console.error("Error saving feedback to Firebase:", e); }
+        } catch (e) { 
+            handleFirestoreError(e, OperationType.CREATE, path);
+            console.error("Error saving feedback to Firebase:", e); 
+        }
         
         feedbackSent = true;
         document.getElementById('feedback-comment').disabled = true;
+        document.getElementById('feedback-yes').style.pointerEvents = 'none';
+        document.getElementById('feedback-no').style.pointerEvents = 'none';
         document.getElementById('btn-send-feedback').disabled = true;
         document.getElementById('btn-send-feedback').style.display = 'none';
         document.getElementById('feedback-thanks').style.display = 'block';
@@ -1442,9 +2009,13 @@
         localStorage.setItem('stats_usuarios_info', JSON.stringify(userInfoLog));
         
         // Save to Firebase
+        const path = 'stats_usuarios_info';
         try {
-            addDoc(collection(db, 'stats_usuarios_info'), userInfoData);
-        } catch (e) { console.error("Error saving user info to Firebase:", e); }
+            addDoc(collection(db, path), userInfoData);
+        } catch (e) { 
+            handleFirestoreError(e, OperationType.CREATE, path);
+            console.error("Error saving user info to Firebase:", e); 
+        }
         
         // UI Feedback
         emailInput.disabled = true;
@@ -1461,10 +2032,9 @@
         const labels = {
             purpose: "Propósito",
             amount: "Monto",
-            size: "Tamaño",
-            sector: "Sector",
-            term: "Plazo",
-            guarantees: "Garantías"
+            percentage: "Porcentaje",
+            installments: "Cuotas",
+            activity: "Actividad Específica"
         };
         
         const summary = Object.entries(answers).map(([key, value]) => {
@@ -1504,10 +2074,12 @@
         if (user.email === "brunograndolijob@gmail.com") return true;
         
         // Secondary check: Firestore role
+        const path = `users/${user.uid}`;
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
             return userDoc.exists() && userDoc.data().role === 'admin';
         } catch (e) {
+            handleFirestoreError(e, OperationType.GET, path);
             console.error("Error checking admin role:", e);
             return false;
         }
@@ -1557,6 +2129,14 @@
     }
 
     window.adminUnsubscribes = [];
+    let adminData = {
+        userInfo: [],
+        completions: [],
+        feedback: [],
+        visitas: []
+    };
+    let currentAdminFilter = 'all';
+
     function setupAdminListeners() {
         // Clear previous
         if (window.adminUnsubscribes) {
@@ -1564,24 +2144,161 @@
         }
         window.adminUnsubscribes = [];
 
-        // Listen for consultations
-        const qConsults = query(collection(db, 'stats_usuarios_info'), orderBy('fecha', 'desc'), limit(100));
+        // Listen for consultations (User Info)
+        const pathConsults = 'stats_usuarios_info';
+        const qConsults = query(collection(db, pathConsults), orderBy('fecha', 'desc'), limit(500));
         const unsubConsults = onSnapshot(qConsults, (snapshot) => {
-            const data = snapshot.docs.map(doc => doc.data());
-            updateUserInfoTable(data);
-            document.getElementById('stat-completadas').innerText = data.length;
-            updateLineCounts(data);
+            adminData.userInfo = snapshot.docs.map(doc => doc.data());
+            refreshAdminUI();
+        }, (error) => {
+            handleFirestoreError(error, OperationType.GET, pathConsults);
         });
         window.adminUnsubscribes.push(unsubConsults);
 
+        // Listen for completions (Solicitudes completas)
+        const pathCompletions = 'stats_consultas_completadas';
+        const qCompletions = query(collection(db, pathCompletions));
+        const unsubCompletions = onSnapshot(qCompletions, (snapshot) => {
+            adminData.completions = snapshot.docs.map(doc => doc.data());
+            refreshAdminUI();
+        }, (error) => {
+            handleFirestoreError(error, OperationType.GET, pathCompletions);
+        });
+        window.adminUnsubscribes.push(unsubCompletions);
+
         // Listen for feedback
-        const qFeedback = query(collection(db, 'stats_feedback'), orderBy('date', 'desc'), limit(100));
+        const pathFeedback = 'stats_feedback';
+        const qFeedback = query(collection(db, pathFeedback), orderBy('date', 'desc'), limit(500));
         const unsubFeedback = onSnapshot(qFeedback, (snapshot) => {
-            const data = snapshot.docs.map(doc => doc.data());
-            updateFeedbackStats(data);
-            updateCommentsList(data);
+            adminData.feedback = snapshot.docs.map(doc => doc.data());
+            refreshAdminUI();
+        }, (error) => {
+            handleFirestoreError(error, OperationType.GET, pathFeedback);
         });
         window.adminUnsubscribes.push(unsubFeedback);
+
+        // Listen for visits
+        const pathVisits = 'stats_visitas_log';
+        const qVisits = query(collection(db, pathVisits), orderBy('date', 'desc'), limit(100));
+        const unsubVisits = onSnapshot(qVisits, (snapshot) => {
+            adminData.visitas = snapshot.docs.map(doc => doc.data());
+            refreshAdminUI();
+        }, (error) => {
+            handleFirestoreError(error, OperationType.GET, pathVisits);
+        });
+        window.adminUnsubscribes.push(unsubVisits);
+
+        // Add listener for filter change
+        const filterSelect = document.getElementById('admin-filter-month');
+        if (filterSelect && !filterSelect.dataset.listenerAdded) {
+            filterSelect.addEventListener('change', (e) => {
+                currentAdminFilter = e.target.value;
+                refreshAdminUI();
+            });
+            filterSelect.dataset.listenerAdded = 'true';
+        }
+
+        // Initial refresh to show lines even if no data yet
+        refreshAdminUI();
+    }
+
+    async function refreshAdminUI() {
+        try {
+            populateFilterDropdown();
+            
+            const filteredUserInfo = filterDataByMonth(adminData.userInfo, 'fecha');
+            const filteredCompletions = filterDataByMonth(adminData.completions, 'date');
+            const filteredFeedback = filterDataByMonth(adminData.feedback, 'date');
+            const filteredVisitas = filterDataByMonth(adminData.visitas, 'date');
+
+            if (document.getElementById('user-info-body')) updateUserInfoTable(filteredUserInfo);
+            if (document.getElementById('recommended-lines-list')) updateLineCounts(filteredCompletions);
+            updateFeedbackStats(filteredFeedback);
+            updateCommentsList(filteredFeedback);
+            
+            const compElem = document.getElementById('stat-completadas');
+            const visitElem = document.getElementById('stat-visitas');
+            
+            if (compElem) compElem.innerText = filteredCompletions.length;
+            
+            // If filtering, show filtered count. If not, show total from server for accuracy.
+            if (visitElem) {
+                if (currentAdminFilter === 'all') {
+                    const path = 'stats_visitas_log';
+                    try {
+                        const coll = collection(db, path);
+                        const snapshot = await getDocs(query(coll, limit(1)));
+                        const countSnapshot = await getCountFromServer(coll);
+                        visitElem.innerText = countSnapshot.data().count;
+                    } catch (err) {
+                        handleFirestoreError(err, OperationType.GET, path);
+                        console.warn("Could not fetch server count, using local data:", err);
+                        visitElem.innerText = adminData.visitas.length;
+                    }
+                } else {
+                    visitElem.innerText = filteredVisitas.length;
+                }
+            }
+        } catch (e) {
+            console.error("Error refreshing Admin UI:", e);
+        }
+    }
+
+    function filterDataByMonth(data, dateField) {
+        if (!data || !Array.isArray(data)) return [];
+        if (currentAdminFilter === 'all') return data;
+        return data.filter(item => {
+            if (!item) return false;
+            const dateStr = item[dateField];
+            if (!dateStr) return false;
+            // Format is DD/MM/YYYY HH:mm
+            const parts = dateStr.split(' ')[0].split('/');
+            if (parts.length < 3) return false;
+            const month = parseInt(parts[1]);
+            const year = parts[2];
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            const itemMonthYear = `${monthNames[month - 1]} ${year}`;
+            return itemMonthYear === currentAdminFilter;
+        });
+    }
+
+    function populateFilterDropdown() {
+        const filterSelect = document.getElementById('admin-filter-month');
+        const currentVal = filterSelect.value;
+        
+        // Collect all unique month/years from all data sources
+        const allDates = [
+            ...adminData.userInfo.map(d => d.fecha),
+            ...adminData.completions.map(d => d.date),
+            ...adminData.feedback.map(d => d.date),
+            ...adminData.visitas.map(d => d.date)
+        ].filter(Boolean);
+
+        const monthYears = new Set();
+        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+        allDates.forEach(dateStr => {
+            const parts = dateStr.split(' ')[0].split('/');
+            if (parts.length >= 3) {
+                const month = parseInt(parts[1]);
+                const year = parts[2];
+                monthYears.add(`${monthNames[month - 1]} ${year}`);
+            }
+        });
+
+        const sortedMonths = Array.from(monthYears).sort((a, b) => {
+            const [mA, yA] = a.split(' ');
+            const [mB, yB] = b.split(' ');
+            if (yA !== yB) return yB - yA;
+            return monthNames.indexOf(mB) - monthNames.indexOf(mA);
+        });
+
+        let html = '<option value="all" style="color: black;">Todos los meses</option>';
+        sortedMonths.forEach(my => {
+            html += `<option value="${my}" ${my === currentVal ? 'selected' : ''} style="color: black;">${my}</option>`;
+        });
+        
+        filterSelect.innerHTML = html;
     }
 
     function updateUserInfoTable(userInfo) {
@@ -1605,19 +2322,172 @@
         window.currentAdminUserInfo = userInfo;
     }
 
-    function updateLineCounts(userInfo) {
+    function updateLineCounts(completions) {
         const lineCounts = {};
-        userInfo.forEach(u => {
-            if (u.recomendacion) {
-                lineCounts[u.recomendacion] = (lineCounts[u.recomendacion] || 0) + 1;
+        
+        // Initialize all available lines with 0
+        financialLines.forEach(line => {
+            lineCounts[line.name] = 0;
+        });
+
+        // Count recommendations from completions
+        completions.forEach(c => {
+            if (c.line && lineCounts.hasOwnProperty(c.line)) {
+                lineCounts[c.line]++;
+            } else if (c.line) {
+                // If for some reason the line name is not in financialLines (e.g. old data)
+                lineCounts[c.line] = (lineCounts[c.line] || 0) + 1;
             }
         });
-        const sortedLines = Object.entries(lineCounts).sort((a, b) => b[1] - a[1]);
+
+        // Sort alphabetically by line name
+        const sortedLines = Object.entries(lineCounts).sort((a, b) => a[0].localeCompare(b[0]));
         
-        const linesBody = document.getElementById('recommended-lines-body');
-        linesBody.innerHTML = sortedLines.length > 0 
-            ? sortedLines.map(([name, count]) => `<tr><td>${name}</td><td>${count}</td></tr>`).join('')
-            : '<tr><td colspan="2" style="text-align:center">No hay datos aún</td></tr>';
+        const linesList = document.getElementById('recommended-lines-list');
+        linesList.innerHTML = sortedLines.length > 0 
+            ? sortedLines.map(([name, count], index) => {
+                const lineObj = financialLines.find(l => l.name === name);
+                return `
+                <div style="padding: 1.25rem; background: rgba(255,255,255,0.1); border-radius: 16px; border-left: 5px solid #7c3aed; color: white; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative;">
+                    <div style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem;">
+                        <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: white; border: none;" onclick="openLineModal('${lineObj ? lineObj.id : ''}')">✏️</button>
+                        <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4);" onclick="deleteLine('${lineObj ? lineObj.id : ''}')">🗑️</button>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem; padding-right: 4rem;">
+                        <span style="font-weight: 800; color: white; font-size: 1.1rem;">Línea ${index + 1}:</span>
+                        <span style="font-weight: 600; font-size: 1.1rem;">${name}</span>
+                    </div>
+                    <p style="font-size: 1rem; opacity: 0.9;">
+                        "Esta línea se recomendó a <span style="font-weight: 800; color: #7c3aed; background: white; padding: 0.1rem 0.6rem; border-radius: 8px; margin: 0 0.2rem;">${count}</span> usuarios"
+                    </p>
+                </div>
+                `;
+            }).join('')
+            : '<div style="text-align:center; padding: 2rem; color: white; opacity: 0.6;">No hay datos aún</div>';
+    }
+
+    let editingLineId = null;
+    function openLineModal(lineId = null) {
+        editingLineId = lineId;
+        const modal = document.getElementById('line-modal-overlay');
+        const title = document.getElementById('line-modal-title');
+        
+        // Reset fields
+        document.getElementById('line-name').value = '';
+        document.getElementById('line-desc').value = '';
+        document.getElementById('line-maxAmount').value = '';
+        document.getElementById('line-term').value = '';
+        document.getElementById('line-rate').value = '';
+        document.getElementById('line-idealFor').value = '';
+        document.getElementById('line-moreInfo').value = '';
+
+        if (lineId) {
+            title.innerText = 'Editar Línea';
+            const line = financialLines.find(l => l.id === lineId);
+            if (line) {
+                document.getElementById('line-name').value = line.name || '';
+                document.getElementById('line-desc').value = line.desc || '';
+                document.getElementById('line-maxAmount').value = line.maxAmount || '';
+                document.getElementById('line-term').value = line.term || '';
+                document.getElementById('line-rate').value = line.rate || '';
+                document.getElementById('line-idealFor').value = line.idealFor || '';
+                document.getElementById('line-moreInfo').value = line.moreInfo || '';
+            }
+        } else {
+            title.innerText = 'Agregar Nueva Línea';
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    function closeLineModal() {
+        document.getElementById('line-modal-overlay').style.display = 'none';
+        editingLineId = null;
+    }
+
+    async function saveLine() {
+        const name = document.getElementById('line-name').value.trim();
+        const desc = document.getElementById('line-desc').value.trim();
+        const maxAmount = document.getElementById('line-maxAmount').value.trim();
+        const term = document.getElementById('line-term').value.trim();
+        const rate = document.getElementById('line-rate').value.trim();
+        const idealFor = document.getElementById('line-idealFor').value.trim();
+        const moreInfo = document.getElementById('line-moreInfo').value.trim();
+
+        if (!name) {
+            alert('El nombre de la línea es obligatorio.');
+            return;
+        }
+
+        const lineId = editingLineId || `line_${Date.now()}`;
+        
+        const lineData = {
+            id: lineId,
+            name,
+            desc,
+            maxAmount,
+            term,
+            rate,
+            idealFor,
+            moreInfo,
+            // Default criteria if new, or keep existing if editing
+            criteria: editingLineId ? financialLines.find(l => l.id === editingLineId).criteria : {
+                purpose: ['renewable_gen', 'energy_efficiency'],
+                installments: ['up_to_36'],
+                amount: ['range_10', 'range_50', 'range_100'],
+                percentage: ['perc_50', 'perc_80']
+            }
+        };
+
+        const path = `config_financial_lines/${lineId}`;
+        try {
+            await setDoc(doc(db, 'config_financial_lines', lineId), lineData);
+            
+            // Update local state
+            if (editingLineId) {
+                const idx = financialLines.findIndex(l => l.id === editingLineId);
+                financialLines[idx] = lineData;
+            } else {
+                financialLines.push(lineData);
+            }
+
+            closeLineModal();
+            refreshAdminUI();
+            showAlert('Éxito', 'Línea guardada correctamente.');
+        } catch (e) {
+            handleFirestoreError(e, OperationType.WRITE, path);
+            console.error("Error saving line:", e);
+            alert('Error al guardar la línea.');
+        }
+    }
+
+    async function deleteLine(lineId) {
+        if (!lineId) return;
+        if (!confirm('¿Estás seguro de que deseas eliminar esta línea? Esta acción no se puede deshacer.')) return;
+
+        const path = `config_financial_lines/${lineId}`;
+        try {
+            await deleteDoc(doc(db, 'config_financial_lines', lineId));
+            financialLines = financialLines.filter(l => l.id !== lineId);
+            refreshAdminUI();
+            showAlert('Éxito', 'Línea eliminada correctamente.');
+        } catch (e) {
+            handleFirestoreError(e, OperationType.DELETE, path);
+            console.error("Error deleting line:", e);
+            alert('Error al eliminar la línea.');
+        }
+    }
+
+    function toggleAllLines() {
+        const container = document.getElementById('all-lines-container');
+        const btn = document.getElementById('toggle-all-lines');
+        if (container.style.display === 'none') {
+            container.style.display = 'block';
+            btn.innerText = 'Ocultar todas';
+        } else {
+            container.style.display = 'none';
+            btn.innerText = 'Ver todas';
+        }
     }
 
     function updateFeedbackStats(feedback) {
@@ -1625,6 +2495,8 @@
         if (total === 0) {
             document.getElementById('stat-positivas').innerText = '0%';
             document.getElementById('stat-negativas').innerText = '0%';
+            document.getElementById('stat-positivas-count').innerText = '0 respuestas';
+            document.getElementById('stat-negativas-count').innerText = '0 respuestas';
             document.getElementById('chart-yes').style.width = '0%';
             document.getElementById('chart-no').style.width = '0%';
             return;
@@ -1638,11 +2510,24 @@
 
         document.getElementById('stat-positivas').innerText = `${posPerc}%`;
         document.getElementById('stat-negativas').innerText = `${negPerc}%`;
+        document.getElementById('stat-positivas-count').innerText = `${positives} respuestas (✓)`;
+        document.getElementById('stat-negativas-count').innerText = `${negatives} respuestas (✗)`;
         
-        document.getElementById('chart-yes').style.width = `${posPerc}%`;
-        document.getElementById('chart-no').style.width = `${negPerc}%`;
+        const chartYes = document.getElementById('chart-yes');
+        const chartNo = document.getElementById('chart-no');
+        
+        chartYes.style.width = `${posPerc}%`;
+        chartNo.style.width = `${negPerc}%`;
+        
         document.getElementById('chart-yes-label').innerText = posPerc;
         document.getElementById('chart-no-label').innerText = negPerc;
+    }
+
+    let showAllComments = false;
+    function toggleAllComments() {
+        showAllComments = !showAllComments;
+        document.getElementById('toggle-all-comments').innerText = showAllComments ? 'Ver solo últimos 5' : 'Ver historial completo';
+        updateCommentsList(filterDataByMonth(adminData.feedback, 'date'));
     }
 
     function updateCommentsList(feedback) {
@@ -1654,14 +2539,16 @@
             return;
         }
 
-        commentsList.innerHTML = comments.map(c => `
+        const displayComments = showAllComments ? comments : comments.slice(0, 5);
+
+        commentsList.innerHTML = displayComments.map(c => `
             <div class="comment-card">
                 <div class="comment-header">
                     <span class="badge" style="background: #eff6ff; color: #1d4ed8; border: none;">${c.line}</span>
                     <span style="font-size: 0.75rem; color: var(--text-muted);">${c.date}</span>
                 </div>
                 <div class="comment-body">${c.comment}</div>
-                <div style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: 600; color: ${c.satisfaction === 'good' ? 'var(--secondary)' : '#e53935'}">
+                <div style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: 600; color: ${c.satisfaction === 'good' ? 'var(--secondary)' : 'white'}">
                     ${c.satisfaction === 'good' ? '✓ Recomendación útil' : '✗ No fue lo que buscaba'}
                 </div>
             </div>
@@ -1671,7 +2558,7 @@
     function downloadUserInfoCSV() {
         const userInfo = window.currentAdminUserInfo || JSON.parse(localStorage.getItem('stats_usuarios_info') || '[]');
         if (userInfo.length === 0) {
-            alert('No hay datos para descargar.');
+            showAlert('Aviso', 'No hay datos para descargar.');
             return;
         }
 
@@ -1719,15 +2606,121 @@
         }
     });
 
-    function clearAllData() {
-        if (confirm('¿Estás seguro de que querés borrar los datos locales? Los datos en la nube (Firebase) no se verán afectados.')) {
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('stats_') || key.startsWith('temp_')) {
-                    localStorage.removeItem(key);
-                }
-            });
-            location.reload();
-        }
+    function showAlert(title, message) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-body').innerText = message;
+        const okBtn = document.getElementById('modal-ok-btn');
+        okBtn.innerText = 'Entendido';
+        okBtn.onclick = closeModal;
+        document.getElementById('modal-cancel-btn').style.display = 'none';
+        document.getElementById('modal-overlay').style.display = 'flex';
+    }
+
+    function showConfirm(title, message, onConfirm) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-body').innerText = message;
+        const okBtn = document.getElementById('modal-ok-btn');
+        okBtn.innerText = 'Confirmar';
+        okBtn.onclick = () => {
+            closeModal();
+            onConfirm();
+        };
+        const cancelBtn = document.getElementById('modal-cancel-btn');
+        cancelBtn.style.display = 'block';
+        cancelBtn.onclick = closeModal;
+        document.getElementById('modal-overlay').style.display = 'flex';
+    }
+
+    async function clearAllData(btnElement) {
+        showConfirm(
+            '¿Borrar todos los datos?',
+            'Esta acción eliminará los registros locales y también todos los datos en la nube (Firebase). Para confirmar, ingresá la contraseña de seguridad.',
+            async () => {
+                // We need a way to ask for a password inside the confirm flow
+                // Let's modify the modal temporarily to show an input
+                const modalBody = document.getElementById('modal-body');
+                const originalContent = modalBody.innerHTML;
+                
+                modalBody.innerHTML = `
+                    <p style="margin-bottom: 1rem;">Ingresá la contraseña de seguridad para confirmar el borrado total:</p>
+                    <input type="password" id="delete-confirm-pass" class="comment-textarea dark-text" style="height: 45px; text-align: center;" placeholder="Contraseña de seguridad">
+                    <p id="delete-error" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; display: none;">Contraseña incorrecta.</p>
+                `;
+                
+                const okBtn = document.getElementById('modal-ok-btn');
+                okBtn.innerText = 'Confirmar Borrado';
+                okBtn.onclick = async () => {
+                    const pass = document.getElementById('delete-confirm-pass').value;
+                    if (pass !== "SecretariaEnergia") {
+                        document.getElementById('delete-error').style.display = 'block';
+                        return;
+                    }
+
+                    closeModal();
+                    
+                    const btn = btnElement || document.getElementById('btn-clear-all');
+                    let originalText = 'Borrar todos los datos';
+                    if (btn) {
+                        originalText = btn.innerText;
+                        btn.innerText = 'Borrando...';
+                        btn.disabled = true;
+                    }
+
+                    try {
+                        // 1. Clear LocalStorage
+                        Object.keys(localStorage).forEach(key => {
+                            if (key.startsWith('stats_') || key.startsWith('temp_')) {
+                                localStorage.removeItem(key);
+                            }
+                        });
+
+                        // 2. Clear Firestore Collections
+                        const collectionsToClear = [
+                            'stats_usuarios_info',
+                            'stats_consultas_completadas',
+                            'stats_feedback',
+                            'stats_visitas_log'
+                        ];
+
+                        for (const colName of collectionsToClear) {
+                            const q = query(collection(db, colName));
+                            const snapshot = await getDocs(q);
+                            
+                            let batch = writeBatch(db);
+                            let count = 0;
+                            
+                            for (const docSnap of snapshot.docs) {
+                                batch.delete(docSnap.ref);
+                                count++;
+                                if (count === 500) {
+                                    await batch.commit();
+                                    batch = writeBatch(db);
+                                    count = 0;
+                                }
+                            }
+                            if (count > 0) {
+                                await batch.commit();
+                            }
+                        }
+
+                        showAlert('Éxito', 'Todos los datos han sido eliminados correctamente.');
+                        setTimeout(() => location.reload(), 2000);
+                    } catch (e) {
+                        handleFirestoreError(e, OperationType.WRITE, 'multiple_collections');
+                        console.error("Error clearing data:", e);
+                        showAlert('Error', 'Hubo un error al intentar borrar los datos de la nube. Por favor, revisa la consola.');
+                        if (btn) {
+                            btn.innerText = originalText;
+                            btn.disabled = false;
+                        }
+                    }
+                };
+                
+                // Keep the modal open for the password input
+                document.getElementById('modal-overlay').style.display = 'flex';
+                document.getElementById('delete-confirm-pass').focus();
+            }
+        );
     }
 
     // UI Helpers
@@ -1748,7 +2741,39 @@
     }
 
     function restart() {
-        location.reload(); // Simplest way to reset everything
+        // Reset state
+        currentStep = 0;
+        Object.keys(userAnswers).forEach(key => delete userAnswers[key]);
+        currentRecommendedLine = "";
+        currentSatisfaction = null;
+        feedbackSent = false;
+
+        // Reset UI
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('welcome-screen').classList.add('active');
+        document.getElementById('progress-container').style.display = 'none';
+        document.getElementById('progress-bar').style.width = '0%';
+        
+        // Reset options
+        document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+        
+        // Reset forms
+        document.getElementById('user-email').value = '';
+        document.getElementById('user-company').value = '';
+        document.getElementById('user-email').disabled = false;
+        document.getElementById('user-company').disabled = false;
+        const saveBtn = document.getElementById('btn-save-user-info');
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Enviar información y finalizar";
+        saveBtn.style.background = "#7c3aed";
+        document.getElementById('user-info-thanks').style.display = 'none';
+        
+        resetFeedbackUI();
+        
+        // Track as a new visit/interaction
+        trackVisit();
+        
+        window.scrollTo(0, 0);
     }
 
     // Export functions to window for HTML access (since this is a module)
@@ -1772,8 +2797,72 @@
     window.showMoreInfo = showMoreInfo;
     window.closeModal = closeModal;
     window.restart = restart;
+    window.toggleAllLines = toggleAllLines;
+    window.toggleAllComments = toggleAllComments;
+    window.openLineModal = openLineModal;
+    window.closeLineModal = closeLineModal;
+    window.saveLine = saveLine;
+    window.deleteLine = deleteLine;
 </script>
 
+
+    <!-- Main Contact Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div>
+                <h3 class="footer-section-title">Contacto</h3>
+                <div class="contact-item">
+                    <div class="contact-icon-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    </div>
+                    <div class="contact-text">
+                        <strong>Secretaría de Energía</strong>
+                        Francisco Miguens 260. Torre 2. Piso 4.<br>
+                        Ciudad de Santa Fe
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    </div>
+                    <div class="contact-text">
+                        <strong>Secretaría de Energía</strong>
+                        San Lorenzo 1949. Piso 2. Oficina 228.<br>
+                        Ciudad de Rosario
+                    </div>
+                </div>
+            </div>
+            <div class="footer-right-items" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 0.5rem;">
+                <div class="contact-item" style="margin-bottom: 1rem; justify-content: flex-end;">
+                    <div class="contact-text" style="text-align: right; font-weight: 600;">
+                        Cel: (0342) 4505882 | Interno 1303
+                    </div>
+                    <div class="contact-icon-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.18-2.18a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </div>
+                </div>
+                <div class="contact-item" style="margin-bottom: 1rem; justify-content: flex-end;">
+                    <div class="contact-text" style="text-align: right; font-weight: 600;">
+                        Cel: (0342) 6400825
+                    </div>
+                    <div class="contact-icon-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.18-2.18a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </div>
+                </div>
+                <div class="contact-item" style="margin-bottom: 1rem; justify-content: flex-end;">
+                    <div class="contact-text" style="text-align: right; font-weight: 600;">
+                        financiamientorenovables@santafevirtual.edu.ar
+                    </div>
+                    <div class="contact-icon-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Gobierno de Santa Fe
+        </div>
+    </footer>
 
 </body>
 </html>
