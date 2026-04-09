@@ -701,6 +701,64 @@
             pointer-events: none;
         }
 
+        /* Distribution Chart Styles */
+        .dist-chart-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            height: 200px;
+            padding: 1rem 0;
+            margin-top: 1rem;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            overflow-x: auto;
+        }
+
+        .dist-bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 60px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .dist-bar {
+            width: 100%;
+            background: linear-gradient(to top, #7c3aed, #db2777);
+            border-radius: 6px 6px 0 0;
+            transition: height 0.5s ease;
+            position: relative;
+            cursor: help;
+        }
+
+        .dist-bar:hover {
+            opacity: 0.9;
+            filter: brightness(1.2);
+        }
+
+        .dist-bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .dist-bar-label {
+            margin-top: 0.5rem;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
         .admin-section-title {
             font-size: 1.25rem;
             font-weight: 700;
@@ -763,6 +821,22 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             margin-bottom: 1rem;
             backdrop-filter: blur(12px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .comment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .comment-card.good {
+            border-color: rgba(34, 197, 94, 0.6);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .comment-card.bad {
+            border-color: rgba(239, 68, 68, 0.6);
+            background: rgba(239, 68, 68, 0.05);
         }
 
         .comment-header {
@@ -977,7 +1051,28 @@
     <!-- Form Step 1 -->
     <section id="step-1" class="screen">
         <div class="question-group">
-            <label class="question-title">1. ¿Cual es el importe requerido?</label>
+            <label class="question-title">1. ¿Que queres financiar?</label>
+            <div class="options-grid" data-question="purpose">
+                <div class="option-card" data-value="Energías Renovables">Energías Renovables</div>
+                <div class="option-card" data-value="Eficiencia energética">Eficiencia energética</div>
+                <div class="option-card" data-value="Triple Impacto">Triple Impacto</div>
+            </div>
+        </div>
+
+        <div id="question-2-container" class="question-group" style="display: none;">
+            <label class="question-title">2. ¿Que tipo de proyecto queres financiar?</label>
+            <div id="options-grid-q2" class="options-grid" data-question="activity">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="nextStep(2)">Siguiente →</button>
+    </section>
+
+    <!-- Form Step 2 -->
+    <section id="step-2" class="screen">
+        <div class="question-group">
+            <label class="question-title">3. ¿Cual es el importe requerido?</label>
             <div class="options-grid" data-question="amount">
                 <div class="option-card" data-value="range_10">Hasta 10Millones</div>
                 <div class="option-card" data-value="range_50">Entre 10M y 50M</div>
@@ -988,7 +1083,7 @@
         </div>
 
         <div class="question-group">
-            <label class="question-title">2. ¿En cuántas cuotas desea cancelar el crédito?</label>
+            <label class="question-title">4. ¿En cuántas cuotas desea cancelar el crédito?</label>
             <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: -0.5rem; margin-bottom: 1rem;">* Cada cuota es equivalente a un mes.</p>
             <div class="options-grid" data-question="installments">
                 <div class="option-card" data-value="up_to_36">Hasta 36 Cuotas</div>
@@ -998,7 +1093,7 @@
         </div>
 
         <div class="question-group">
-            <label class="question-title">3. ¿Que porcentaje del proyecto desea financiar?</label>
+            <label class="question-title">5. ¿Que porcentaje del proyecto desea financiar?</label>
             <div class="options-grid" data-question="percentage">
                 <div class="option-card" data-value="perc_25">Entre 10% y 25%</div>
                 <div class="option-card" data-value="perc_50">Entre 25% y 50%</div>
@@ -1006,29 +1101,6 @@
                 <div class="option-card" data-value="perc_70">Entre 60% y 70%</div>
                 <div class="option-card" data-value="perc_80">Entre 70% y 80%</div>
                 <div class="option-card" data-value="perc_95">Entre 80% y 95%</div>
-            </div>
-        </div>
-
-        <button class="btn btn-primary btn-block" onclick="nextStep(2)">Siguiente →</button>
-    </section>
-
-    <!-- Form Step 2 -->
-    <section id="step-2" class="screen">
-        <div class="question-group">
-            <label class="question-title">4. ¿Cual es el tipo de proyecto a financiar?</label>
-            <div class="options-grid" data-question="purpose">
-                <div class="option-card" data-value="renewable_gen">Generación de energía renovable</div>
-                <div class="option-card" data-value="renewable_equip">Producción de equipos para energías renovables</div>
-                <div class="option-card" data-value="energy_efficiency">Eficiencia energética Industrial</div>
-                <div class="option-card" data-value="capital_goods">Adquisición de bienes de capital que permitan el ahorro de energético o generación de energía renovable</div>
-                <div class="option-card" data-value="sustainable_transport">Adquisición de transporte sostenible</div>
-            </div>
-        </div>
-
-        <div id="question-5-container" class="question-group" style="display: none;">
-            <label class="question-title">5. Especifique la actividad que desea realizar</label>
-            <div id="options-grid-q5" class="options-grid" data-question="activity">
-                <!-- Dynamically populated -->
             </div>
         </div>
 
@@ -1196,9 +1268,13 @@
             </div>
             <div style="display: flex; gap: 1rem; align-items: center;">
                 <div class="filter-group" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
-                    <label for="admin-filter-month" style="font-size: 0.8rem; font-weight: 600; color: white; white-space: nowrap;">Filtrar:</label>
+                    <label style="font-size: 0.8rem; font-weight: 600; color: white; white-space: nowrap;">Filtrar:</label>
                     <select id="admin-filter-month" style="background: transparent; border: none; color: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; outline: none;">
-                        <option value="all" style="color: black;">Todos los meses</option>
+                        <option value="all" style="color: black;">Mes: Todos</option>
+                    </select>
+                    <div style="width: 1px; height: 15px; background: rgba(255,255,255,0.3);"></div>
+                    <select id="admin-filter-year" style="background: transparent; border: none; color: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; outline: none;">
+                        <option value="all" style="color: black;">Año: Todos</option>
                     </select>
                 </div>
                 <button class="btn" style="border: 1px solid rgba(255,255,255,0.3); color: white; background: rgba(255,255,255,0.1);" onclick="handleLogout()">Cerrar sesión</button>
@@ -1238,6 +1314,15 @@
                 <span style="color: #4ade80;">Positivas: <span id="chart-yes-label">0</span>%</span>
                 <span style="color: #f87171;">Negativas: <span id="chart-no-label">0</span>%</span>
             </div>
+        </div>
+
+        <!-- Distribution Chart -->
+        <div class="chart-section">
+            <h3 class="admin-section-title">Distribución de Recomendaciones</h3>
+            <div id="dist-chart" class="dist-chart-container">
+                <!-- Injected by JS -->
+            </div>
+            <p style="font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 1rem; text-align: center;">* Muestra la cantidad de veces que cada línea fue recomendada en el período seleccionado.</p>
         </div>
 
         <!-- Available Lines -->
@@ -1282,6 +1367,20 @@
                 Ver historial completo
             </button>
         </div>
+
+        <!-- Comments Filters -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px; position: relative;">
+                <input type="text" id="comment-search" placeholder="Buscar por empresa..." style="width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 0.9rem; outline: none;">
+                <svg style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <select id="comment-filter-line" style="width: 100%; padding: 0.6rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 0.9rem; outline: none; cursor: pointer;">
+                    <option value="all" style="color: black;">Todas las líneas</option>
+                </select>
+            </div>
+        </div>
+
         <div id="comments-history-list" style="margin-bottom: 2.5rem;">
             <!-- Injected by JS -->
         </div>
@@ -1319,7 +1418,7 @@
                 <div class="footer-right-items" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 0.5rem;">
                     <div class="contact-item" style="margin-bottom: 1rem; justify-content: flex-end;">
                         <div class="contact-text" style="text-align: right; font-weight: 600;">
-                            Cel: (0342) 4505882 | Interno 1303
+                            Tel: (0342) 4505882 | Interno 1303
                         </div>
                         <div class="contact-icon-box">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.18-2.18a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
@@ -1398,6 +1497,53 @@
                 <div class="question-group" style="margin-bottom: 0;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">¿Por qué es ideal? (Para el análisis IA)</label>
                     <textarea id="line-idealFor" class="comment-textarea" style="height: 80px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Explicación de por qué elegir esta línea..."></textarea>
+                </div>
+
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 1rem; font-weight: 800; margin-bottom: 1rem; color: #7c3aed; border-bottom: 2px solid #f3f4f6; padding-bottom: 0.5rem;">Criterios de Selección (Configuración IA)</label>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Propósito del Proyecto</label>
+                        <div id="criteria-purpose" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="renewable_gen"> Generación de energía renovable</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="renewable_equip"> Producción de equipos para energías renovables</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="energy_efficiency"> Eficiencia energética Industrial</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="capital_goods"> Adquisición de bienes de capital</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="sustainable_transport"> Adquisición de transporte sostenible</label>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Montos (Rangos)</label>
+                        <div id="criteria-amount" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_10"> Hasta 10M</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_50"> 10M a 50M</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_100"> 50M a 100M</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_150"> 100M a 150M</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_200"> 150M a 200M</label>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Cuotas (Plazos)</label>
+                        <div id="criteria-installments" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="up_to_36"> Hasta 36 Cuotas</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="up_to_60"> Hasta 60 Cuotas</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_37_61"> Entre 37 y 61 Cuotas</label>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Porcentaje de Financiamiento</label>
+                        <div id="criteria-percentage" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_25"> 10% a 25%</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_50"> 25% a 50%</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_60"> 50% a 60%</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_70"> 60% a 70%</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_80"> 70% a 80%</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_95"> 80% a 95%</label>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="question-group" style="margin-bottom: 0;">
@@ -1665,45 +1811,38 @@
             this.classList.add('selected');
             userAnswers[question] = value;
 
-            // Conditional logic for Question 5
+            // Conditional logic for Question 2
             if (question === 'purpose') {
-                updateQuestion5(value);
+                updateQuestion2(value);
             }
         });
     });
 
-    function updateQuestion5(purposeValue) {
-        const container = document.getElementById('question-5-container');
-        const grid = document.getElementById('options-grid-q5');
+    function updateQuestion2(purposeValue) {
+        const container = document.getElementById('question-2-container');
+        const grid = document.getElementById('options-grid-q2');
         
         const activities = {
-            'renewable_gen': [
-                'Equipos de generación solar',
-                'Equipos de generación eólica',
-                'Pequeños aprovechamientos hidroeléctricos',
-                'Generación eléctrica a partir de biogás',
-                'Sistemas Off y On Grid',
-                'Sistemas de almacenamiento',
-                'Otros componentes requeridos para la instalación',
-                'Colectores solares',
-                'Energía térmica en base a biogás o biomasa',
-                'Obras complementarias',
-                'Biodigestores',
-                'Calderas a biomasa'
+            'Eficiencia energética': [
+                'Generación solar térmica (Termo tanques, radiadores solares)',
+                'Generación de BíoGas (Bíodigestores)',
+                'Energía Eólica (Aerogeneradores)',
+                'Generación de energía eléctrica a partir de BíoGas',
+                'Recambio de maquinaria productiva (Motores, Maquinas, Transporte , Calderas, Etc)',
+                'Readecuación de instalaciones para reducir consumo energético (Aislación, Recambio de conducción, Sistemas de control inteligente)',
+                'Recambio de instalaciones de acondicionamiento de aire ( Equipos de calefacción, refrigeración, ventilación, Etc',
+                'Recambio de sistemas de iluminación (Luminaria LED, Etc)',
+                'Otra medida que reduzca consumo energético o aumente producción utilizando mismo nivel de consumo'
             ],
-            'renewable_equip': [
-                'Fabricación calefones solares, luminarias, aerogeneradores y paneles solares.',
-                'Ensamble de calefones solares, luminarias, aerogeneradores y paneles solares.'
+            'Energías Renovables': [
+                'Prosumidores',
+                'Sistemas renovables OFF-Grid',
+                'Sistemas de BíoGas',
+                'Sistema de bombeo y riego solar',
+                'Otro tipo de instalación que incorpore Energías Renovables'
             ],
-            'energy_efficiency': [
-                'Sustitución de maquinaria por equipos más eficientes',
-                'Recambio a iluminación LED o de bajo consumo',
-                'Reemplazo de motores eléctricos por otros de mayor eficiencia',
-                'Gestión para certificaciones energéticas.'
-            ],
-            'sustainable_transport': [
-                'Bienes Nacionales',
-                'Importados'
+            'Triple Impacto': [
+                'Inversiones que impliquen simultáneamente: RENTABILIDAD ECONÓMICA (sostenible en el tiempo) con IMPACTO SOCIAL POSITIVO (mejorando la calidad de vida de colaboradores y la comunidad, incluyendo empleos dignos, equidad e inclusión) e IMPACTO AMBIENTAL POSITIVO (reduciendo la huella ambiental, utilizando energías renovables, aplicando economía circular, regenerando el entorno, etc.)'
             ]
         };
 
@@ -1711,20 +1850,44 @@
         
         if (currentActivities) {
             grid.innerHTML = currentActivities.map(activity => `
-                <div class="option-card" data-value="${activity}">${activity}</div>
+                <div class="option-card ${purposeValue === 'Triple Impacto' ? 'full-width' : ''}" data-value="${activity}" style="${purposeValue === 'Triple Impacto' ? 'grid-column: 1 / -1; font-size: 0.9rem; line-height: 1.5; padding: 2rem;' : ''}">
+                    ${activity}
+                </div>
             `).join('');
             
             // Re-attach listeners to new cards
             grid.querySelectorAll('.option-card').forEach(card => {
                 card.addEventListener('click', function() {
-                    grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    userAnswers['activity'] = this.dataset.value;
+                    const value = this.dataset.value;
+                    
+                    if (purposeValue === 'Triple Impacto') {
+                        // For Triple Impacto, it's a single selection (the definition itself)
+                        grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                        this.classList.add('selected');
+                        userAnswers['activity'] = value;
+                        return;
+                    }
+
+                    if (!userAnswers['activity'] || !Array.isArray(userAnswers['activity'])) userAnswers['activity'] = [];
+                    
+                    if (this.classList.contains('selected')) {
+                        // Deselect
+                        this.classList.remove('selected');
+                        userAnswers['activity'] = userAnswers['activity'].filter(v => v !== value);
+                    } else {
+                        // Select if under limit
+                        if (userAnswers['activity'].length < 3) {
+                            this.classList.add('selected');
+                            userAnswers['activity'].push(value);
+                        } else {
+                            showAlert('Límite alcanzado', 'Puedes seleccionar un máximo de 3 actividades.');
+                        }
+                    }
                 });
             });
 
             container.style.display = 'block';
-            delete userAnswers['activity']; // Reset if purpose changed
+            userAnswers['activity'] = purposeValue === 'Triple Impacto' ? null : []; // Reset if purpose changed
         } else {
             container.style.display = 'none';
             delete userAnswers['activity'];
@@ -1732,12 +1895,12 @@
     }
 
     function validateStep(step) {
-        const questions = step === 1 ? ['installments', 'amount', 'percentage'] : ['purpose'];
-        if (step === 2 && document.getElementById('question-5-container').style.display !== 'none') {
+        const questions = step === 1 ? ['purpose'] : ['amount', 'installments', 'percentage'];
+        if (step === 1 && document.getElementById('question-2-container').style.display !== 'none') {
             questions.push('activity');
         }
         for (const q of questions) {
-            if (!userAnswers[q]) {
+            if (!userAnswers[q] || (Array.isArray(userAnswers[q]) && userAnswers[q].length === 0)) {
                 alert('Por favor, respondé todas las preguntas para continuar.');
                 return false;
             }
@@ -1794,7 +1957,7 @@
                 ${JSON.stringify(financialLines, null, 2)}
 
                 INSTRUCCIONES:
-                1. Analiza críticamente cómo cada línea se ajusta al propósito, monto, cuotas y actividad del usuario.
+                1. Analiza críticamente cómo cada línea se ajusta al perfil del usuario. Utiliza el campo "criteria" de cada línea para verificar la compatibilidad técnica con las respuestas del usuario (propósito, monto, cuotas, porcentaje).
                 2. Selecciona la línea con el ID que mejor coincida.
                 3. Proporciona un razonamiento detallado y profesional (en español) explicando por qué es la mejor opción.
                 4. Identifica hasta 2 alternativas si existen.
@@ -1938,6 +2101,7 @@
         document.getElementById('char-count').innerText = '0';
         document.getElementById('btn-send-feedback').disabled = false;
         document.getElementById('btn-send-feedback').style.display = 'block';
+        document.getElementById('btn-send-feedback').innerText = "Enviar respuesta";
         document.getElementById('feedback-thanks').style.display = 'none';
         currentSatisfaction = null;
         feedbackSent = false;
@@ -1993,11 +2157,11 @@
         document.getElementById('feedback-yes').style.pointerEvents = 'none';
         document.getElementById('feedback-no').style.pointerEvents = 'none';
         document.getElementById('btn-send-feedback').disabled = true;
-        document.getElementById('btn-send-feedback').style.display = 'none';
+        document.getElementById('btn-send-feedback').innerText = "✓ Enviado";
         document.getElementById('feedback-thanks').style.display = 'block';
 
         setTimeout(() => {
-            document.getElementById('feedback-thanks').style.display = 'none';
+            resetFeedbackUI();
         }, 3000);
     }
 
@@ -2010,15 +2174,32 @@
         const company = companyInput.value.trim();
         
         // Validation
-        if (!email || !company) {
-            emailInput.style.borderColor = !email ? '#e53935' : 'var(--border)';
-            companyInput.style.borderColor = !company ? '#e53935' : 'var(--border)';
-            return;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        let hasError = false;
+
+        if (!email || !emailRegex.test(email)) {
+            emailInput.style.borderColor = '#ef4444';
+            emailInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+            hasError = true;
+        } else {
+            emailInput.style.borderColor = 'rgba(255,255,255,0.3)';
+            emailInput.style.boxShadow = 'none';
         }
 
-        // Reset borders
-        emailInput.style.borderColor = 'var(--border)';
-        companyInput.style.borderColor = 'var(--border)';
+        if (!company) {
+            companyInput.style.borderColor = '#ef4444';
+            companyInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+            hasError = true;
+        } else {
+            companyInput.style.borderColor = 'rgba(255,255,255,0.3)';
+            companyInput.style.boxShadow = 'none';
+        }
+
+        if (hasError) {
+            const errorMsg = !email || !company ? 'Por favor, completa todos los campos.' : 'Por favor, ingresa un email válido.';
+            alert(errorMsg);
+            return;
+        }
 
         // Ensure we have a recommendation and summary
         let recommendation = currentRecommendedLine;
@@ -2080,7 +2261,8 @@
         };
         
         const summary = Object.entries(answers).map(([key, value]) => {
-            return `${labels[key] || key}: ${value}`;
+            const displayValue = Array.isArray(value) ? value.join(", ") : value;
+            return `${labels[key] || key}: ${displayValue}`;
         }).join(" | ");
         
         return summary || "Sin datos de perfil";
@@ -2177,7 +2359,8 @@
         feedback: [],
         visitas: []
     };
-    let currentAdminFilter = 'all';
+    let currentAdminFilter = { month: 'all', year: 'all' };
+    let currentCommentFilters = { search: '', line: 'all' };
 
     function setupAdminListeners() {
         // Clear previous
@@ -2230,14 +2413,44 @@
         });
         window.adminUnsubscribes.push(unsubVisits);
 
-        // Add listener for filter change
-        const filterSelect = document.getElementById('admin-filter-month');
-        if (filterSelect && !filterSelect.dataset.listenerAdded) {
-            filterSelect.addEventListener('change', (e) => {
-                currentAdminFilter = e.target.value;
+        // Add listeners for filter changes
+        const monthSelect = document.getElementById('admin-filter-month');
+        const yearSelect = document.getElementById('admin-filter-year');
+
+        if (monthSelect && !monthSelect.dataset.listenerAdded) {
+            monthSelect.addEventListener('change', (e) => {
+                currentAdminFilter.month = e.target.value;
                 refreshAdminUI();
             });
-            filterSelect.dataset.listenerAdded = 'true';
+            monthSelect.dataset.listenerAdded = 'true';
+        }
+
+        if (yearSelect && !yearSelect.dataset.listenerAdded) {
+            yearSelect.addEventListener('change', (e) => {
+                currentAdminFilter.year = e.target.value;
+                refreshAdminUI();
+            });
+            yearSelect.dataset.listenerAdded = 'true';
+        }
+
+        // Add listeners for comment filters
+        const commentSearch = document.getElementById('comment-search');
+        const commentLineFilter = document.getElementById('comment-filter-line');
+
+        if (commentSearch && !commentSearch.dataset.listenerAdded) {
+            commentSearch.addEventListener('input', (e) => {
+                currentCommentFilters.search = e.target.value.toLowerCase();
+                updateCommentsList(filterDataByDate(adminData.feedback, 'date'));
+            });
+            commentSearch.dataset.listenerAdded = 'true';
+        }
+
+        if (commentLineFilter && !commentLineFilter.dataset.listenerAdded) {
+            commentLineFilter.addEventListener('change', (e) => {
+                currentCommentFilters.line = e.target.value;
+                updateCommentsList(filterDataByDate(adminData.feedback, 'date'));
+            });
+            commentLineFilter.dataset.listenerAdded = 'true';
         }
 
         // Initial refresh to show lines even if no data yet
@@ -2246,15 +2459,18 @@
 
     async function refreshAdminUI() {
         try {
-            populateFilterDropdown();
+            populateFilterDropdowns();
             
-            const filteredUserInfo = filterDataByMonth(adminData.userInfo, 'fecha');
-            const filteredCompletions = filterDataByMonth(adminData.completions, 'date');
-            const filteredFeedback = filterDataByMonth(adminData.feedback, 'date');
-            const filteredVisitas = filterDataByMonth(adminData.visitas, 'date');
+            const filteredUserInfo = filterDataByDate(adminData.userInfo, 'fecha');
+            const filteredCompletions = filterDataByDate(adminData.completions, 'date');
+            const filteredFeedback = filterDataByDate(adminData.feedback, 'date');
+            const filteredVisitas = filterDataByDate(adminData.visitas, 'date');
 
             if (document.getElementById('user-info-body')) updateUserInfoTable(filteredUserInfo);
-            if (document.getElementById('recommended-lines-list')) updateLineCounts(filteredCompletions);
+            if (document.getElementById('recommended-lines-list')) {
+                updateLineCounts(filteredCompletions);
+                updateDistributionChart(filteredCompletions);
+            }
             updateFeedbackStats(filteredFeedback);
             updateCommentsList(filteredFeedback);
             
@@ -2262,7 +2478,7 @@
             const visitElem = document.getElementById('stat-visitas');
             
             // Real-time counters from server for accuracy when not filtering
-            if (currentAdminFilter === 'all') {
+            if (currentAdminFilter.month === 'all' && currentAdminFilter.year === 'all') {
                 // Completions
                 const pathComp = 'stats_consultas_completadas';
                 try {
@@ -2289,29 +2505,37 @@
         }
     }
 
-    function filterDataByMonth(data, dateField) {
+    function filterDataByDate(data, dateField) {
         if (!data || !Array.isArray(data)) return [];
-        if (currentAdminFilter === 'all') return data;
+        if (currentAdminFilter.month === 'all' && currentAdminFilter.year === 'all') return data;
+        
         return data.filter(item => {
             if (!item) return false;
             const dateStr = item[dateField];
             if (!dateStr) return false;
-            // Format is DD/MM/YYYY HH:mm
+            
             const parts = dateStr.split(' ')[0].split('/');
             if (parts.length < 3) return false;
+            
             const month = parseInt(parts[1]);
             const year = parts[2];
             const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            const itemMonthYear = `${monthNames[month - 1]} ${year}`;
-            return itemMonthYear === currentAdminFilter;
+            const itemMonth = monthNames[month - 1];
+            
+            const monthMatch = currentAdminFilter.month === 'all' || itemMonth === currentAdminFilter.month;
+            const yearMatch = currentAdminFilter.year === 'all' || year === currentAdminFilter.year;
+            
+            return monthMatch && yearMatch;
         });
     }
 
-    function populateFilterDropdown() {
-        const filterSelect = document.getElementById('admin-filter-month');
-        const currentVal = filterSelect.value;
+    function populateFilterDropdowns() {
+        const monthSelect = document.getElementById('admin-filter-month');
+        const yearSelect = document.getElementById('admin-filter-year');
         
-        // Collect all unique month/years from all data sources
+        const currentMonth = monthSelect.value;
+        const currentYear = yearSelect.value;
+        
         const allDates = [
             ...adminData.userInfo.map(d => d.fecha),
             ...adminData.completions.map(d => d.date),
@@ -2319,7 +2543,8 @@
             ...adminData.visitas.map(d => d.date)
         ].filter(Boolean);
 
-        const monthYears = new Set();
+        const months = new Set();
+        const years = new Set();
         const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
         allDates.forEach(dateStr => {
@@ -2327,23 +2552,52 @@
             if (parts.length >= 3) {
                 const month = parseInt(parts[1]);
                 const year = parts[2];
-                monthYears.add(`${monthNames[month - 1]} ${year}`);
+                months.add(monthNames[month - 1]);
+                years.add(year);
             }
         });
 
-        const sortedMonths = Array.from(monthYears).sort((a, b) => {
-            const [mA, yA] = a.split(' ');
-            const [mB, yB] = b.split(' ');
-            if (yA !== yB) return yB - yA;
-            return monthNames.indexOf(mB) - monthNames.indexOf(mA);
-        });
+        // Sort years descending
+        const sortedYears = Array.from(years).sort((a, b) => b - a);
+        // Sort months based on chronological order
+        const sortedMonths = Array.from(months).sort((a, b) => monthNames.indexOf(a) - monthNames.indexOf(b));
 
-        let html = '<option value="all" style="color: black;">Todos los meses</option>';
-        sortedMonths.forEach(my => {
-            html += `<option value="${my}" ${my === currentVal ? 'selected' : ''} style="color: black;">${my}</option>`;
+        // Populate Month Select
+        let monthHtml = '<option value="all" style="color: black;">Mes: Todos</option>';
+        sortedMonths.forEach(m => {
+            monthHtml += `<option value="${m}" ${m === currentMonth ? 'selected' : ''} style="color: black;">${m}</option>`;
         });
-        
-        filterSelect.innerHTML = html;
+        monthSelect.innerHTML = monthHtml;
+
+        // Populate Year Select
+        let yearHtml = '<option value="all" style="color: black;">Año: Todos</option>';
+        sortedYears.forEach(y => {
+            yearHtml += `<option value="${y}" ${y === currentYear ? 'selected' : ''} style="color: black;">${y}</option>`;
+        });
+        yearSelect.innerHTML = yearHtml;
+
+        // Populate Comment Line Filter
+        const commentLineSelect = document.getElementById('comment-filter-line');
+        if (commentLineSelect) {
+            const currentLineFilter = commentLineSelect.value;
+            let lineHtml = '<option value="all" style="color: black;">Todas las líneas</option>';
+            
+            // Get unique lines from feedback
+            const uniqueLines = new Set();
+            adminData.feedback.forEach(f => {
+                if (f.line) uniqueLines.add(f.line);
+            });
+            
+            // Also add from current financialLines to be sure
+            financialLines.forEach(l => {
+                if (l.name) uniqueLines.add(l.name);
+            });
+
+            Array.from(uniqueLines).sort().forEach(line => {
+                lineHtml += `<option value="${line}" ${line === currentLineFilter ? 'selected' : ''} style="color: black;">${line}</option>`;
+            });
+            commentLineSelect.innerHTML = lineHtml;
+        }
     }
 
     function updateUserInfoTable(userInfo) {
@@ -2424,6 +2678,45 @@
             : '<div style="text-align:center; padding: 2rem; color: white; opacity: 0.6;">No hay datos aún</div>';
     }
 
+    function updateDistributionChart(completions) {
+        const distChart = document.getElementById('dist-chart');
+        if (!distChart) return;
+
+        const lineCounts = {};
+        financialLines.forEach(line => {
+            if (line && line.name) lineCounts[line.name] = 0;
+        });
+
+        completions.forEach(c => {
+            const lineName = c.line || "No especificada";
+            if (lineCounts.hasOwnProperty(lineName)) {
+                lineCounts[lineName]++;
+            } else {
+                lineCounts[lineName] = (lineCounts[lineName] || 0) + 1;
+            }
+        });
+
+        const data = Object.entries(lineCounts).sort((a, b) => b[1] - a[1]);
+        const maxCount = Math.max(...data.map(d => d[1]), 1);
+
+        if (data.length === 0) {
+            distChart.innerHTML = '<div style="width: 100%; text-align: center; color: rgba(255,255,255,0.5);">Sin datos suficientes</div>';
+            return;
+        }
+
+        distChart.innerHTML = data.map(([name, count]) => {
+            const height = (count / maxCount) * 100;
+            return `
+                <div class="dist-bar-group">
+                    <div class="dist-bar" style="height: ${height}%;" title="${name}: ${count} recomendaciones">
+                        <span class="dist-bar-value">${count}</span>
+                    </div>
+                    <span class="dist-bar-label" title="${name}">${name}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
     let editingLineId = null;
     function openLineModal(lineId = null) {
         editingLineId = lineId;
@@ -2439,6 +2732,9 @@
         document.getElementById('line-idealFor').value = '';
         document.getElementById('line-moreInfo').value = '';
 
+        // Reset criteria checkboxes
+        document.querySelectorAll('#line-modal-overlay input[type="checkbox"]').forEach(cb => cb.checked = false);
+
         if (lineId) {
             title.innerText = 'Editar Línea';
             const line = financialLines.find(l => l.id === lineId);
@@ -2450,6 +2746,18 @@
                 document.getElementById('line-rate').value = line.rate || '';
                 document.getElementById('line-idealFor').value = line.idealFor || '';
                 document.getElementById('line-moreInfo').value = line.moreInfo || '';
+
+                // Populate criteria checkboxes
+                if (line.criteria) {
+                    Object.entries(line.criteria).forEach(([category, values]) => {
+                        if (Array.isArray(values)) {
+                            values.forEach(val => {
+                                const cb = document.querySelector(`#criteria-${category} input[value="${val}"]`);
+                                if (cb) cb.checked = true;
+                            });
+                        }
+                    });
+                }
             }
         } else {
             title.innerText = 'Agregar Nueva Línea';
@@ -2464,18 +2772,89 @@
     }
 
     async function saveLine() {
-        const name = document.getElementById('line-name').value.trim();
-        const desc = document.getElementById('line-desc').value.trim();
-        const maxAmount = document.getElementById('line-maxAmount').value.trim();
-        const term = document.getElementById('line-term').value.trim();
-        const rate = document.getElementById('line-rate').value.trim();
-        const idealFor = document.getElementById('line-idealFor').value.trim();
-        const moreInfo = document.getElementById('line-moreInfo').value.trim();
+        const nameInput = document.getElementById('line-name');
+        const descInput = document.getElementById('line-desc');
+        const maxAmountInput = document.getElementById('line-maxAmount');
+        const termInput = document.getElementById('line-term');
+        const rateInput = document.getElementById('line-rate');
+        const idealForInput = document.getElementById('line-idealFor');
+        const moreInfoInput = document.getElementById('line-moreInfo');
 
+        const name = nameInput.value.trim();
+        const desc = descInput.value.trim();
+        const maxAmount = maxAmountInput.value.trim();
+        const term = termInput.value.trim();
+        const rate = rateInput.value.trim();
+        const idealFor = idealForInput.value.trim();
+        const moreInfo = moreInfoInput.value.trim();
+
+        // Reset borders
+        const inputs = [nameInput, descInput, maxAmountInput, termInput, rateInput, idealForInput];
+        inputs.forEach(input => {
+            input.style.borderColor = '#e5e7eb';
+            input.style.boxShadow = 'none';
+        });
+
+        let hasError = false;
+        let errorMessage = "";
+
+        // Mandatory fields check
         if (!name) {
-            alert('El nombre de la línea es obligatorio.');
+            nameInput.style.borderColor = '#ef4444';
+            hasError = true;
+            errorMessage = "El nombre de la línea es obligatorio.";
+        } else if (!desc) {
+            descInput.style.borderColor = '#ef4444';
+            hasError = true;
+            errorMessage = "La descripción es obligatoria.";
+        } else if (!maxAmount) {
+            maxAmountInput.style.borderColor = '#ef4444';
+            hasError = true;
+            errorMessage = "El monto máximo es obligatorio.";
+        } else if (!term) {
+            termInput.style.borderColor = '#ef4444';
+            hasError = true;
+            errorMessage = "El plazo es obligatorio.";
+        } else if (!rate) {
+            rateInput.style.borderColor = '#ef4444';
+            hasError = true;
+            errorMessage = "La tasa es obligatoria.";
+        }
+
+        // Format checks (Reasonable format)
+        if (!hasError) {
+            // Check if maxAmount has at least one digit
+            if (!/\d/.test(maxAmount)) {
+                maxAmountInput.style.borderColor = '#ef4444';
+                hasError = true;
+                errorMessage = "El monto debe contener números (Ej: $100.000.000).";
+            }
+            // Check if term has at least one digit
+            else if (!/\d/.test(term)) {
+                termInput.style.borderColor = '#ef4444';
+                hasError = true;
+                errorMessage = "El plazo debe contener números (Ej: 36 meses).";
+            }
+            // Check if rate has % or digits
+            else if (!/%|\d/.test(rate)) {
+                rateInput.style.borderColor = '#ef4444';
+                hasError = true;
+                errorMessage = "La tasa debe incluir un porcentaje o valor numérico (Ej: 21% Fija).";
+            }
+        }
+
+        if (hasError) {
+            alert(errorMessage);
             return;
         }
+
+        // Collect criteria
+        const criteria = {
+            purpose: Array.from(document.querySelectorAll('#criteria-purpose input:checked')).map(cb => cb.value),
+            amount: Array.from(document.querySelectorAll('#criteria-amount input:checked')).map(cb => cb.value),
+            installments: Array.from(document.querySelectorAll('#criteria-installments input:checked')).map(cb => cb.value),
+            percentage: Array.from(document.querySelectorAll('#criteria-percentage input:checked')).map(cb => cb.value)
+        };
 
         const lineId = editingLineId || `line_${Date.now()}`;
         
@@ -2488,13 +2867,7 @@
             rate,
             idealFor,
             moreInfo,
-            // Default criteria if new, or keep existing if editing
-            criteria: editingLineId ? financialLines.find(l => l.id === editingLineId).criteria : {
-                purpose: ['renewable_gen', 'energy_efficiency'],
-                installments: ['up_to_36'],
-                amount: ['range_10', 'range_50', 'range_100'],
-                percentage: ['perc_50', 'perc_80']
-            }
+            criteria
         };
 
         const path = `config_financial_lines/${lineId}`;
@@ -2590,13 +2963,8 @@
 
     function updateCommentsList(feedback) {
         const commentsList = document.getElementById('comments-history-list');
-        const comments = feedback.filter(f => f.comment && f.comment.trim() !== '');
+        let comments = feedback.filter(f => f.comment && f.comment.trim() !== '');
         
-        if (comments.length === 0) {
-            commentsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay comentarios aún.</div>';
-            return;
-        }
-
         // Build a map of sessionId -> company name from adminData.userInfo for real-time lookup
         const userMap = {};
         adminData.userInfo.forEach(u => {
@@ -2605,34 +2973,57 @@
             }
         });
 
+        // Apply additional filters (Search and Line)
+        if (currentCommentFilters.line !== 'all') {
+            comments = comments.filter(c => c.line === currentCommentFilters.line);
+        }
+
+        if (currentCommentFilters.search) {
+            comments = comments.filter(c => {
+                const companyName = (c.sessionId ? (userMap[c.sessionId] || 'Usuario no identificado') : 'Usuario no identificado').toLowerCase();
+                const commentText = (c.comment || '').toLowerCase();
+                return companyName.includes(currentCommentFilters.search) || commentText.includes(currentCommentFilters.search);
+            });
+        }
+
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay comentarios que coincidan con los filtros.</div>';
+            return;
+        }
+
         const displayComments = showAllComments ? comments : comments.slice(0, 5);
 
         commentsList.innerHTML = displayComments.map(c => {
             const companyName = c.sessionId ? (userMap[c.sessionId] || 'Usuario no identificado') : 'Usuario no identificado';
+            const cardClass = c.satisfaction === 'good' ? 'good' : 'bad';
+            
             return `
-                <div class="comment-card">
+                <div class="comment-card ${cardClass}">
                     <div class="comment-header">
-                        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
-                            <span style="font-weight: 700; color: white; font-size: 0.9rem;">${companyName}</span>
-                            <span class="badge" style="background: #eff6ff; color: #1d4ed8; border: none; width: fit-content;">${c.line || 'No especificada'}</span>
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem; flex: 1;">
+                            <span style="font-weight: 800; color: white; font-size: 1.1rem; letter-spacing: -0.01em;">${companyName}</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em;">Línea:</span>
+                                <span class="badge" style="background: white; color: #7c3aed; border: none; width: fit-content; font-size: 0.8rem; padding: 0.2rem 0.6rem; margin-bottom: 0;">${c.line || 'No especificada'}</span>
+                            </div>
                         </div>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">${c.date}</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">${c.date}</span>
                     </div>
-                    <div class="comment-body" style="margin-top: 0.5rem;">${c.comment}</div>
-                    <div style="margin-top: 0.75rem;">
+                    <div class="comment-body" style="margin-top: 1rem; font-size: 1rem; line-height: 1.5; padding: 1rem; background: rgba(0,0,0,0.1); border-radius: 8px; border-left: 3px solid ${c.satisfaction === 'good' ? '#10b981' : '#ef4444'};">${c.comment}</div>
+                    <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
                         <span style="
-                            font-size: 0.7rem; 
-                            font-weight: 700; 
+                            font-size: 0.75rem; 
+                            font-weight: 800; 
                             color: white; 
-                            padding: 0.25rem 0.6rem; 
-                            border-radius: 4px; 
+                            padding: 0.4rem 0.8rem; 
+                            border-radius: 6px; 
                             text-transform: uppercase;
-                            letter-spacing: 0.025em;
+                            letter-spacing: 0.05em;
                             display: inline-flex;
                             align-items: center;
-                            gap: 0.3rem;
+                            gap: 0.4rem;
                             background: ${c.satisfaction === 'good' ? '#10b981' : '#ef4444'};
-                            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                         ">
                             ${c.satisfaction === 'good' ? '✓ Recomendación útil' : '✗ No fue lo que buscaba'}
                         </span>
@@ -2922,7 +3313,7 @@
             <div class="footer-right-items" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 0.5rem;">
                 <div class="contact-item" style="margin-bottom: 1rem; justify-content: flex-end;">
                     <div class="contact-text" style="text-align: right; font-weight: 600;">
-                        Cel: (0342) 4505882 | Interno 1303
+                        Tel: (0342) 4505882 | Interno 1303
                     </div>
                     <div class="contact-icon-box">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.18-2.18a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
