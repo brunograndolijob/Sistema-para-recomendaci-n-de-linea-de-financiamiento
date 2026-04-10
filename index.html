@@ -283,6 +283,8 @@
             position: relative;
             overflow: hidden;
             color: var(--text-dark);
+            overflow-wrap: break-word;
+            word-wrap: break-word;
         }
 
         .main-card::before {
@@ -386,6 +388,9 @@
             backdrop-filter: blur(12px);
             color: white;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            overflow: hidden;
         }
 
         .alt-card:hover {
@@ -424,6 +429,8 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(12px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow-wrap: break-word;
+            word-wrap: break-word;
         }
 
         .glossary-item {
@@ -478,6 +485,8 @@
             text-align: center;
             backdrop-filter: blur(12px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow-wrap: break-word;
+            word-wrap: break-word;
         }
 
         .feedback-title {
@@ -896,6 +905,9 @@
             position: relative;
             box-shadow: var(--shadow-lg);
             color: var(--text-dark);
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            overflow: hidden;
         }
 
         .modal-close {
@@ -1072,35 +1084,21 @@
     <!-- Form Step 2 -->
     <section id="step-2" class="screen">
         <div class="question-group">
-            <label class="question-title">3. ¿Cual es el importe requerido?</label>
+            <label class="question-title">3. Categoría del solicitante</label>
+            <div class="options-grid" data-question="category">
+                <div class="option-card" data-value="Monotributista o Responsable Inscripto">Monotributista o Responsable Inscripto</div>
+                <div class="option-card" data-value="MiPyme (Con certificado)">MiPyme (Con certificado)</div>
+                <div class="option-card" data-value="Cooperativa">Cooperativa</div>
+            </div>
+        </div>
+
+        <div class="question-group">
+            <label class="question-title">4. ¿Que monto de dinero desea solicitar?</label>
             <div class="options-grid" data-question="amount">
-                <div class="option-card" data-value="range_10">Hasta 10Millones</div>
-                <div class="option-card" data-value="range_50">Entre 10M y 50M</div>
-                <div class="option-card" data-value="range_100">Entre 50M y 100M</div>
-                <div class="option-card" data-value="range_150">Entre 100M y 150M</div>
-                <div class="option-card" data-value="range_200">Entre 150M y 200M</div>
-            </div>
-        </div>
-
-        <div class="question-group">
-            <label class="question-title">4. ¿En cuántas cuotas desea cancelar el crédito?</label>
-            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: -0.5rem; margin-bottom: 1rem;">* Cada cuota es equivalente a un mes.</p>
-            <div class="options-grid" data-question="installments">
-                <div class="option-card" data-value="up_to_36">Hasta 36 Cuotas</div>
-                <div class="option-card" data-value="up_to_60">Hasta 60 Cuotas</div>
-                <div class="option-card" data-value="range_37_61">Entre 37 y 61 Cuotas</div>
-            </div>
-        </div>
-
-        <div class="question-group">
-            <label class="question-title">5. ¿Que porcentaje del proyecto desea financiar?</label>
-            <div class="options-grid" data-question="percentage">
-                <div class="option-card" data-value="perc_25">Entre 10% y 25%</div>
-                <div class="option-card" data-value="perc_50">Entre 25% y 50%</div>
-                <div class="option-card" data-value="perc_60">Entre 50% y 60%</div>
-                <div class="option-card" data-value="perc_70">Entre 60% y 70%</div>
-                <div class="option-card" data-value="perc_80">Entre 70% y 80%</div>
-                <div class="option-card" data-value="perc_95">Entre 80% y 95%</div>
+                <div class="option-card" data-value="Hasta 10 Millones">Hasta 10 Millones</div>
+                <div class="option-card" data-value="Hasta 100 Millones">Hasta 100 Millones</div>
+                <div class="option-card" data-value="Hasta 200 Millones">Hasta 200 Millones</div>
+                <div class="option-card" data-value="Hasta 300 Millones">Hasta 300 Millones</div>
             </div>
         </div>
 
@@ -1121,6 +1119,10 @@
 
         <h3 class="secondary-title">Otras opciones que también podrían interesarte</h3>
         <div id="alternatives-container" class="alternatives-grid">
+            <!-- Injected by JS -->
+        </div>
+
+        <div id="linea0-container" style="margin-top: 2rem;">
             <!-- Injected by JS -->
         </div>
 
@@ -1150,17 +1152,9 @@
                     Respaldo que asegura el pago del crédito. Las SGR (Sociedades de Garantía Recíproca) facilitan el acceso avalando a las PyMEs ante los bancos.
                 </div>
             </div>
-            <div class="glossary-item">
-                <button class="glossary-trigger" onclick="toggleGlossary(this)">
-                    Capital de trabajo <span class="icon-plus">+</span>
-                </button>
-                <div class="glossary-content">
-                    Fondos destinados a la operación diaria del negocio: compra de materia prima, pago de salarios o stock.
-                </div>
-            </div>
         </div>
 
-        <div id="user-info-section" class="feedback-section" style="background: white; padding: 2.5rem; border-radius: 24px; margin-top: 0; margin-bottom: 3rem; text-align: left; color: var(--text-dark); box-shadow: var(--shadow-lg);">
+        <div id="user-info-section" class="feedback-section" style="background: white; padding: 2.5rem; border-radius: 24px; margin-top: 3rem; margin-bottom: 3rem; text-align: left; color: var(--text-dark); box-shadow: var(--shadow-lg);">
             <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #7c3aed; text-align: center;">¿Querés avanzar con esta línea?</h3>
             <p style="color: #4b5563; margin-bottom: 2rem; text-align: center;">Dejanos tus datos y un asesor se contactará para guiarte en el proceso.</p>
             
@@ -1453,7 +1447,7 @@
         <div class="modal" onclick="event.stopPropagation()">
             <span class="modal-close" onclick="closeModal()">&times;</span>
             <h3 id="modal-title" style="margin-bottom: 1rem; color: #7c3aed;"></h3>
-            <div id="modal-body" style="color: #4b5563;"></div>
+            <div id="modal-body" style="color: #4b5563; overflow-wrap: break-word; word-wrap: break-word;"></div>
             <div id="modal-footer" style="margin-top: 2rem; display: flex; gap: 1rem;">
                 <button id="modal-ok-btn" class="btn btn-primary btn-block" style="background: #7c3aed; color: white;" onclick="closeModal()">Entendido</button>
                 <button id="modal-cancel-btn" class="btn btn-block" style="display: none; background: #f3f4f6; color: #4b5563;" onclick="closeModal()">Cancelar</button>
@@ -1505,50 +1499,56 @@
                     <div style="margin-bottom: 1rem;">
                         <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Propósito del Proyecto</label>
                         <div id="criteria-purpose" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="renewable_gen"> Generación de energía renovable</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="renewable_equip"> Producción de equipos para energías renovables</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="energy_efficiency"> Eficiencia energética Industrial</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="capital_goods"> Adquisición de bienes de capital</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="sustainable_transport"> Adquisición de transporte sostenible</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Energías Renovables"> Energías Renovables</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Eficiencia energética"> Eficiencia energética</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Triple Impacto"> Triple Impacto</label>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Categoría del Solicitante</label>
+                        <div id="criteria-category" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Monotributista o Responsable Inscripto"> Monotributista o Responsable Inscripto</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="MiPyme (Con certificado)"> MiPyme (Con certificado)</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Cooperativa"> Cooperativa</label>
                         </div>
                     </div>
 
                     <div style="margin-bottom: 1rem;">
                         <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Montos (Rangos)</label>
                         <div id="criteria-amount" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_10"> Hasta 10M</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_50"> 10M a 50M</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_100"> 50M a 100M</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_150"> 100M a 150M</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_200"> 150M a 200M</label>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 1rem;">
-                        <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Cuotas (Plazos)</label>
-                        <div id="criteria-installments" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="up_to_36"> Hasta 36 Cuotas</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="up_to_60"> Hasta 60 Cuotas</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="range_37_61"> Entre 37 y 61 Cuotas</label>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 1rem;">
-                        <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Porcentaje de Financiamiento</label>
-                        <div id="criteria-percentage" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_25"> 10% a 25%</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_50"> 25% a 50%</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_60"> 50% a 60%</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_70"> 60% a 70%</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_80"> 70% a 80%</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="perc_95"> 80% a 95%</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Hasta 10 Millones"> Hasta 10 Millones</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Hasta 100 Millones"> Hasta 100 Millones</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Hasta 200 Millones"> Hasta 200 Millones</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Hasta 300 Millones"> Hasta 300 Millones</label>
                         </div>
                     </div>
                 </div>
 
+                <div class="question-group" style="margin-bottom: 0; display: none;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Información Detallada (Auto-completada)</label>
+                    <textarea id="line-moreInfo" class="comment-textarea" style="height: 120px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Detalles técnicos..."></textarea>
+                </div>
+
                 <div class="question-group" style="margin-bottom: 0;">
-                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Información Detallada (HTML permitido)</label>
-                    <textarea id="line-moreInfo" class="comment-textarea" style="height: 120px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Detalles técnicos, proyectos elegibles..."></textarea>
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Más información (Links - Máx. 3)</label>
+                    <div id="line-links-container" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <!-- Link rows will be added here -->
+                    </div>
+                    <button type="button" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb;" onclick="addLinkRow()">+ Agregar link</button>
+                </div>
+
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Maneras de contacto (Máx. 3)</label>
+                    <div id="contact-methods-container" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <!-- Contact rows will be added here -->
+                    </div>
+                    <button type="button" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb;" onclick="addContactRow()">+ Agregar contacto</button>
+                    
+                    <div style="margin-top: 0.75rem;">
+                        <label style="font-size: 0.75rem; color: #6b7280; display: block; margin-bottom: 0.25rem;">Indicación para el contacto (Epígrafe)</label>
+                        <input type="text" id="line-contact-epigraph" class="comment-textarea dark-text" style="height: 36px; font-size: 0.8rem;" placeholder="Ej: Horario de atención de 8 a 16hs">
+                    </div>
                 </div>
             </div>
 
@@ -1635,7 +1635,19 @@
     }
 
     // Data: Financial Lines
-    let financialLines = [
+    const initialFinancialLines = [
+        {
+            id: 'linea_0',
+            name: 'Linea 0: Link para que los usuarios vean todas las opciones disponibles',
+            desc: 'Acceso a todas las opciones de financiamiento disponibles.',
+            isSpecial: true,
+            links: [],
+            contacts: [],
+            maxAmount: 'N/A',
+            term: 'N/A',
+            rate: 'N/A',
+            idealFor: 'N/A'
+        },
         {
             id: 'eficiencia_energetica_bmr',
             name: 'Eficiencia Energética (Banco Municipal de Rosario)',
@@ -1654,10 +1666,9 @@
                 - Eficiencia energética industrial: Sustitución de maquinaria, iluminación LED, motores eficientes y certificaciones energéticas.
             `,
             criteria: {
-                purpose: ['renewable_gen', 'renewable_equip', 'energy_efficiency'],
-                installments: ['up_to_36'],
-                amount: ['range_10', 'range_50', 'range_100'],
-                percentage: ['perc_25', 'perc_50', 'perc_60', 'perc_70', 'perc_80']
+                purpose: ['Energías Renovables', 'Eficiencia energética'],
+                amount: ['Hasta 10 Millones', 'Hasta 100 Millones'],
+                category: ['Monotributista o Responsable Inscripto', 'MiPyme (Con certificado)', 'Cooperativa']
             }
         },
         {
@@ -1677,10 +1688,9 @@
                 - Adquisición de transporte sostenible (bienes nacionales o importados).
             `,
             criteria: {
-                purpose: ['capital_goods', 'sustainable_transport'],
-                installments: ['range_37_61'],
-                amount: ['range_10', 'range_50', 'range_100'],
-                percentage: ['perc_80', 'perc_95']
+                purpose: ['Eficiencia energética'],
+                amount: ['Hasta 10 Millones', 'Hasta 100 Millones'],
+                category: ['MiPyme (Con certificado)']
             }
         },
         {
@@ -1699,13 +1709,14 @@
                 - Eficiencia Energética: Infraestructura, tecnología o maquinaria para mejora de la eficiencia energética (con certificación o aval de organismo competente).
             `,
             criteria: {
-                purpose: ['renewable_gen', 'energy_efficiency'],
-                installments: ['up_to_60'],
-                amount: ['range_10', 'range_50', 'range_100', 'range_150', 'range_200'],
-                percentage: ['perc_25', 'perc_50', 'perc_60', 'perc_70', 'perc_80']
+                purpose: ['Energías Renovables', 'Eficiencia energética'],
+                amount: ['Hasta 10 Millones', 'Hasta 100 Millones', 'Hasta 200 Millones'],
+                category: ['Monotributista o Responsable Inscripto', 'MiPyme (Con certificado)', 'Cooperativa']
             }
         }
     ];
+
+    let financialLines = [...initialFinancialLines];
 
     // Load custom lines from Firestore (Real-time)
     function loadCustomLines() {
@@ -1715,9 +1726,19 @@
             onSnapshot(q, (snapshot) => {
                 const customLines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                if (customLines.length > 0) {
-                    financialLines = customLines;
-                }
+                // Merge: Start with initial, then apply custom (overriding by ID or name)
+                let merged = [...initialFinancialLines];
+                
+                customLines.forEach(cl => {
+                    const idx = merged.findIndex(ml => ml.id === cl.id || ml.name === cl.name);
+                    if (idx !== -1) {
+                        merged[idx] = cl;
+                    } else {
+                        merged.push(cl);
+                    }
+                });
+
+                financialLines = merged;
                 
                 // If admin panel is open, refresh it
                 if (document.getElementById('admin-panel').style.display === 'block') {
@@ -1895,7 +1916,7 @@
     }
 
     function validateStep(step) {
-        const questions = step === 1 ? ['purpose'] : ['amount', 'installments', 'percentage'];
+        const questions = step === 1 ? ['purpose'] : ['category', 'amount'];
         if (step === 1 && document.getElementById('question-2-container').style.display !== 'none') {
             questions.push('activity');
         }
@@ -1957,7 +1978,7 @@
                 ${JSON.stringify(financialLines, null, 2)}
 
                 INSTRUCCIONES:
-                1. Analiza críticamente cómo cada línea se ajusta al perfil del usuario. Utiliza el campo "criteria" de cada línea para verificar la compatibilidad técnica con las respuestas del usuario (propósito, monto, cuotas, porcentaje).
+                1. Analiza críticamente cómo cada línea se ajusta al perfil del usuario. Utiliza el campo "criteria" de cada línea para verificar la compatibilidad técnica con las respuestas del usuario (propósito, monto, categoría).
                 2. Selecciona la línea con el ID que mejor coincida.
                 3. Proporciona un razonamiento detallado y profesional (en español) explicando por qué es la mejor opción.
                 4. Identifica hasta 2 alternativas si existen.
@@ -1994,7 +2015,7 @@
         const scores = financialLines.map(line => {
             let score = 0;
             if (line.criteria.purpose && line.criteria.purpose.includes(userAnswers.purpose)) score += 20;
-            if (line.criteria.installments && line.criteria.installments.includes(userAnswers.installments)) score += 15;
+            if (line.criteria.amount && line.criteria.amount.includes(userAnswers.amount)) score += 15;
             return { ...line, score };
         });
         scores.sort((a, b) => b.score - a.score);
@@ -2043,6 +2064,25 @@
                 </h4>
                 <p>${reasoning}</p>
             </div>
+
+            ${main.links && main.links.length > 0 ? `
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.1);">
+                <h4 style="font-size: 1rem; color: #7c3aed; margin-bottom: 0.75rem;">Más información:</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    ${main.links.map(l => `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: #1f2937; text-decoration: underline; font-size: 0.9rem; font-weight: 600; display: block; word-break: break-all;">${l}</a>`).join('')}
+                </div>
+            </div>
+            ` : ''}
+
+            ${main.contacts && main.contacts.length > 0 ? `
+            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 12px;">
+                <h4 style="font-size: 1rem; color: #7c3aed; margin-bottom: 0.75rem;">Maneras de contacto:</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    ${main.contacts.map(c => `<span style="font-size: 0.9rem; color: #1f2937; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
+                </div>
+                ${main.contactEpigraph ? `<p style="font-size: 0.8rem; margin-top: 0.75rem; color: #4b5563; font-style: italic; word-break: break-word;">${main.contactEpigraph}</p>` : ''}
+            </div>
+            ` : ''}
         `;
 
         // Render Alternatives
@@ -2053,9 +2093,53 @@
                         ${alt.name}
                     </div>
                     <p class="alt-desc">${alt.desc}</p>
+                    
+                    ${alt.links && alt.links.length > 0 ? `
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <h5 style="font-size: 0.85rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Más información:</h5>
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            ${alt.links.map(l => `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: white; text-decoration: underline; font-size: 0.8rem; font-weight: 600; word-break: break-all;">${l}</a>`).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    ${alt.contacts && alt.contacts.length > 0 ? `
+                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                        <h5 style="font-size: 0.85rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Contacto:</h5>
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            ${alt.contacts.map(c => `<span style="font-size: 0.8rem; color: white; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
+                        </div>
+                        ${alt.contactEpigraph ? `<p style="font-size: 0.75rem; margin-top: 0.5rem; color: white; opacity: 0.8; font-style: italic; word-break: break-word;">${alt.contactEpigraph}</p>` : ''}
+                    </div>
+                    ` : ''}
                 </div>
             `;
         }).join('');
+
+        // Render Linea 0
+        const linea0 = financialLines.find(l => l.id === 'linea_0' || (l.name && l.name.includes("Linea 0")));
+        if (linea0) {
+            document.getElementById('linea0-container').innerHTML = `
+                <div class="alt-card" style="width: 100%; max-width: 100%; background: rgba(255, 255, 255, 0.25);">
+                    <div class="alt-title" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                        Información sobre todas las opciones de financiamiento disponible
+                    </div>
+                    
+                    ${linea0.links && linea0.links.length > 0 ? `
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        ${linea0.links.map(l => `
+                            <a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" 
+                               style="background: white; color: #7c3aed; padding: 1rem; border-radius: 12px; text-decoration: none; font-weight: 700; text-align: center; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.2s ease; word-break: break-all;"
+                               onmouseover="this.style.transform='translateY(-2px)'"
+                               onmouseout="this.style.transform='translateY(0)'">
+                                🔗 ${l}
+                            </a>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
     }
 
     function getStars(score) {
@@ -2254,9 +2338,8 @@
     function getCaseSummary(answers = userAnswers) {
         const labels = {
             purpose: "Propósito",
-            amount: "Monto",
-            percentage: "Porcentaje",
-            installments: "Cuotas",
+            amount: "Monto Solicitado",
+            category: "Categoría",
             activity: "Actividad Específica"
         };
         
@@ -2479,29 +2562,27 @@
             
             // Real-time counters from server for accuracy when not filtering
             if (currentAdminFilter.month === 'all' && currentAdminFilter.year === 'all') {
-                // Completions
+                // Completions - Non-blocking
                 const pathComp = 'stats_consultas_completadas';
-                try {
-                    const countSnapshot = await getCountFromServer(collection(db, pathComp));
+                getCountFromServer(collection(db, pathComp)).then(countSnapshot => {
                     if (compElem) compElem.innerText = countSnapshot.data().count;
-                } catch (err) {
+                }).catch(() => {
                     if (compElem) compElem.innerText = adminData.completions.length;
-                }
+                });
 
-                // Visits
+                // Visits - Non-blocking
                 const pathVisits = 'stats_visitas_log';
-                try {
-                    const countSnapshot = await getCountFromServer(collection(db, pathVisits));
+                getCountFromServer(collection(db, pathVisits)).then(countSnapshot => {
                     if (visitElem) visitElem.innerText = countSnapshot.data().count;
-                } catch (err) {
+                }).catch(() => {
                     if (visitElem) visitElem.innerText = adminData.visitas.length;
-                }
+                });
             } else {
                 if (compElem) compElem.innerText = filteredCompletions.length;
                 if (visitElem) visitElem.innerText = filteredVisitas.length;
             }
         } catch (e) {
-            console.error("Error refreshing Admin UI:", e);
+            console.error("Error refreshing admin UI:", e);
         }
     }
 
@@ -2514,11 +2595,25 @@
             const dateStr = item[dateField];
             if (!dateStr) return false;
             
-            const parts = dateStr.split(' ')[0].split('/');
-            if (parts.length < 3) return false;
+            let month, year;
+            if (dateStr.includes('-')) {
+                // ISO Format: YYYY-MM-DD
+                const parts = dateStr.split('T')[0].split('-');
+                if (parts.length >= 2) {
+                    year = parts[0];
+                    month = parseInt(parts[1]);
+                }
+            } else if (dateStr.includes('/')) {
+                // DD/MM/YYYY Format
+                const parts = dateStr.split(' ')[0].split('/');
+                if (parts.length >= 3) {
+                    month = parseInt(parts[1]);
+                    year = parts[2];
+                }
+            }
             
-            const month = parseInt(parts[1]);
-            const year = parts[2];
+            if (!month || !year) return false;
+            
             const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
             const itemMonth = monthNames[month - 1];
             
@@ -2532,6 +2627,7 @@
     function populateFilterDropdowns() {
         const monthSelect = document.getElementById('admin-filter-month');
         const yearSelect = document.getElementById('admin-filter-year');
+        if (!monthSelect || !yearSelect) return;
         
         const currentMonth = monthSelect.value;
         const currentYear = yearSelect.value;
@@ -2548,10 +2644,24 @@
         const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
         allDates.forEach(dateStr => {
-            const parts = dateStr.split(' ')[0].split('/');
-            if (parts.length >= 3) {
-                const month = parseInt(parts[1]);
-                const year = parts[2];
+            let month, year;
+            if (dateStr.includes('-')) {
+                // ISO Format: YYYY-MM-DD
+                const parts = dateStr.split('T')[0].split('-');
+                if (parts.length >= 2) {
+                    year = parts[0];
+                    month = parseInt(parts[1]);
+                }
+            } else if (dateStr.includes('/')) {
+                // DD/MM/YYYY Format
+                const parts = dateStr.split(' ')[0].split('/');
+                if (parts.length >= 3) {
+                    month = parseInt(parts[1]);
+                    year = parts[2];
+                }
+            }
+            
+            if (month && year) {
                 months.add(monthNames[month - 1]);
                 years.add(year);
             }
@@ -2641,8 +2751,10 @@
             }
         });
 
-        // Sort alphabetically by line name, but keep "No especificada" at the end
+        // Sort alphabetically by line name, but keep "Linea 0" at the very top and "No especificada" at the end
         const sortedLines = Object.entries(lineCounts).sort((a, b) => {
+            if (a[0].includes("Linea 0")) return -1;
+            if (b[0].includes("Linea 0")) return 1;
             if (a[0] === "No especificada") return 1;
             if (b[0] === "No especificada") return -1;
             return a[0].localeCompare(b[0]);
@@ -2652,26 +2764,32 @@
         linesList.innerHTML = sortedLines.length > 0 
             ? sortedLines.map(([name, count], index) => {
                 const lineObj = financialLines.find(l => l.name === name);
-                const isUnknown = !lineObj && name !== "No especificada";
-                
+                const isLinea0 = name.includes("Linea 0");
+                const displayIndex = isLinea0 ? 0 : (sortedLines.findIndex(l => l[0].includes("Linea 0")) !== -1 ? index : index + 1);
+
                 return `
-                <div style="padding: 1.25rem; background: rgba(255,255,255,0.1); border-radius: 16px; border-left: 5px solid #7c3aed; color: white; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative; ${isUnknown ? 'border: 1px dashed rgba(255,255,255,0.3);' : ''}">
+                <div style="padding: 1.25rem; background: rgba(255,255,255,0.1); border-radius: 16px; border-left: 5px solid ${isLinea0 ? '#4ade80' : '#7c3aed'}; color: white; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative; ${!lineObj && name !== "No especificada" ? 'border: 1px dashed rgba(255,255,255,0.3);' : ''}">
                     <div style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem;">
-                        ${lineObj ? `
-                            <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: white; border: none;" onclick="openLineModal('${lineObj.id}')">✏️</button>
-                            <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4);" onclick="deleteLine('${lineObj.id}')">🗑️</button>
+                        <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: white; border: none;" onclick="openLineModal('${lineObj ? lineObj.id : ''}', '${name !== "No especificada" ? name : ''}')">✏️</button>
+                        ${!isLinea0 ? `
+                        <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4);" onclick="deleteLine('${lineObj ? lineObj.id : ''}', '${name !== "No especificada" ? name : ''}')">🗑️</button>
                         ` : ''}
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem; padding-right: 4rem;">
-                        <span style="font-weight: 800; color: white; font-size: 1.1rem;">Línea ${index + 1}:</span>
+                        <span style="font-weight: 800; color: white; font-size: 1.1rem;">${isLinea0 ? 'Línea 0' : `Línea ${displayIndex}`}:</span>
                         <span style="font-weight: 600; font-size: 1.1rem;">
                             ${name}
-                            ${isUnknown ? '<span style="font-size: 0.6rem; background: rgba(255,255,255,0.1); padding: 2px 4px; border-radius: 4px; margin-left: 5px; font-weight: 400; opacity: 0.7;">(Línea antigua o eliminada)</span>' : ''}
                         </span>
                     </div>
+                    ${!isLinea0 ? `
                     <p style="font-size: 1rem; opacity: 0.9;">
                         "Esta línea se recomendó a <span style="font-weight: 800; color: #7c3aed; background: white; padding: 0.1rem 0.6rem; border-radius: 8px; margin: 0 0.2rem;">${count}</span> usuarios"
                     </p>
+                    ` : `
+                    <p style="font-size: 0.9rem; opacity: 0.8; font-style: italic;">
+                        Esta línea es informativa y no se incluye en las recomendaciones automáticas.
+                    </p>
+                    `}
                 </div>
                 `;
             }).join('')
@@ -2718,19 +2836,66 @@
     }
 
     let editingLineId = null;
-    function openLineModal(lineId = null) {
+
+    function addLinkRow(value = '') {
+        const container = document.getElementById('line-links-container');
+        const rows = container.querySelectorAll('.link-row');
+        const lineName = document.getElementById('line-name').value;
+        const isLinea0 = lineName.includes("Linea 0");
+        
+        if (!isLinea0 && rows.length >= 3) return;
+
+        const row = document.createElement('div');
+        row.className = 'link-row';
+        row.style = 'display: flex; gap: 0.5rem; align-items: center;';
+        row.innerHTML = `
+            <input type="text" class="comment-textarea dark-text" style="flex: 1; height: 36px; font-size: 0.8rem;" placeholder="https://..." value="${value}">
+            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem;" onclick="this.parentElement.remove()">&times;</button>
+        `;
+        container.appendChild(row);
+    }
+
+    function addContactRow(type = 'Email', value = '') {
+        const container = document.getElementById('contact-methods-container');
+        const rows = container.querySelectorAll('.contact-row');
+        const lineName = document.getElementById('line-name').value;
+        const isLinea0 = lineName.includes("Linea 0");
+        
+        if (!isLinea0 && rows.length >= 3) return;
+
+        const row = document.createElement('div');
+        row.className = 'contact-row';
+        row.style = 'display: flex; gap: 0.5rem; align-items: center;';
+        row.innerHTML = `
+            <select class="comment-textarea dark-text" style="width: 120px; height: 36px; font-size: 0.8rem; padding: 0 0.5rem;">
+                <option value="Email" ${type === 'Email' ? 'selected' : ''}>Email</option>
+                <option value="Celular" ${type === 'Celular' ? 'selected' : ''}>Celular</option>
+                <option value="Teléfono" ${type === 'Teléfono' ? 'selected' : ''}>Teléfono</option>
+                <option value="WhatsApp" ${type === 'WhatsApp' ? 'selected' : ''}>WhatsApp</option>
+                <option value="Web" ${type === 'Web' ? 'selected' : ''}>Web</option>
+            </select>
+            <input type="text" class="comment-textarea dark-text" style="flex: 1; height: 36px; font-size: 0.8rem;" placeholder="Valor..." value="${value}">
+            <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem;" onclick="this.parentElement.remove()">&times;</button>
+        `;
+        container.appendChild(row);
+    }
+
+    function openLineModal(lineId = null, fallbackName = '') {
         editingLineId = lineId;
         const modal = document.getElementById('line-modal-overlay');
         const title = document.getElementById('line-modal-title');
         
         // Reset fields
-        document.getElementById('line-name').value = '';
+        document.getElementById('line-name').value = fallbackName || '';
         document.getElementById('line-desc').value = '';
         document.getElementById('line-maxAmount').value = '';
         document.getElementById('line-term').value = '';
         document.getElementById('line-rate').value = '';
         document.getElementById('line-idealFor').value = '';
         document.getElementById('line-moreInfo').value = '';
+        document.getElementById('line-links-container').innerHTML = '';
+        document.getElementById('line-contact-epigraph').value = '';
+        document.getElementById('contact-methods-container').innerHTML = '';
 
         // Reset criteria checkboxes
         document.querySelectorAll('#line-modal-overlay input[type="checkbox"]').forEach(cb => cb.checked = false);
@@ -2746,6 +2911,15 @@
                 document.getElementById('line-rate').value = line.rate || '';
                 document.getElementById('line-idealFor').value = line.idealFor || '';
                 document.getElementById('line-moreInfo').value = line.moreInfo || '';
+                document.getElementById('line-contact-epigraph').value = line.contactEpigraph || '';
+                
+                if (line.links && Array.isArray(line.links)) {
+                    line.links.forEach(l => addLinkRow(l));
+                }
+
+                if (line.contacts && Array.isArray(line.contacts)) {
+                    line.contacts.forEach(c => addContactRow(c.type, c.value));
+                }
 
                 // Populate criteria checkboxes
                 if (line.criteria) {
@@ -2778,7 +2952,7 @@
         const termInput = document.getElementById('line-term');
         const rateInput = document.getElementById('line-rate');
         const idealForInput = document.getElementById('line-idealFor');
-        const moreInfoInput = document.getElementById('line-moreInfo');
+        const epigraphInput = document.getElementById('line-contact-epigraph');
 
         const name = nameInput.value.trim();
         const desc = descInput.value.trim();
@@ -2786,7 +2960,48 @@
         const term = termInput.value.trim();
         const rate = rateInput.value.trim();
         const idealFor = idealForInput.value.trim();
-        const moreInfo = moreInfoInput.value.trim();
+        const contactEpigraph = epigraphInput.value.trim();
+        
+        const isLinea0 = name.includes("Linea 0");
+
+        const links = Array.from(document.querySelectorAll('#line-links-container .link-row')).map(row => {
+            return row.querySelector('input').value.trim();
+        }).filter(Boolean);
+
+        const contacts = Array.from(document.querySelectorAll('#contact-methods-container .contact-row')).map(row => {
+            return {
+                type: row.querySelector('select').value,
+                value: row.querySelector('input').value.trim()
+            };
+        }).filter(c => c.value);
+
+        // Auto-generate moreInfo HTML
+        let moreInfo = `
+            <div style="margin-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 1rem;">
+                <p style="color: #1f2937;"><strong>Monto Máximo:</strong> ${maxAmount}</p>
+                <p style="color: #1f2937;"><strong>Plazo:</strong> ${term}</p>
+                <p style="color: #1f2937;"><strong>Tasa:</strong> ${rate}</p>
+                <div style="margin-top: 1rem; color: #1f2937;">
+                    <strong>Ideal para:</strong><br>
+                    ${idealFor}
+                </div>
+                ${links.length > 0 ? `
+                <div style="margin-top: 1rem;">
+                    <strong style="color: #1f2937;">Más información:</strong><br>
+                    ${links.map(l => `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: #1f2937; text-decoration: underline; display: block; margin-top: 0.25rem; font-weight: 600;">${l}</a>`).join('')}
+                </div>
+                ` : ''}
+                ${contacts.length > 0 ? `
+                <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(0,0,0,0.05); border-radius: 8px;">
+                    <strong style="color: #1f2937;">Contacto:</strong><br>
+                    <div style="display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.5rem;">
+                        ${contacts.map(c => `<span style="color: #1f2937;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
+                    </div>
+                    ${contactEpigraph ? `<p style="font-size: 0.8rem; margin-top: 0.5rem; color: #4b5563; font-style: italic;">${contactEpigraph}</p>` : ''}
+                </div>
+                ` : ''}
+            </div>
+        `;
 
         // Reset borders
         const inputs = [nameInput, descInput, maxAmountInput, termInput, rateInput, idealForInput];
@@ -2807,22 +3022,22 @@
             descInput.style.borderColor = '#ef4444';
             hasError = true;
             errorMessage = "La descripción es obligatoria.";
-        } else if (!maxAmount) {
+        } else if (!isLinea0 && !maxAmount) {
             maxAmountInput.style.borderColor = '#ef4444';
             hasError = true;
             errorMessage = "El monto máximo es obligatorio.";
-        } else if (!term) {
+        } else if (!isLinea0 && !term) {
             termInput.style.borderColor = '#ef4444';
             hasError = true;
             errorMessage = "El plazo es obligatorio.";
-        } else if (!rate) {
+        } else if (!isLinea0 && !rate) {
             rateInput.style.borderColor = '#ef4444';
             hasError = true;
             errorMessage = "La tasa es obligatoria.";
         }
 
         // Format checks (Reasonable format)
-        if (!hasError) {
+        if (!hasError && !isLinea0) {
             // Check if maxAmount has at least one digit
             if (!/\d/.test(maxAmount)) {
                 maxAmountInput.style.borderColor = '#ef4444';
@@ -2852,8 +3067,7 @@
         const criteria = {
             purpose: Array.from(document.querySelectorAll('#criteria-purpose input:checked')).map(cb => cb.value),
             amount: Array.from(document.querySelectorAll('#criteria-amount input:checked')).map(cb => cb.value),
-            installments: Array.from(document.querySelectorAll('#criteria-installments input:checked')).map(cb => cb.value),
-            percentage: Array.from(document.querySelectorAll('#criteria-percentage input:checked')).map(cb => cb.value)
+            category: Array.from(document.querySelectorAll('#criteria-category input:checked')).map(cb => cb.value)
         };
 
         const lineId = editingLineId || `line_${Date.now()}`;
@@ -2867,6 +3081,9 @@
             rate,
             idealFor,
             moreInfo,
+            links,
+            contacts,
+            contactEpigraph,
             criteria
         };
 
@@ -2884,7 +3101,8 @@
 
             closeLineModal();
             refreshAdminUI();
-            showAlert('Éxito', 'Línea guardada correctamente.');
+            // Use a non-blocking notification instead of showAlert for better flow
+            console.log('Línea guardada correctamente.');
         } catch (e) {
             handleFirestoreError(e, OperationType.WRITE, path);
             console.error("Error saving line:", e);
@@ -2892,20 +3110,35 @@
         }
     }
 
-    async function deleteLine(lineId) {
-        if (!lineId) return;
-        if (!confirm('¿Estás seguro de que deseas eliminar esta línea? Esta acción no se puede deshacer.')) return;
+    async function deleteLine(lineId, lineName = '') {
+        if (!lineId && !lineName) return;
+        
+        // Prevent deleting Linea 0
+        if (lineName && lineName.includes("Linea 0")) {
+            alert("La Línea 0 es una línea especial del sistema y no puede ser eliminada.");
+            return;
+        }
 
-        const path = `config_financial_lines/${lineId}`;
-        try {
-            await deleteDoc(doc(db, 'config_financial_lines', lineId));
-            financialLines = financialLines.filter(l => l.id !== lineId);
-            refreshAdminUI();
-            showAlert('Éxito', 'Línea eliminada correctamente.');
-        } catch (e) {
-            handleFirestoreError(e, OperationType.DELETE, path);
-            console.error("Error deleting line:", e);
-            alert('Error al eliminar la línea.');
+        if (!confirm(`¿Estás seguro de que deseas eliminar ${lineName ? `la línea "${lineName}"` : 'esta línea'}? Esta acción no se puede deshacer.`)) return;
+
+        if (lineId) {
+            const path = `config_financial_lines/${lineId}`;
+            try {
+                await deleteDoc(doc(db, 'config_financial_lines', lineId));
+                financialLines = financialLines.filter(l => l.id !== lineId);
+                refreshAdminUI();
+                // Use a non-blocking notification instead of showAlert for better flow
+                console.log('Línea eliminada correctamente.');
+            } catch (e) {
+                handleFirestoreError(e, OperationType.DELETE, path);
+                console.error("Error deleting line:", e);
+                alert('Error al eliminar la línea.');
+            }
+        } else if (lineName) {
+            // If it's an "old" line without ID, we can't delete a config, 
+            // but we can offer to clear its stats if desired.
+            // For now, let's just show a message or do nothing if no ID exists.
+            alert("Esta línea no tiene una configuración activa para eliminar, pero puedes ocultarla de las estadísticas borrando los datos históricos.");
         }
     }
 
@@ -2958,7 +3191,7 @@
     function toggleAllComments() {
         showAllComments = !showAllComments;
         document.getElementById('toggle-all-comments').innerText = showAllComments ? 'Ver solo últimos 5' : 'Ver historial completo';
-        updateCommentsList(filterDataByMonth(adminData.feedback, 'date'));
+        updateCommentsList(filterDataByDate(adminData.feedback, 'date'));
     }
 
     function updateCommentsList(feedback) {
@@ -3210,7 +3443,7 @@
     function showMoreInfo(id) {
         const line = financialLines.find(l => l.id === id);
         document.getElementById('modal-title').innerText = line.name;
-        document.getElementById('modal-body').innerText = line.moreInfo;
+        document.getElementById('modal-body').innerHTML = line.moreInfo;
         document.getElementById('modal-overlay').style.display = 'flex';
     }
 
@@ -3281,6 +3514,8 @@
     window.closeLineModal = closeLineModal;
     window.saveLine = saveLine;
     window.deleteLine = deleteLine;
+    window.addContactRow = addContactRow;
+    window.addLinkRow = addLinkRow;
 </script>
 
 

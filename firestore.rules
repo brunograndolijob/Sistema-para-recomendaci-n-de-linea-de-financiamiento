@@ -123,9 +123,11 @@ service cloud.firestore {
     }
 
     // Financial Lines Configuration: Public read, Admin write
+    // WARNING: Public write access is enabled as per user request to avoid Google Login.
+    // This makes the collection vulnerable to unauthorized modifications if the collection name is known.
     match /config_financial_lines/{lineId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if true;
     }
     
     // Test connection
