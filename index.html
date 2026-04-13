@@ -1052,10 +1052,9 @@
 
     <!-- Welcome Screen -->
     <section id="welcome-screen" class="screen active">
-        <h1 style="font-size: 3rem; margin-bottom: 0.5rem; text-transform: uppercase;">Lineas de financiamiento para la Transición Energética</h1>
-        <h2 style="font-size: 1.5rem; font-weight: 400; margin-bottom: 2.5rem; opacity: 0.9; letter-spacing: 0.1em;">Busca impulsar tu negocio</h2>
-        <p class="subtitle" style="color: white; font-weight: 500; line-height: 1.6; max-width: 700px;">
-            Descubrí la linea de financiamiento ideal para tu empresa. Respondé unas breves preguntas y nuestro sistema te orientará hacia las mejores opciones que ofrece la Secretaría de Energía para potenciar tu crecimiento, innovación y sustentabilidad.
+        <h1 style="font-size: 2.2rem; margin-bottom: 1.5rem; text-transform: uppercase;">Líneas de financiamiento para la Transición Energética</h1>
+        <p class="subtitle" style="color: white; font-size: 1.7rem; font-weight: 400; line-height: 1.4; max-width: 800px; opacity: 0.9; letter-spacing: 0.05em; margin-bottom: 2.5rem;">
+            Respondé unas preguntas y encontrá la línea de financiamiento ideal para aumentar la eficiencia energética o incorporar energías renovables a tu emprendimiento productivo
         </p>
         <button class="btn btn-primary" style="margin-top: 1rem;" onclick="nextStep(1)">Comenzar simulación →</button>
     </section>
@@ -1063,16 +1062,19 @@
     <!-- Form Step 1 -->
     <section id="step-1" class="screen">
         <div class="question-group">
-            <label class="question-title">1. ¿Que queres financiar?</label>
+            <label class="question-title">1. ¿Qué querés financiar?</label>
             <div class="options-grid" data-question="purpose">
                 <div class="option-card" data-value="Energías Renovables">Energías Renovables</div>
-                <div class="option-card" data-value="Eficiencia energética">Eficiencia energética</div>
-                <div class="option-card" data-value="Triple Impacto">Triple Impacto</div>
+                <div class="option-card" data-value="Eficiencia Energética">Eficiencia Energética</div>
+                <div class="option-card" data-value="Triple Impacto" style="flex-direction: column;">
+                    <div>Triple Impacto</div>
+                    <span style="display: block; font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem; font-weight: 400;">Aporta valor en tres áreas: social, económica y ambiental.</span>
+                </div>
             </div>
         </div>
 
         <div id="question-2-container" class="question-group" style="display: none;">
-            <label class="question-title">2. ¿Que tipo de proyecto queres financiar?</label>
+            <label class="question-title">2. ¿Qué tipo de proyecto querés financiar?</label>
             <div id="options-grid-q2" class="options-grid" data-question="activity">
                 <!-- Dynamically populated -->
             </div>
@@ -1087,13 +1089,13 @@
             <label class="question-title">3. Categoría del solicitante</label>
             <div class="options-grid" data-question="category">
                 <div class="option-card" data-value="Monotributista o Responsable Inscripto">Monotributista o Responsable Inscripto</div>
-                <div class="option-card" data-value="MiPyme (Con certificado)">MiPyme (Con certificado)</div>
+                <div class="option-card" data-value="Pequeña y mediana empresa (PyME), con certificado MyPyME vigente">Pequeña y mediana empresa (PyME), con certificado MyPyME vigente</div>
                 <div class="option-card" data-value="Cooperativa">Cooperativa</div>
             </div>
         </div>
 
         <div class="question-group">
-            <label class="question-title">4. ¿Que monto de dinero desea solicitar?</label>
+            <label class="question-title">4. ¿Qué monto de dinero desea solicitar?</label>
             <div class="options-grid" data-question="amount">
                 <div class="option-card" data-value="Hasta 10 Millones">Hasta 10 Millones</div>
                 <div class="option-card" data-value="Hasta 100 Millones">Hasta 100 Millones</div>
@@ -1109,10 +1111,10 @@
     <section id="results-screen" class="screen">
         <div class="results-header" style="text-align: center; margin-bottom: 3rem;">
             <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">¡Análisis Completo!</h2>
-            <p class="subtitle" style="color: white;">Basado en tu perfil industrial, estas son las mejores opciones de la Secretaria de Energía</p>
+            <p class="subtitle" style="color: white;">En base a tu perfil industrial, te brindamos la mejor opción de financiamiento</p>
         </div>
 
-        <h3 class="secondary-title">Tu línea recomendada</h3>
+        <h3 class="secondary-title" style="text-align: center; font-size: 2.2rem; color: #7c3aed; background: #ede9fe; padding: 1.5rem; border-radius: 16px; margin-bottom: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Línea recomendada</h3>
         <div id="main-recommendation" class="main-card">
             <!-- Injected by JS -->
         </div>
@@ -1500,7 +1502,7 @@
                         <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Propósito del Proyecto</label>
                         <div id="criteria-purpose" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Energías Renovables"> Energías Renovables</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Eficiencia energética"> Eficiencia energética</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Eficiencia Energética"> Eficiencia Energética</label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Triple Impacto"> Triple Impacto</label>
                         </div>
                     </div>
@@ -1509,7 +1511,7 @@
                         <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Categoría del Solicitante</label>
                         <div id="criteria-category" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Monotributista o Responsable Inscripto"> Monotributista o Responsable Inscripto</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="MiPyme (Con certificado)"> MiPyme (Con certificado)</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Pequeña y mediana empresa (PyME), con certificado MyPyME vigente"> Pequeña y mediana empresa (PyME), con certificado MyPyME vigente</label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Cooperativa"> Cooperativa</label>
                         </div>
                     </div>
@@ -1539,7 +1541,7 @@
                 </div>
 
                 <div class="question-group" style="margin-bottom: 0;">
-                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Maneras de contacto (Máx. 3)</label>
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Canales de contacto (Máx. 3)</label>
                     <div id="contact-methods-container" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem;">
                         <!-- Contact rows will be added here -->
                     </div>
@@ -1666,9 +1668,9 @@
                 - Eficiencia energética industrial: Sustitución de maquinaria, iluminación LED, motores eficientes y certificaciones energéticas.
             `,
             criteria: {
-                purpose: ['Energías Renovables', 'Eficiencia energética'],
+                purpose: ['Energías Renovables', 'Eficiencia Energética'],
                 amount: ['Hasta 10 Millones', 'Hasta 100 Millones'],
-                category: ['Monotributista o Responsable Inscripto', 'MiPyme (Con certificado)', 'Cooperativa']
+                category: ['Monotributista o Responsable Inscripto', 'Pequeña y mediana empresa (PyME), con certificado MyPyME vigente', 'Cooperativa']
             }
         },
         {
@@ -1688,9 +1690,9 @@
                 - Adquisición de transporte sostenible (bienes nacionales o importados).
             `,
             criteria: {
-                purpose: ['Eficiencia energética'],
+                purpose: ['Eficiencia Energética'],
                 amount: ['Hasta 10 Millones', 'Hasta 100 Millones'],
-                category: ['MiPyme (Con certificado)']
+                category: ['Pequeña y mediana empresa (PyME), con certificado MyPyME vigente']
             }
         },
         {
@@ -1709,9 +1711,9 @@
                 - Eficiencia Energética: Infraestructura, tecnología o maquinaria para mejora de la eficiencia energética (con certificación o aval de organismo competente).
             `,
             criteria: {
-                purpose: ['Energías Renovables', 'Eficiencia energética'],
+                purpose: ['Energías Renovables', 'Eficiencia Energética'],
                 amount: ['Hasta 10 Millones', 'Hasta 100 Millones', 'Hasta 200 Millones'],
-                category: ['Monotributista o Responsable Inscripto', 'MiPyme (Con certificado)', 'Cooperativa']
+                category: ['Monotributista o Responsable Inscripto', 'Pequeña y mediana empresa (PyME), con certificado MyPyME vigente', 'Cooperativa']
             }
         }
     ];
@@ -1844,37 +1846,45 @@
         const grid = document.getElementById('options-grid-q2');
         
         const activities = {
-            'Eficiencia energética': [
-                'Generación solar térmica (Termo tanques, radiadores solares)',
-                'Generación de BíoGas (Bíodigestores)',
-                'Energía Eólica (Aerogeneradores)',
-                'Generación de energía eléctrica a partir de BíoGas',
-                'Recambio de maquinaria productiva (Motores, Maquinas, Transporte , Calderas, Etc)',
-                'Readecuación de instalaciones para reducir consumo energético (Aislación, Recambio de conducción, Sistemas de control inteligente)',
-                'Recambio de instalaciones de acondicionamiento de aire ( Equipos de calefacción, refrigeración, ventilación, Etc',
-                'Recambio de sistemas de iluminación (Luminaria LED, Etc)',
-                'Otra medida que reduzca consumo energético o aumente producción utilizando mismo nivel de consumo'
+            'Eficiencia Energética': [
+                { text: 'Generación solar térmica (termotanques, radiadores solares, etc.)' },
+                { text: 'Generación de biogás (Biodigestores)' },
+                { text: 'Energía Eólica (Aerogeneradores)' },
+                { text: 'Generación de energía eléctrica a partir de biogás' },
+                { text: 'Recambio de maquinarias productivas (Motores, máquinas, transporte, calderas, etc.)' },
+                { text: 'Readecuación de instalaciones para reducir consumo energético (Aislación, Recambio de conducción, Sistemas de control inteligente)' },
+                { text: 'Recambio de instalaciones de acondicionamiento de aire (Equipos de calefacción, refrigeración, ventilación, etc.)' },
+                { text: 'Recambio de sistemas de iluminación (Luminaria, LED, etc.)' },
+                { text: 'Otra medida que reduzca consumo energético o aumente producción utilizando mismo nivel de consumo' }
             ],
             'Energías Renovables': [
-                'Prosumidores',
-                'Sistemas renovables OFF-Grid',
-                'Sistemas de BíoGas',
-                'Sistema de bombeo y riego solar',
-                'Otro tipo de instalación que incorpore Energías Renovables'
+                { text: 'Prosumidores', legend: 'Generás tu propia energía con paneles solares y reducís tu factura' },
+                { text: 'Sistemas renovables off-grid', legend: 'Sistema eléctrico independiente, sin conexión a la red' },
+                { text: 'Sistemas de biogás' },
+                { text: 'Sistema de bombeo y riego solar', legend: 'Extrae y bombea agua usando energía del sol' },
+                { text: 'Otro tipo de instalación que incorpore Energías Renovables' }
             ],
             'Triple Impacto': [
-                'Inversiones que impliquen simultáneamente: RENTABILIDAD ECONÓMICA (sostenible en el tiempo) con IMPACTO SOCIAL POSITIVO (mejorando la calidad de vida de colaboradores y la comunidad, incluyendo empleos dignos, equidad e inclusión) e IMPACTO AMBIENTAL POSITIVO (reduciendo la huella ambiental, utilizando energías renovables, aplicando economía circular, regenerando el entorno, etc.)'
+                { text: 'Inversiones que impliquen simultáneamente: RENTABILIDAD ECONÓMICA (sostenible en el tiempo) con IMPACTO SOCIAL POSITIVO (mejorando la calidad de vida de colaboradores y la comunidad, incluyendo empleos dignos, equidad e inclusión) e IMPACTO AMBIENTAL POSITIVO (reduciendo la huella ambiental, utilizando energías renovables, aplicando economía circular, regenerando el entorno, etc.)' }
             ]
         };
 
         const currentActivities = activities[purposeValue];
         
         if (currentActivities) {
-            grid.innerHTML = currentActivities.map(activity => `
-                <div class="option-card ${purposeValue === 'Triple Impacto' ? 'full-width' : ''}" data-value="${activity}" style="${purposeValue === 'Triple Impacto' ? 'grid-column: 1 / -1; font-size: 0.9rem; line-height: 1.5; padding: 2rem;' : ''}">
-                    ${activity}
-                </div>
-            `).join('');
+            grid.innerHTML = currentActivities.map(activityObj => {
+                const activity = activityObj.text;
+                const legend = activityObj.legend ? `<span style="display: block; font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem; font-weight: 400;">${activityObj.legend}</span>` : '';
+                
+                return `
+                    <div class="option-card ${purposeValue === 'Triple Impacto' ? 'full-width' : ''}" 
+                         data-value="${activity}" 
+                         style="flex-direction: column; ${purposeValue === 'Triple Impacto' ? 'grid-column: 1 / -1; font-size: 0.9rem; line-height: 1.5; padding: 2rem;' : ''}">
+                        <div>${activity}</div>
+                        ${legend}
+                    </div>
+                `;
+            }).join('');
             
             // Re-attach listeners to new cards
             grid.querySelectorAll('.option-card').forEach(card => {
@@ -2039,7 +2049,6 @@
     function renderResults(main, alts, reasoning) {
         // Render Main
         document.getElementById('main-recommendation').innerHTML = `
-            <span class="badge">Recomendación Inteligente</span>
             <h4 class="line-title">${main.name}</h4>
             <p class="line-desc">${main.desc}</p>
             
@@ -2049,7 +2058,7 @@
                     <strong>${main.maxAmount}</strong>
                 </div>
                 <div class="detail-item">
-                    <span>Plazo Típico</span>
+                    <span>Plazo de repago</span>
                     <strong>${main.term}</strong>
                 </div>
                 <div class="detail-item">
@@ -2076,7 +2085,7 @@
 
             ${main.contacts && main.contacts.length > 0 ? `
             <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 12px;">
-                <h4 style="font-size: 1rem; color: #7c3aed; margin-bottom: 0.75rem;">Maneras de contacto:</h4>
+                <h4 style="font-size: 1rem; color: #7c3aed; margin-bottom: 0.75rem;">Canales de contacto:</h4>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                     ${main.contacts.map(c => `<span style="font-size: 0.9rem; color: #1f2937; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
                 </div>
