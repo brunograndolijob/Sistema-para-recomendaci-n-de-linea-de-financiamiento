@@ -167,12 +167,15 @@
             text-align: center;
         }
 
+        h1, h2, h3, h4, h5, h6 {
+            line-height: 1.1 !important;
+        }
+
         h1 {
             font-size: 2.5rem;
             font-weight: 800;
             margin-bottom: 1rem;
             color: var(--text-main);
-            line-height: 1.2;
         }
 
         .subtitle {
@@ -1017,32 +1020,7 @@
     <header>
         <div class="logo">
             <div class="santa-fe-brand">
-                <svg class="brand-icon" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 15C25 5 45 25 65 15C85 5 95 15 95 15" stroke="url(#grad1)" stroke-width="8" stroke-linecap="round"/>
-                    <path d="M10 30C25 20 45 40 65 30C85 20 95 30 95 30" stroke="url(#grad2)" stroke-width="8" stroke-linecap="round"/>
-                    <path d="M10 45C25 35 45 55 65 45C85 35 95 45 95 45" stroke="url(#grad3)" stroke-width="8" stroke-linecap="round"/>
-                    <defs>
-                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
-                        </linearGradient>
-                        <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
-                        </linearGradient>
-                        <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-                <div class="brand-text-main">Santa Fe</div>
-                <div class="brand-text-sub">PROVINCIA</div>
-            </div>
-            <div class="brand-divider"></div>
-            <div class="ministerio-brand">
-                <div>Ministerio de<br>Desarrollo Productivo</div>
-                <div class="dept">Secretaría de Energía</div>
+                <img src="logo_santafe_provincia.png" alt="Santa Fe Provincia" style="height: 110px; width: auto; filter: brightness(0) invert(1);">
             </div>
         </div>
         <div class="progress-container" id="progress-container">
@@ -1053,7 +1031,7 @@
     <!-- Welcome Screen -->
     <section id="welcome-screen" class="screen active">
         <h1 style="font-size: 2.2rem; margin-bottom: 1.5rem; text-transform: uppercase;">Líneas de financiamiento para la Transición Energética</h1>
-        <p class="subtitle" style="color: white; font-size: 1.7rem; font-weight: 400; line-height: 1.4; max-width: 800px; opacity: 0.9; letter-spacing: 0.05em; margin-bottom: 2.5rem;">
+        <p class="subtitle" style="color: white; font-size: 1.4rem; font-weight: 400; line-height: normal; max-width: 800px; opacity: 0.9; letter-spacing: 0.05em; margin-bottom: 2.5rem;">
             Respondé unas preguntas y encontrá la línea de financiamiento ideal para aumentar la eficiencia energética o incorporar energías renovables a tu emprendimiento productivo
         </p>
         <button class="btn btn-primary" style="margin-top: 1rem;" onclick="nextStep(1)">Comenzar simulación →</button>
@@ -1089,7 +1067,7 @@
             <label class="question-title">3. Categoría del solicitante</label>
             <div class="options-grid" data-question="category">
                 <div class="option-card" data-value="Monotributista o Responsable Inscripto">Monotributista o Responsable Inscripto</div>
-                <div class="option-card" data-value="Pequeña y mediana empresa (PyME), con certificado MyPyME vigente">Pequeña y mediana empresa (PyME), con certificado MyPyME vigente</div>
+                <div class="option-card" data-value="Pequeña y mediana empresa (PyME), con certificado MiPyME vigente">Pequeña y mediana empresa (PyME), con certificado MiPyME vigente</div>
                 <div class="option-card" data-value="Cooperativa">Cooperativa</div>
             </div>
         </div>
@@ -1111,10 +1089,9 @@
     <section id="results-screen" class="screen">
         <div class="results-header" style="text-align: center; margin-bottom: 3rem;">
             <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">¡Análisis Completo!</h2>
-            <p class="subtitle" style="color: white;">En base a tu perfil industrial, te brindamos la mejor opción de financiamiento</p>
         </div>
 
-        <h3 class="secondary-title" style="text-align: center; font-size: 2.2rem; color: #7c3aed; background: #ede9fe; padding: 1.5rem; border-radius: 16px; margin-bottom: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Línea recomendada</h3>
+        <h3 class="secondary-title" style="text-align: center; font-size: 2.2rem; color: #7c3aed; background: #ede9fe; padding: 1.5rem; border-radius: 16px; margin-bottom: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Línea que más se adapta a tu perfil</h3>
         <div id="main-recommendation" class="main-card">
             <!-- Injected by JS -->
         </div>
@@ -1511,7 +1488,7 @@
                         <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Categoría del Solicitante</label>
                         <div id="criteria-category" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Monotributista o Responsable Inscripto"> Monotributista o Responsable Inscripto</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Pequeña y mediana empresa (PyME), con certificado MyPyME vigente"> Pequeña y mediana empresa (PyME), con certificado MyPyME vigente</label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Pequeña y mediana empresa (PyME), con certificado MiPyME vigente"> Pequeña y mediana empresa (PyME), con certificado MiPyME vigente</label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Cooperativa"> Cooperativa</label>
                         </div>
                     </div>
@@ -1670,7 +1647,7 @@
             criteria: {
                 purpose: ['Energías Renovables', 'Eficiencia Energética'],
                 amount: ['Hasta 10 Millones', 'Hasta 100 Millones'],
-                category: ['Monotributista o Responsable Inscripto', 'Pequeña y mediana empresa (PyME), con certificado MyPyME vigente', 'Cooperativa']
+                category: ['Monotributista o Responsable Inscripto', 'Pequeña y mediana empresa (PyME), con certificado MiPyME vigente', 'Cooperativa']
             }
         },
         {
@@ -1692,7 +1669,7 @@
             criteria: {
                 purpose: ['Eficiencia Energética'],
                 amount: ['Hasta 10 Millones', 'Hasta 100 Millones'],
-                category: ['Pequeña y mediana empresa (PyME), con certificado MyPyME vigente']
+                category: ['Pequeña y mediana empresa (PyME), con certificado MiPyME vigente']
             }
         },
         {
@@ -1713,7 +1690,7 @@
             criteria: {
                 purpose: ['Energías Renovables', 'Eficiencia Energética'],
                 amount: ['Hasta 10 Millones', 'Hasta 100 Millones', 'Hasta 200 Millones'],
-                category: ['Monotributista o Responsable Inscripto', 'Pequeña y mediana empresa (PyME), con certificado MyPyME vigente', 'Cooperativa']
+                category: ['Monotributista o Responsable Inscripto', 'Pequeña y mediana empresa (PyME), con certificado MiPyME vigente', 'Cooperativa']
             }
         }
     ];
@@ -1847,10 +1824,6 @@
         
         const activities = {
             'Eficiencia Energética': [
-                { text: 'Generación solar térmica (termotanques, radiadores solares, etc.)' },
-                { text: 'Generación de biogás (Biodigestores)' },
-                { text: 'Energía Eólica (Aerogeneradores)' },
-                { text: 'Generación de energía eléctrica a partir de biogás' },
                 { text: 'Recambio de maquinarias productivas (Motores, máquinas, transporte, calderas, etc.)' },
                 { text: 'Readecuación de instalaciones para reducir consumo energético (Aislación, Recambio de conducción, Sistemas de control inteligente)' },
                 { text: 'Recambio de instalaciones de acondicionamiento de aire (Equipos de calefacción, refrigeración, ventilación, etc.)' },
@@ -1860,7 +1833,7 @@
             'Energías Renovables': [
                 { text: 'Prosumidores', legend: 'Generás tu propia energía con paneles solares y reducís tu factura' },
                 { text: 'Sistemas renovables off-grid', legend: 'Sistema eléctrico independiente, sin conexión a la red' },
-                { text: 'Sistemas de biogás' },
+                { text: 'Sistemas de biogás', legend: 'Generación de energía y/o gas a partir de biodigestores' },
                 { text: 'Sistema de bombeo y riego solar', legend: 'Extrae y bombea agua usando energía del sol' },
                 { text: 'Otro tipo de instalación que incorpore Energías Renovables' }
             ],
@@ -2067,18 +2040,17 @@
                 </div>
             </div>
 
-            <div class="why-ideal">
-                <h4 style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 1.2rem;">🧠</span> ANÁLISIS DE LA IA
-                </h4>
-                <p>${reasoning}</p>
-            </div>
+
 
             ${main.links && main.links.length > 0 ? `
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.1);">
                 <h4 style="font-size: 1rem; color: #7c3aed; margin-bottom: 0.75rem;">Más información:</h4>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    ${main.links.map(l => `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: #1f2937; text-decoration: underline; font-size: 0.9rem; font-weight: 600; display: block; word-break: break-all;">${l}</a>`).join('')}
+                    ${main.links.map(l => {
+                        const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
+                        const linkText = isDriveLink ? 'Líneas de financiamiento' : l;
+                        return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: #1f2937; text-decoration: underline; font-size: 0.9rem; font-weight: 600; display: block; word-break: break-all;">${linkText}</a>`;
+                    }).join('')}
                 </div>
             </div>
             ` : ''}
@@ -2107,7 +2079,11 @@
                     <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
                         <h5 style="font-size: 0.85rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Más información:</h5>
                         <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                            ${alt.links.map(l => `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: white; text-decoration: underline; font-size: 0.8rem; font-weight: 600; word-break: break-all;">${l}</a>`).join('')}
+                            ${alt.links.map(l => {
+                                const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
+                                const linkText = isDriveLink ? 'Líneas de financiamiento' : l;
+                                return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: white; text-decoration: underline; font-size: 0.8rem; font-weight: 600; word-break: break-all;">${linkText}</a>`;
+                            }).join('')}
                         </div>
                     </div>
                     ` : ''}
@@ -2136,14 +2112,18 @@
                     
                     ${linea0.links && linea0.links.length > 0 ? `
                     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        ${linea0.links.map(l => `
-                            <a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" 
-                               style="background: white; color: #7c3aed; padding: 1rem; border-radius: 12px; text-decoration: none; font-weight: 700; text-align: center; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.2s ease; word-break: break-all;"
-                               onmouseover="this.style.transform='translateY(-2px)'"
-                               onmouseout="this.style.transform='translateY(0)'">
-                                🔗 ${l}
-                            </a>
-                        `).join('')}
+                        ${linea0.links.map(l => {
+                            const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
+                            const linkText = isDriveLink ? 'Líneas de financiamiento' : l;
+                            return `
+                                <a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" 
+                                   style="background: white; color: #7c3aed; padding: 1rem; border-radius: 12px; text-decoration: none; font-weight: 700; text-align: center; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.2s ease; word-break: break-all;"
+                                   onmouseover="this.style.transform='translateY(-2px)'"
+                                   onmouseout="this.style.transform='translateY(0)'">
+                                    🔗 ${linkText}
+                                </a>
+                            `;
+                        }).join('')}
                     </div>
                     ` : ''}
                 </div>
