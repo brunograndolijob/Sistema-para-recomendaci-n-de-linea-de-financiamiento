@@ -1110,7 +1110,7 @@
             <!-- Injected by JS -->
         </div>
 
-        <h3 class="secondary-title">Otras opciones que también podrían interesarte</h3>
+        <h3 id="alternatives-title" class="secondary-title">Otras opciones que también podrían interesarte</h3>
         <div id="alternatives-container" class="alternatives-grid">
             <!-- Injected by JS -->
         </div>
@@ -1853,8 +1853,8 @@
             q3Container.style.display = 'block';
         }
 
-        // Logic for Category options (Hide Monotributista for Triple Impacto OR if hasMiPyME === 'Si')
-        if (purpose === 'Triple Impacto' || hasMiPyME === 'Si') {
+        // Logic for Category options (Hide Monotributista only for Triple Impacto)
+        if (purpose === 'Triple Impacto') {
             optionMonotributista.style.display = 'none';
             if (userAnswers['category'] === 'Monotributista o Responsable Inscripto') {
                 optionMonotributista.classList.remove('selected');
@@ -1875,19 +1875,8 @@
             option300.style.display = 'flex';
         }
 
-        // Logic for 200M (Hide if Renovables/Eficiencia + MiPyME: Si + Monotributista)
-        const isRenovablesOrEficiencia = (purpose === 'Energías Renovables' || purpose === 'Eficiencia Energética');
-        const isMonotributista = (category === 'Monotributista o Responsable Inscripto');
-        
-        if (isRenovablesOrEficiencia && hasMiPyME === 'Si' && isMonotributista) {
-            option200.style.display = 'none';
-            if (userAnswers['amount'] === 'Hasta 200 Millones') {
-                option200.classList.remove('selected');
-                delete userAnswers['amount'];
-            }
-        } else {
-            option200.style.display = 'flex';
-        }
+        // Logic for 200M
+        option200.style.display = 'flex';
     }
 
     function updateQuestion2(purposeValue) {
@@ -2016,11 +2005,27 @@
 
         const { purpose, hasMiPyME, category } = userAnswers;
 
-        if (purpose === 'Energías Renovables' || purpose === 'Eficiencia Energética') {
+        if (purpose === 'Triple Impacto') {
+            mainLine = financialLines.find(l => l.criteria && l.criteria.purpose && l.criteria.purpose.includes('Triple Impacto'));
+            if (!mainLine) {
+                // Fallback if not found by criteria
+                mainLine = financialLines.find(l => l.name.toLowerCase().includes('triple impacto'));
+            }
+            altLines = [];
+            reasoning = "Para proyectos de Triple Impacto, esta es la línea de financiamiento específica diseñada para potenciar su impacto social, ambiental y económico.";
+        } else if (purpose === 'Energías Renovables' || purpose === 'Eficiencia Energética') {
             if (hasMiPyME === 'Si') {
                 if (category === 'Monotributista o Responsable Inscripto') {
-                    mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
-                    reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME, la línea del Banco Municipal de Rosario (BMR) es la opción recomendada por sus tasas bonificadas.";
+                    if (userAnswers.amount === 'Hasta 100 Millones') {
+                        mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
+                        reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME y un monto de hasta 100 millones, la línea del Banco Municipal de Rosario (BMR) es la opción recomendada.";
+                    } else if (userAnswers.amount === 'Hasta 200 Millones') {
+                        mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi');
+                        reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME y un monto de hasta 200 millones, la línea de Financiamiento Verde del CFI es la opción recomendada.";
+                    } else {
+                        mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
+                        reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME, la línea del Banco Municipal de Rosario (BMR) es la opción recomendada por sus tasas bonificadas.";
+                    }
                 } else if (category === 'Pequeña y mediana empresa (PyME)' || category === 'Cooperativa') {
                     if (userAnswers.amount === 'Hasta 100 Millones') {
                         mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
@@ -2125,6 +2130,23 @@
     }
 
     function renderResults(main, alts, reasoning) {
+        // Show/Hide alternatives title
+        const altTitle = document.getElementById('alternatives-title');
+        const altContainer = document.getElementById('alternatives-container');
+        
+        // Force empty alternatives for Triple Impacto
+        const finalAlts = userAnswers.purpose === 'Triple Impacto' ? [] : alts;
+
+        if (altTitle && altContainer) {
+            if (finalAlts.length === 0) {
+                altTitle.style.display = 'none';
+                altContainer.style.display = 'none';
+            } else {
+                altTitle.style.display = 'block';
+                altContainer.style.display = 'grid';
+            }
+        }
+
         // Render Main
         document.getElementById('main-recommendation').innerHTML = `
             <h4 class="line-title">${main.name}</h4>
@@ -2172,7 +2194,7 @@
         `;
 
         // Render Alternatives
-        document.getElementById('alternatives-container').innerHTML = alts.map(alt => {
+        document.getElementById('alternatives-container').innerHTML = finalAlts.map(alt => {
             return `
                 <div class="alt-card">
                     <div class="alt-title">
