@@ -1063,19 +1063,26 @@
 
     <!-- Form Step 2 -->
     <section id="step-2" class="screen">
+        <div id="question-3-container" class="question-group">
+            <label class="question-title">3. ¿Cuenta con certificado MiPyME?</label>
+            <div class="options-grid" data-question="hasMiPyME">
+                <div class="option-card" data-value="Si">Si</div>
+                <div class="option-card" data-value="No">No</div>
+            </div>
+        </div>
+
         <div class="question-group">
-            <label class="question-title">3. Categoría del solicitante</label>
-            <div class="options-grid" data-question="category">
+            <label class="question-title">4. Categoría del solicitante</label>
+            <div id="options-grid-category" class="options-grid" data-question="category">
                 <div class="option-card" data-value="Monotributista o Responsable Inscripto">Monotributista o Responsable Inscripto</div>
-                <div class="option-card" data-value="Pequeña y mediana empresa (PyME), con certificado MiPyME vigente">Pequeña y mediana empresa (PyME), con certificado MiPyME vigente</div>
+                <div class="option-card" data-value="Pequeña y mediana empresa (PyME)">Pequeña y mediana empresa (PyME)</div>
                 <div class="option-card" data-value="Cooperativa">Cooperativa</div>
             </div>
         </div>
 
         <div class="question-group">
-            <label class="question-title">4. ¿Qué monto de dinero desea solicitar?</label>
-            <div class="options-grid" data-question="amount">
-                <div class="option-card" data-value="Hasta 10 Millones">Hasta 10 Millones</div>
+            <label class="question-title">5. ¿Qué monto de dinero desea solicitar?</label>
+            <div id="options-grid-amount" class="options-grid" data-question="amount">
                 <div class="option-card" data-value="Hasta 100 Millones">Hasta 100 Millones</div>
                 <div class="option-card" data-value="Hasta 200 Millones">Hasta 200 Millones</div>
                 <div class="option-card" data-value="Hasta 300 Millones">Hasta 300 Millones</div>
@@ -1811,12 +1818,70 @@
             this.classList.add('selected');
             userAnswers[question] = value;
 
-            // Conditional logic for Question 2
-            if (question === 'purpose') {
-                updateQuestion2(value);
+            // Conditional logic for Question 2 and Amount restriction
+            if (question === 'purpose' || question === 'hasMiPyME' || question === 'category') {
+                if (question === 'purpose') updateQuestion2(value);
+                updateAmountOptions();
             }
         });
     });
+
+    function updateAmountOptions() {
+        const amountGrid = document.getElementById('options-grid-amount');
+        const categoryGrid = document.getElementById('options-grid-category');
+        const q3Container = document.getElementById('question-3-container');
+        if (!amountGrid || !categoryGrid || !q3Container) return;
+
+        const option200 = amountGrid.querySelector('[data-value="Hasta 200 Millones"]');
+        const option300 = amountGrid.querySelector('[data-value="Hasta 300 Millones"]');
+        const optionMonotributista = categoryGrid.querySelector('[data-value="Monotributista o Responsable Inscripto"]');
+        
+        const { purpose, hasMiPyME, category } = userAnswers;
+
+        // Logic for Question 3 visibility
+        if (purpose === 'Triple Impacto') {
+            q3Container.style.display = 'none';
+            delete userAnswers['hasMiPyME'];
+        } else {
+            q3Container.style.display = 'block';
+        }
+
+        // Logic for Category options (Hide Monotributista for Triple Impacto OR if hasMiPyME === 'Si')
+        if (purpose === 'Triple Impacto' || hasMiPyME === 'Si') {
+            optionMonotributista.style.display = 'none';
+            if (userAnswers['category'] === 'Monotributista o Responsable Inscripto') {
+                optionMonotributista.classList.remove('selected');
+                delete userAnswers['category'];
+            }
+        } else {
+            optionMonotributista.style.display = 'flex';
+        }
+
+        // Logic for 300M (Only for Triple Impacto)
+        if (purpose !== 'Triple Impacto') {
+            option300.style.display = 'none';
+            if (userAnswers['amount'] === 'Hasta 300 Millones') {
+                option300.classList.remove('selected');
+                delete userAnswers['amount'];
+            }
+        } else {
+            option300.style.display = 'flex';
+        }
+
+        // Logic for 200M (Hide if Renovables/Eficiencia + MiPyME: Si + Monotributista)
+        const isRenovablesOrEficiencia = (purpose === 'Energías Renovables' || purpose === 'Eficiencia Energética');
+        const isMonotributista = (category === 'Monotributista o Responsable Inscripto');
+        
+        if (isRenovablesOrEficiencia && hasMiPyME === 'Si' && isMonotributista) {
+            option200.style.display = 'none';
+            if (userAnswers['amount'] === 'Hasta 200 Millones') {
+                option200.classList.remove('selected');
+                delete userAnswers['amount'];
+            }
+        } else {
+            option200.style.display = 'flex';
+        }
+    }
 
     function updateQuestion2(purposeValue) {
         const container = document.getElementById('question-2-container');
@@ -1899,11 +1964,14 @@
     }
 
     function validateStep(step) {
-        const questions = step === 1 ? ['purpose'] : ['category', 'amount'];
+        const questions = step === 1 ? ['purpose'] : ['hasMiPyME', 'category', 'amount'];
         if (step === 1 && document.getElementById('question-2-container').style.display !== 'none') {
             questions.push('activity');
         }
         for (const q of questions) {
+            // Skip validation if the question container is hidden
+            if (q === 'hasMiPyME' && document.getElementById('question-3-container').style.display === 'none') continue;
+            
             if (!userAnswers[q] || (Array.isArray(userAnswers[q]) && userAnswers[q].length === 0)) {
                 alert('Por favor, respondé todas las preguntas para continuar.');
                 return false;
@@ -1934,6 +2002,37 @@
     async function calculateResults() {
         if (!validateStep(2)) return;
 
+        // Deterministic logic based on user requirements
+        let mainLine = null;
+        let altLines = [];
+        let reasoning = "";
+
+        const { purpose, hasMiPyME, category } = userAnswers;
+
+        if (purpose === 'Energías Renovables' || purpose === 'Eficiencia Energética') {
+            if (hasMiPyME === 'Si') {
+                if (category === 'Monotributista o Responsable Inscripto') {
+                    mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
+                    reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME, la línea del Banco Municipal de Rosario (BMR) es la opción recomendada por sus tasas bonificadas.";
+                } else if (category === 'Pequeña y mediana empresa (PyME)' || category === 'Cooperativa') {
+                    if (userAnswers.amount === 'Hasta 100 Millones') {
+                        mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
+                        altLines = [];
+                        reasoning = "Para su empresa o cooperativa con certificado MiPyME y un monto de hasta 100 millones, la línea del Banco Municipal de Rosario (BMR) es la recomendación ideal por sus condiciones preferenciales.";
+                    } else {
+                        mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi');
+                        altLines = [financialLines.find(l => l.id === 'eficiencia_energetica_bmr')].filter(Boolean);
+                        reasoning = "Como empresa o cooperativa con certificado MiPyME, la línea de Financiamiento Verde del CFI es su mejor opción principal, complementada por la línea del BMR como alternativa.";
+                    }
+                }
+            } else if (hasMiPyME === 'No') {
+                if (category === 'Monotributista o Responsable Inscripto' || category === 'Cooperativa') {
+                    mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi');
+                    reasoning = "Al no contar con certificado MiPyME, la línea de Financiamiento Verde del CFI es la que mejor se adapta a su perfil de monotributista o cooperativa.";
+                }
+            }
+        }
+
         // Show loading state
         document.getElementById('step-2').classList.remove('active');
         const resultsScreen = document.getElementById('results-screen');
@@ -1941,13 +2040,23 @@
         document.getElementById('main-recommendation').innerHTML = `
             <div style="text-align: center; padding: 3rem;">
                 <div class="loader" style="margin: 0 auto 1.5rem;"></div>
-                <p style="color: white; font-weight: 600;">Analizando tu perfil con inteligencia artificial...</p>
-                <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 0.5rem;">Buscando la mejor opción para tu proyecto.</p>
+                <p style="color: white; font-weight: 600;">Analizando tu perfil...</p>
             </div>
         `;
         document.getElementById('alternatives-container').innerHTML = '';
         updateProgress(90);
         window.scrollTo(0, 0);
+
+        // If deterministic logic found a match, use it. Otherwise, use AI or Fallback.
+        if (mainLine) {
+            setTimeout(async () => {
+                renderResults(mainLine, altLines, reasoning);
+                currentRecommendedLine = mainLine.name;
+                await trackCompletion(currentRecommendedLine, reasoning, userAnswers);
+                updateProgress(100);
+            }, 1500);
+            return;
+        }
 
         try {
             const prompt = `
@@ -1961,35 +2070,24 @@
                 ${JSON.stringify(financialLines, null, 2)}
 
                 INSTRUCCIONES:
-                1. Analiza críticamente cómo cada línea se ajusta al perfil del usuario. Utiliza el campo "criteria" de cada línea para verificar la compatibilidad técnica con las respuestas del usuario (propósito, monto, categoría).
+                1. Analiza críticamente cómo cada línea se ajusta al perfil del usuario.
                 2. Selecciona la línea con el ID que mejor coincida.
-                3. Proporciona un razonamiento detallado y profesional (en español) explicando por qué es la mejor opción.
+                3. Proporciona un razonamiento detallado y profesional (en español).
                 4. Identifica hasta 2 alternativas si existen.
             `;
 
             const response = await getGeminiResponse(prompt);
             const result = JSON.parse(response.text);
-            const mainLine = financialLines.find(l => l.id === result.recommendedLineId) || financialLines[0];
-            const altLines = (result.alternatives || []).map(id => financialLines.find(l => l.id === id)).filter(Boolean);
+            const aiMainLine = financialLines.find(l => l.id === result.recommendedLineId) || financialLines[0];
+            const aiAltLines = (result.alternatives || []).map(id => financialLines.find(l => l.id === id)).filter(Boolean);
 
-            renderResults(mainLine, altLines, result.reasoning);
-            currentRecommendedLine = mainLine ? mainLine.name : "No especificada";
-            
-            // Track completion
+            renderResults(aiMainLine, aiAltLines, result.reasoning);
+            currentRecommendedLine = aiMainLine ? aiMainLine.name : "No especificada";
             await trackCompletion(currentRecommendedLine, result.reasoning, userAnswers);
-
-            // Save current session answers temporarily
-            localStorage.setItem('temp_current_answers', JSON.stringify(userAnswers));
-            localStorage.setItem('temp_current_recommendation', currentRecommendedLine);
-
-            currentSatisfaction = null;
-            feedbackSent = false;
-            resetFeedbackUI();
             updateProgress(100);
 
         } catch (error) {
             console.error("Error in AI recommendation:", error);
-            // Fallback to deterministic logic if AI fails
             fallbackRecommendation();
         }
     }
