@@ -1969,30 +1969,24 @@
                         this.classList.remove('selected');
                         userAnswers['activity'] = userAnswers['activity'].filter(v => v !== value);
                     } else {
+                        // Mutual exclusivity for Energías Renovables: Prosumidores vs Off-grid
+                        if (purposeValue === 'Energías Renovables') {
+                            if (value === 'Prosumidores' && userAnswers['activity'].includes('Sistemas renovables off-grid')) {
+                                showAlert('Opciones incompatibles', 'Un proyecto no puede ser "Prosumidor" (conectado a red) y "Off-grid" (independiente de la red) al mismo tiempo.');
+                                return;
+                            }
+                            if (value === 'Sistemas renovables off-grid' && userAnswers['activity'].includes('Prosumidores')) {
+                                showAlert('Opciones incompatibles', 'Los sistemas off-grid no son compatibles con la modalidad de Prosumidores.');
+                                return;
+                            }
+                        }
+
                         // Select if under limit
                         if (userAnswers['activity'].length < 3) {
                             this.classList.add('selected');
                             userAnswers['activity'].push(value);
                         } else {
                             showAlert('Límite alcanzado', 'Puedes seleccionar un máximo de 3 actividades.');
-                        }
-                    }
-
-                    // Exclusivity logic for Energías Renovables: Prosumidores vs Off-grid
-                    if (purposeValue === 'Energías Renovables') {
-                        const allCards = grid.querySelectorAll('.option-card');
-                        const prosCard = Array.from(allCards).find(c => c.dataset.value === 'Prosumidores');
-                        const offCard = Array.from(allCards).find(c => c.dataset.value === 'Sistemas renovables off-grid');
-                        
-                        if (prosCard && offCard) {
-                            if (userAnswers['activity'].includes('Prosumidores')) {
-                                offCard.style.display = 'none';
-                            } else if (userAnswers['activity'].includes('Sistemas renovables off-grid')) {
-                                prosCard.style.display = 'none';
-                            } else {
-                                prosCard.style.display = 'flex';
-                                offCard.style.display = 'flex';
-                            }
                         }
                     }
                 });
