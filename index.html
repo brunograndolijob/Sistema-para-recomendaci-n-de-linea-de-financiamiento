@@ -1977,6 +1977,24 @@
                             showAlert('Límite alcanzado', 'Puedes seleccionar un máximo de 3 actividades.');
                         }
                     }
+
+                    // Exclusivity logic for Energías Renovables: Prosumidores vs Off-grid
+                    if (purposeValue === 'Energías Renovables') {
+                        const allCards = grid.querySelectorAll('.option-card');
+                        const prosCard = Array.from(allCards).find(c => c.dataset.value === 'Prosumidores');
+                        const offCard = Array.from(allCards).find(c => c.dataset.value === 'Sistemas renovables off-grid');
+                        
+                        if (prosCard && offCard) {
+                            if (userAnswers['activity'].includes('Prosumidores')) {
+                                offCard.style.display = 'none';
+                            } else if (userAnswers['activity'].includes('Sistemas renovables off-grid')) {
+                                prosCard.style.display = 'none';
+                            } else {
+                                prosCard.style.display = 'flex';
+                                offCard.style.display = 'flex';
+                            }
+                        }
+                    }
                 });
             });
 
