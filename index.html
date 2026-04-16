@@ -1030,7 +1030,7 @@
         <img src="https://www.santafe.gob.ar/suma-eficiencia/assets/images/logo.png" 
              alt="Santa Fe Provincia - Ministerio de Desarrollo Productivo" 
              referrerPolicy="no-referrer"
-             style="width: 960px; height: auto; filter: brightness(0) invert(1);"
+             style="width: 480px; height: auto; filter: brightness(0) invert(1);"
              class="object-contain">
     </div>
     <header>
@@ -2045,20 +2045,15 @@
         } else if (purpose === 'Energías Renovables' || purpose === 'Eficiencia Energética') {
             if (hasMiPyME === 'Si') {
                 if (category === 'Monotributista o Responsable Inscripto') {
-                    // Always CFI as main, BMR as alt
+                    // Always BMR as main for Monotributista MiPyME (100M or 200M)
+                    mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
+                    altLines = [financialLines.find(l => l.id === 'financiamiento_verde_cfi')].filter(Boolean);
+                    reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME, la línea del Banco Municipal de Rosario (BMR) es la opción recomendada como prioridad por sus tasas bonificadas.";
+                } else if (category === 'Pequeña y mediana empresa (PyME)' || category === 'Cooperativa') {
+                    // Always CFI as main for PyME MiPyME (100M or 200M)
                     mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi');
                     altLines = [financialLines.find(l => l.id === 'eficiencia_energetica_bmr')].filter(Boolean);
-                    reasoning = "Como monotributista o responsable inscripto con certificado MiPyME, la línea de Financiamiento Verde del CFI es tu mejor opción principal, complementada por la línea del Banco Municipal de Rosario (BMR) como alternativa.";
-                } else if (category === 'Pequeña y mediana empresa (PyME)' || category === 'Cooperativa') {
-                    if (userAnswers.amount === 'Hasta 100 Millones') {
-                        mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
-                        altLines = [];
-                        reasoning = "Para su empresa o cooperativa con certificado MiPyME y un monto de hasta 100 millones, la línea del Banco Municipal de Rosario (BMR) es la recomendación ideal por sus condiciones preferenciales.";
-                    } else {
-                        mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi');
-                        altLines = [financialLines.find(l => l.id === 'eficiencia_energetica_bmr')].filter(Boolean);
-                        reasoning = "Como empresa o cooperativa con certificado MiPyME, la línea de Financiamiento Verde del CFI es su mejor opción principal, complementada por la línea del BMR como alternativa.";
-                    }
+                    reasoning = "Como empresa o cooperativa con certificado MiPyME, la línea de Financiamiento Verde del CFI es su mejor opción principal para montos de hasta 200 millones, complementada por la línea del BMR como alternativa.";
                 }
             } else if (hasMiPyME === 'No') {
                 if (category === 'Monotributista o Responsable Inscripto' || category === 'Cooperativa') {
