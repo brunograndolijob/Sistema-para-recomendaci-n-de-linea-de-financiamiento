@@ -1027,7 +1027,7 @@
 
 <div class="container">
     <div class="top-banner">
-        <img src="/logo_santafe_provincia.png" alt="Santa Fe Provincia" style="height: 110px; width: auto; filter: brightness(0) invert(1);">
+        <img src="logo_santafe_completo.png" alt="Santa Fe Provincia - Ministerio de Desarrollo Productivo" style="max-width: 600px; width: 90%; height: auto; filter: brightness(0) invert(1);">
     </div>
     <header>
         <div class="progress-container" id="progress-container">
@@ -1110,7 +1110,7 @@
             <!-- Injected by JS -->
         </div>
 
-        <h3 id="alternatives-title" class="secondary-title">Otras opciones que también podrían interesarte</h3>
+        <h3 id="alternatives-title" class="secondary-title">Opciones que podrían interesarte</h3>
         <div id="alternatives-container" class="alternatives-grid">
             <!-- Injected by JS -->
         </div>
@@ -1842,6 +1842,8 @@
         const option200 = amountGrid.querySelector('[data-value="Hasta 200 Millones"]');
         const option300 = amountGrid.querySelector('[data-value="Hasta 300 Millones"]');
         const optionMonotributista = categoryGrid.querySelector('[data-value="Monotributista o Responsable Inscripto"]');
+        const optionCooperativa = categoryGrid.querySelector('[data-value="Cooperativa"]');
+        const optionPyME = categoryGrid.querySelector('[data-value="Pequeña y mediana empresa (PyME)"]');
         
         const { purpose, hasMiPyME, category } = userAnswers;
 
@@ -1862,6 +1864,28 @@
             }
         } else {
             optionMonotributista.style.display = 'flex';
+        }
+
+        // Logic for Cooperativa (Hide if MiPyME is "Si")
+        if (hasMiPyME === 'Si') {
+            optionCooperativa.style.display = 'none';
+            if (userAnswers['category'] === 'Cooperativa') {
+                optionCooperativa.classList.remove('selected');
+                delete userAnswers['category'];
+            }
+        } else {
+            optionCooperativa.style.display = 'flex';
+        }
+
+        // Logic for PyME (Hide if MiPyME is "No")
+        if (hasMiPyME === 'No') {
+            optionPyME.style.display = 'none';
+            if (userAnswers['category'] === 'Pequeña y mediana empresa (PyME)') {
+                optionPyME.classList.remove('selected');
+                delete userAnswers['category'];
+            }
+        } else {
+            optionPyME.style.display = 'flex';
         }
 
         // Logic for 300M (Only for Triple Impacto)
@@ -2011,7 +2035,7 @@
                 // Fallback if not found by criteria
                 mainLine = financialLines.find(l => l.name.toLowerCase().includes('triple impacto'));
             }
-            altLines = [];
+            altLines = financialLines.filter(l => l.id !== mainLine?.id && (l.id === 'eficiencia_energetica_bmr' || l.id === 'financiamiento_verde_cfi'));
             reasoning = "Para proyectos de Triple Impacto, esta es la línea de financiamiento específica diseñada para potenciar su impacto social, ambiental y económico.";
         } else if (purpose === 'Energías Renovables' || purpose === 'Eficiencia Energética') {
             if (hasMiPyME === 'Si') {
@@ -2061,6 +2085,10 @@
 
         // If deterministic logic found a match, use it. Otherwise, use AI or Fallback.
         if (mainLine) {
+            // Ensure we have some alternatives if none were set
+            if (altLines.length === 0) {
+                altLines = financialLines.filter(l => l.id !== mainLine.id && !l.isSpecial).slice(0, 2);
+            }
             setTimeout(async () => {
                 renderResults(mainLine, altLines, reasoning);
                 currentRecommendedLine = mainLine.name;
@@ -2134,17 +2162,12 @@
         const altTitle = document.getElementById('alternatives-title');
         const altContainer = document.getElementById('alternatives-container');
         
-        // Force empty alternatives for Triple Impacto
-        const finalAlts = userAnswers.purpose === 'Triple Impacto' ? [] : alts;
+        // Alternatives are now shown for everyone as per request
+        const finalAlts = alts;
 
         if (altTitle && altContainer) {
-            if (finalAlts.length === 0) {
-                altTitle.style.display = 'none';
-                altContainer.style.display = 'none';
-            } else {
-                altTitle.style.display = 'block';
-                altContainer.style.display = 'grid';
-            }
+            altTitle.style.display = 'block';
+            altContainer.style.display = 'grid';
         }
 
         // Render Main
