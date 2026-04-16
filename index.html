@@ -1027,7 +1027,11 @@
 
 <div class="container">
     <div class="top-banner">
-        <img src="logo_santafe_completo.png" alt="Santa Fe Provincia - Ministerio de Desarrollo Productivo" style="max-width: 600px; width: 90%; height: auto; filter: brightness(0) invert(1);">
+        <img src="https://www.santafe.gob.ar/suma-eficiencia/assets/images/logo.png" 
+             alt="Santa Fe Provincia - Ministerio de Desarrollo Productivo" 
+             referrerPolicy="no-referrer"
+             style="width: 480px; height: auto; filter: brightness(0) invert(1);"
+             class="object-contain">
     </div>
     <header>
         <div class="progress-container" id="progress-container">
@@ -1112,10 +1116,6 @@
 
         <h3 id="alternatives-title" class="secondary-title">Opciones que podrían interesarte</h3>
         <div id="alternatives-container" class="alternatives-grid">
-            <!-- Injected by JS -->
-        </div>
-
-        <div id="linea0-container" style="margin-top: 2rem;">
             <!-- Injected by JS -->
         </div>
 
@@ -1629,18 +1629,6 @@
 
     // Data: Financial Lines
     const initialFinancialLines = [
-        {
-            id: 'linea_0',
-            name: 'Acceso a todaslas opciones de financiamiento disponibles',
-            desc: 'Acceso a todas las opciones de financiamiento disponibles.',
-            isSpecial: true,
-            links: [],
-            contacts: [],
-            maxAmount: 'N/A',
-            term: 'N/A',
-            rate: 'N/A',
-            idealFor: 'N/A'
-        },
         {
             id: 'eficiencia_energetica_bmr',
             name: 'Eficiencia Energética (Banco Municipal de Rosario)',
@@ -2250,35 +2238,6 @@
                 </div>
             `;
         }).join('');
-
-        // Render Linea 0
-        const linea0 = financialLines.find(l => l.id === 'linea_0' || (l.name && l.name.includes("Linea 0")));
-        if (linea0) {
-            document.getElementById('linea0-container').innerHTML = `
-                <div class="alt-card" style="width: 100%; max-width: 100%; background: rgba(255, 255, 255, 0.25);">
-                    <div class="alt-title" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
-                        Información sobre todas las opciones de financiamiento disponible
-                    </div>
-                    
-                    ${linea0.links && linea0.links.length > 0 ? `
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        ${linea0.links.map(l => {
-                            const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
-                            const linkText = isDriveLink ? 'Líneas de financiamiento' : l;
-                            return `
-                                <a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" 
-                                   style="background: white; color: #7c3aed; padding: 1rem; border-radius: 12px; text-decoration: none; font-weight: 700; text-align: center; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.2s ease; word-break: break-all;"
-                                   onmouseover="this.style.transform='translateY(-2px)'"
-                                   onmouseout="this.style.transform='translateY(0)'">
-                                    🔗 ${linkText}
-                                </a>
-                            `;
-                        }).join('')}
-                    </div>
-                    ` : ''}
-                </div>
-            `;
-        }
     }
 
     function getStars(score) {
