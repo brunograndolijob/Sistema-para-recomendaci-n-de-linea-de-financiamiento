@@ -1030,7 +1030,7 @@
         <img src="https://www.santafe.gob.ar/suma-eficiencia/assets/images/logo.png" 
              alt="Santa Fe Provincia - Ministerio de Desarrollo Productivo" 
              referrerPolicy="no-referrer"
-             style="width: 480px; height: auto; filter: brightness(0) invert(1);"
+             style="width: 960px; height: auto; filter: brightness(0) invert(1);"
              class="object-contain">
     </div>
     <header>
@@ -1064,6 +1064,9 @@
 
         <div id="question-2-container" class="question-group" style="display: none;">
             <label class="question-title">2. ¿Qué tipo de proyecto querés financiar?</label>
+            <div id="q2-note" style="color: white; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 1rem; font-weight: 600; background: rgba(255, 255, 255, 0.1); padding: 0.5rem 1rem; border-radius: 8px; display: none; text-align: center;">
+                Seleccioná hasta 3 opciones
+            </div>
             <div id="options-grid-q2" class="options-grid" data-question="activity">
                 <!-- Dynamically populated -->
             </div>
@@ -1894,6 +1897,11 @@
     function updateQuestion2(purposeValue) {
         const container = document.getElementById('question-2-container');
         const grid = document.getElementById('options-grid-q2');
+        const hint = document.getElementById('q2-hint');
+        
+        if (hint) {
+            hint.style.display = purposeValue === 'Triple Impacto' ? 'none' : 'block';
+        }
         
         const activities = {
             'Eficiencia Energética': [
@@ -1916,6 +1924,15 @@
         };
 
         const currentActivities = activities[purposeValue];
+        
+        const q2Note = document.getElementById('q2-note');
+        if (q2Note) {
+            if (purposeValue === 'Energías Renovables' || purposeValue === 'Eficiencia Energética') {
+                q2Note.style.display = 'block';
+            } else {
+                q2Note.style.display = 'none';
+            }
+        }
         
         if (currentActivities) {
             grid.innerHTML = currentActivities.map(activityObj => {
@@ -2028,16 +2045,10 @@
         } else if (purpose === 'Energías Renovables' || purpose === 'Eficiencia Energética') {
             if (hasMiPyME === 'Si') {
                 if (category === 'Monotributista o Responsable Inscripto') {
-                    if (userAnswers.amount === 'Hasta 100 Millones') {
-                        mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
-                        reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME y un monto de hasta 100 millones, la línea del Banco Municipal de Rosario (BMR) es la opción recomendada.";
-                    } else if (userAnswers.amount === 'Hasta 200 Millones') {
-                        mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi');
-                        reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME y un monto de hasta 200 millones, la línea de Financiamiento Verde del CFI es la opción recomendada.";
-                    } else {
-                        mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
-                        reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME, la línea del Banco Municipal de Rosario (BMR) es la opción recomendada por sus tasas bonificadas.";
-                    }
+                    // Always CFI as main, BMR as alt
+                    mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi');
+                    altLines = [financialLines.find(l => l.id === 'eficiencia_energetica_bmr')].filter(Boolean);
+                    reasoning = "Como monotributista o responsable inscripto con certificado MiPyME, la línea de Financiamiento Verde del CFI es tu mejor opción principal, complementada por la línea del Banco Municipal de Rosario (BMR) como alternativa.";
                 } else if (category === 'Pequeña y mediana empresa (PyME)' || category === 'Cooperativa') {
                     if (userAnswers.amount === 'Hasta 100 Millones') {
                         mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
