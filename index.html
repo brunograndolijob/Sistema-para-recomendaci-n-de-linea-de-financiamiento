@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         .loader {
             width: 48px;
@@ -1108,11 +1109,15 @@
 
     <!-- Results Screen -->
     <section id="results-screen" class="screen">
-        <div class="results-header" style="text-align: center; margin-bottom: 3rem;">
-            <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">¡Análisis Completo!</h2>
+        <div class="results-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; gap: 1rem; flex-wrap: wrap;">
+            <h2 style="font-size: 2.5rem; font-weight: 800; margin: 0;">¡Análisis Completo!</h2>
+            <button onclick="downloadPDF()" style="background: white; color: #7c3aed; border: none; padding: 0.6rem 1.2rem; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.6rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)';">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                PDF
+            </button>
         </div>
 
-        <h3 class="secondary-title" style="text-align: center; font-size: 1.6rem; color: #7c3aed; background: #ede9fe; padding: 1.2rem; border-radius: 16px; margin-bottom: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Línea que más se adapta a tu perfil</h3>
+        <h3 id="main-rec-title" class="secondary-title" style="text-align: center; font-size: 1.6rem; color: #7c3aed; background: #ede9fe; padding: 1.2rem; border-radius: 16px; margin-bottom: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Línea que más se adapta a tu perfil</h3>
         <div id="main-recommendation" class="main-card">
             <!-- Injected by JS -->
         </div>
@@ -3632,6 +3637,193 @@
     window.deleteLine = deleteLine;
     window.addContactRow = addContactRow;
     window.addLinkRow = addLinkRow;
+
+    async function downloadPDF() {
+        const { purpose, amount, category } = userAnswers;
+        const mainRecTitle = document.getElementById('main-rec-title').textContent;
+        const mainRecContent = document.getElementById('main-recommendation').cloneNode(true);
+        const altRecTitle = document.getElementById('alternatives-title').textContent;
+        const altRecContent = document.getElementById('alternatives-container').cloneNode(true);
+
+        const container = document.createElement('div');
+        container.style.padding = '20px';
+        container.style.fontFamily = 'Inter, sans-serif';
+        container.style.background = '#ffffff';
+
+        const header = `
+            <div style="border-bottom: 2px solid #7c3aed; padding-bottom: 15px; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1 style="color: #7c3aed; margin: 0; font-size: 24px;">Suma Eficiencia</h1>
+                        <p style="margin: 5px 0 0; font-size: 14px; color: #666;">Resultados de Evaluación de Financiamiento</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #888;">Fecha: ${new Date().toLocaleDateString('es-AR')}</div>
+                    </div>
+                </div>
+            </div>
+            <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="font-size: 14px; margin: 0 0 10px; color: #4b5563; text-transform: uppercase; font-weight: 700;">Perfil del Solicitante</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; font-size: 12px; color: #1f2937;">
+                    <div><strong>Propósito:</strong> ${purpose || '-'}</div>
+                    <div><strong>Categoría:</strong> ${category || '-'}</div>
+                    <div><strong>Monto estimado:</strong> ${amount || '-'}</div>
+                </div>
+            </div>
+        `;
+
+        container.innerHTML = header;
+
+        const formatCard = (card, isMain = false) => {
+            card.style.background = '#ffffff';
+            card.style.border = '1px solid #e5e7eb';
+            card.style.borderRadius = '12px';
+            card.style.padding = '20px';
+            card.style.marginBottom = isMain ? '0' : '15px';
+            card.style.boxShadow = 'none';
+            card.style.color = '#111827';
+            card.style.backdropFilter = 'none';
+            card.style.width = 'auto';
+            card.style.height = 'auto';
+            card.style.display = 'block';
+            
+            const titles = card.querySelectorAll('.line-title, .alt-title');
+            titles.forEach(t => {
+                t.style.color = '#7c3aed';
+                t.style.fontSize = isMain ? '22px' : '18px';
+                t.style.fontWeight = '800';
+                t.style.margin = '0 0 10px 0';
+                t.style.display = 'block';
+            });
+
+            const descs = card.querySelectorAll('.line-desc, .alt-desc');
+            descs.forEach(d => {
+                d.style.color = '#4b5563';
+                d.style.fontSize = '14px';
+                d.style.lineHeight = '1.5';
+                d.style.marginBottom = '15px';
+                d.style.display = 'block';
+            });
+
+            const detailItemsGrid = card.querySelector('.line-details');
+            if (detailItemsGrid) {
+                detailItemsGrid.style.display = 'grid';
+                detailItemsGrid.style.gridTemplateColumns = '1fr 1fr 1fr';
+                detailItemsGrid.style.gap = '15px';
+                detailItemsGrid.style.borderTop = '1px solid #f3f4f6';
+                detailItemsGrid.style.borderBottom = '1px solid #f3f4f6';
+                detailItemsGrid.style.padding = '15px 0';
+                detailItemsGrid.style.margin = '15px 0';
+                
+                const details = detailItemsGrid.querySelectorAll('.detail-item');
+                details.forEach(d => {
+                    d.style.display = 'block';
+                    const span = d.querySelector('span');
+                    if (span) {
+                        span.style.fontSize = '11px';
+                        span.style.color = '#6b7280';
+                        span.style.textTransform = 'uppercase';
+                        span.style.marginBottom = '4px';
+                        span.style.display = 'block';
+                    }
+                    const strong = d.querySelector('strong');
+                    if (strong) {
+                        strong.style.fontSize = '14px';
+                        strong.style.color = '#111827';
+                        strong.style.display = 'block';
+                    }
+                });
+            }
+
+            const whyIdeal = card.querySelector('.why-ideal');
+            if (whyIdeal) {
+                whyIdeal.style.background = '#f9fafb';
+                whyIdeal.style.borderLeft = '4px solid #7c3aed';
+                whyIdeal.style.padding = '15px';
+                whyIdeal.style.borderRadius = '0 8px 8px 0';
+                whyIdeal.style.display = 'block';
+                
+                const h4 = whyIdeal.querySelector('h4');
+                if (h4) {
+                    h4.style.fontSize = '11px';
+                    h4.style.color = '#6b7280';
+                    h4.style.margin = '0 0 5px 0';
+                    h4.style.textTransform = 'uppercase';
+                }
+                const p = whyIdeal.querySelector('p');
+                if (p) {
+                    p.style.fontSize = '13px';
+                    p.style.color = '#1f2937';
+                    p.style.margin = '0';
+                    p.style.lineHeight = '1.4';
+                }
+            }
+
+            // Hide buttons in PDF
+            card.querySelectorAll('.btn').forEach(b => b.style.display = 'none');
+        };
+
+        const mainSection = document.createElement('div');
+        mainSection.style.marginBottom = '30px';
+        mainSection.innerHTML = `<h2 style="font-size: 18px; color: #7c3aed; font-weight: 700; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid #eee;">${mainRecTitle}</h2>`;
+        formatCard(mainRecContent, true);
+        mainSection.appendChild(mainRecContent);
+        container.appendChild(mainSection);
+
+        if (altRecContent && altRecContent.children.length > 0) {
+            const altSection = document.createElement('div');
+            altSection.innerHTML = `<h2 style="font-size: 18px; color: #7c3aed; font-weight: 700; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid #eee;">${altRecTitle}</h2>`;
+            
+            const altGrid = document.createElement('div');
+            altGrid.style.display = 'grid';
+            altGrid.style.gridTemplateColumns = '1fr 1fr';
+            altGrid.style.gap = '15px';
+            
+            Array.from(altRecContent.children).forEach(child => {
+                const cardClone = child.cloneNode(true);
+                formatCard(cardClone);
+                altGrid.appendChild(cardClone);
+            });
+            
+            altSection.appendChild(altGrid);
+            container.appendChild(altSection);
+        }
+
+        const footer = `
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #9ca3af; font-size: 10px;">
+                <p style="margin: 0;">Este es un resumen informativo generado por el simulador Suma Eficiencia.</p>
+                <p style="margin: 5px 0 0;">Gobierno de Santa Fe - Ministerio de Desarrollo Productivo</p>
+            </div>
+        `;
+        const footerEl = document.createElement('div');
+        footerEl.innerHTML = footer;
+        container.appendChild(footerEl);
+
+        const opt = {
+            margin: [15, 15],
+            filename: `Evaluacion_Suma_Eficiencia_${new Date().getTime()}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        const btn = document.querySelector('button[onclick="downloadPDF()"]');
+        const originalBtnText = btn.innerHTML;
+        btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px; margin-right: 8px;"></div> Generando...';
+        btn.disabled = true;
+
+        try {
+            await html2pdf().set(opt).from(container).save();
+        } catch (err) {
+            console.error("PDF generation failed:", err);
+            showAlert('Error', 'No se pudo generar el PDF. Por favor, intente nuevamente.');
+        } finally {
+            btn.innerHTML = originalBtnText;
+            btn.disabled = false;
+        }
+    }
+
+    window.downloadPDF = downloadPDF;
 </script>
 
 
