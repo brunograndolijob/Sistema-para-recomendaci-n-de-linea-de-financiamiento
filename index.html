@@ -148,19 +148,93 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
+        /* Interactive Stepper */
+        .stepper {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .step-item {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-bubble {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #7c3aed;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(4px);
+        }
+
+        .step-item.active .step-bubble {
+            background: white;
+            color: #7c3aed;
+            border-color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        .step-item.completed .step-bubble {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+
+        .step-item.active .step-label {
+            color: white;
+            opacity: 1;
+        }
+
         /* Screens */
         .screen {
             display: none;
-            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .screen.active {
             display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Welcome Screen */
@@ -1035,8 +1109,23 @@
              class="object-contain">
     </div>
     <header>
-        <div class="progress-container" id="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
+        <div class="stepper" id="stepper">
+            <div class="step-item" id="step-item-1">
+                <div class="step-bubble">1</div>
+                <div class="step-label">Inicio</div>
+            </div>
+            <div class="step-item" id="step-item-2">
+                <div class="step-bubble">2</div>
+                <div class="step-label">Propósito</div>
+            </div>
+            <div class="step-item" id="step-item-3">
+                <div class="step-bubble">3</div>
+                <div class="step-label">Perfil</div>
+            </div>
+            <div class="step-item" id="step-item-4">
+                <div class="step-bubble">4</div>
+                <div class="step-label">Resultados</div>
+            </div>
         </div>
     </header>
 
@@ -1073,7 +1162,10 @@
             </div>
         </div>
 
-        <button class="btn btn-primary btn-block" onclick="nextStep(2)">Siguiente →</button>
+        <div class="nav-buttons" style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button class="btn btn-block" style="background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);" onclick="prevStep(0)">← Anterior</button>
+            <button class="btn btn-primary btn-block" style="margin-top: 0;" onclick="nextStep(2)">Siguiente →</button>
+        </div>
     </section>
 
     <!-- Form Step 2 -->
@@ -1104,7 +1196,10 @@
             </div>
         </div>
 
-        <button class="btn btn-primary btn-block" onclick="calculateResults()">Ver mi recomendación →</button>
+        <div class="nav-buttons" style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button class="btn btn-block" style="background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);" onclick="prevStep(1)">← Anterior</button>
+            <button class="btn btn-primary btn-block" style="margin-top: 0;" onclick="calculateResults()">Ver mi recomendación →</button>
+        </div>
     </section>
 
     <!-- Results Screen -->
@@ -1331,22 +1426,26 @@
             <!-- Injected by JS -->
         </div>
 
-        <!-- User Info History -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h3 class="admin-section-title" style="margin-bottom: 0; color: white;">Información de los usuarios</h3>
-            <button class="btn" style="font-size: 0.8rem; padding: 0.4rem 1rem; border: 1px solid white; color: white; background: rgba(255,255,255,0.1);" onclick="downloadUserInfoCSV()">
-                📥 Descargar CSV
+        <!-- User Contact History -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; margin-top: 4rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #7c3aed;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <h3 class="admin-section-title" style="margin-bottom: 0; color: white;">Historial de Información de Contacto</h3>
+            </div>
+            <button class="btn" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; border: 1px solid rgba(255,255,255,0.4); color: white; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; gap: 0.5rem;" onclick="downloadUserInfoCSV()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Exportar CSV
             </button>
         </div>
-        <div class="table-container" style="margin-bottom: 2.5rem;">
-            <table>
+        <div class="table-container" style="margin-bottom: 3rem; background: rgba(0,0,0,0.3); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);">
+            <table id="user-info-table">
                 <thead>
                     <tr>
-                        <th>Fecha</th>
-                        <th>Empresa</th>
-                        <th>Email</th>
-                        <th>Recomendación</th>
-                        <th>Resumen del caso</th>
+                        <th style="width: 15%;">Fecha</th>
+                        <th style="width: 20%;">Empresa</th>
+                        <th style="width: 20%;">Email</th>
+                        <th style="width: 20%;">Recomendación</th>
+                        <th style="width: 25%;">Resumen del caso</th>
                     </tr>
                 </thead>
                 <tbody id="user-info-body">
@@ -1366,7 +1465,7 @@
         <!-- Comments Filters -->
         <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
             <div style="flex: 1; min-width: 200px; position: relative;">
-                <input type="text" id="comment-search" placeholder="Buscar por empresa..." style="width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 0.9rem; outline: none;">
+                <input type="text" id="comment-search" placeholder="Buscar por empresa o palabra clave..." style="width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 0.9rem; outline: none;">
                 <svg style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </div>
             <div style="flex: 1; min-width: 200px;">
@@ -1499,29 +1598,79 @@
                     
                     <div style="margin-bottom: 1rem;">
                         <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Propósito del Proyecto</label>
-                        <div id="criteria-purpose" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Energías Renovables"> Energías Renovables</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Eficiencia Energética"> Eficiencia Energética</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Triple Impacto"> Triple Impacto</label>
+                        <div id="criteria-purpose" style="display: grid; grid-template-columns: 1fr; gap: 0.8rem; font-size: 0.8rem; color: #1f2937;">
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Energías Renovables"> Energías Renovables
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Incluye solar, eólica, biomasa y otras fuentes limpias.</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Eficiencia Energética"> Eficiencia Energética
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Optimización de procesos y reducción de consumo eléctrico/gas.</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Triple Impacto"> Triple Impacto
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Proyectos con objetivos sociales, ambientales y económicos simultáneos.</span>
+                            </label>
                         </div>
                     </div>
 
                     <div style="margin-bottom: 1rem;">
                         <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Categoría del Solicitante</label>
-                        <div id="criteria-category" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Monotributista o Responsable Inscripto"> Monotributista o Responsable Inscripto</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Pequeña y mediana empresa (PyME), con certificado MiPyME vigente"> Pequeña y mediana empresa (PyME), con certificado MiPyME vigente</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Cooperativa"> Cooperativa</label>
+                        <div id="criteria-category" style="display: grid; grid-template-columns: 1fr; gap: 0.8rem; font-size: 0.8rem; color: #1f2937;">
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Monotributista o Responsable Inscripto"> Monotributista o Responsable Inscripto
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Personas humanas o jurídicas con facturación individual.</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Pequeña y mediana empresa (PyME), con certificado MiPyME vigente"> Pequeña y mediana empresa (PyME)
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Empresas con certificado habilitante para líneas especiales de fomento.</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Cooperativa"> Cooperativa
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Entidades de economía social regidas por la ley 20.337.</span>
+                            </label>
                         </div>
                     </div>
 
                     <div style="margin-bottom: 1rem;">
                         <label style="font-size: 0.85rem; font-weight: 700; color: #4b5563; display: block; margin-bottom: 0.5rem;">Montos (Rangos)</label>
-                        <div id="criteria-amount" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 0.8rem; color: #1f2937;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Hasta 10 Millones"> Hasta 10 Millones</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Hasta 100 Millones"> Hasta 100 Millones</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Hasta 200 Millones"> Hasta 200 Millones</label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="checkbox" value="Hasta 300 Millones"> Hasta 300 Millones</label>
+                        <div id="criteria-amount" style="display: grid; grid-template-columns: 1fr; gap: 0.8rem; font-size: 0.8rem; color: #1f2937;">
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Hasta 10 Millones"> Hasta 10 Millones
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Ideal para micro-inversiones o equipamiento solar pequeño.</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Hasta 100 Millones"> Hasta 100 Millones
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Inversiones tecnológicas medianas o eficiencia industrial inicial.</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Hasta 200 Millones"> Hasta 200 Millones
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Proyectos de reconversión de planta o parques solares PyME.</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                                    <input type="checkbox" value="Hasta 300 Millones"> Hasta 300 Millones
+                                </div>
+                                <span style="font-size: 0.7rem; color: #6b7280; margin-left: 1.6rem;">Límite superior para grandes sistemas renovables o infraestructura.</span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -1791,21 +1940,38 @@
 
             trackVisit(); // Count visit only when starting simulation
             document.getElementById('welcome-screen').classList.remove('active');
-            document.getElementById('step-1').classList.add('active');
-            document.getElementById('progress-container').style.display = 'block';
-            updateProgress(33);
+            setTimeout(() => {
+                document.getElementById('step-1').classList.add('active');
+                document.getElementById('stepper').style.display = 'flex';
+                updateStepper(2);
+            }, 50);
         } else if (step === 2) {
             if (!validateStep(1)) return;
             document.getElementById('step-1').classList.remove('active');
-            document.getElementById('step-2').classList.add('active');
-            updateProgress(66);
+            setTimeout(() => {
+                document.getElementById('step-2').classList.add('active');
+                updateStepper(3);
+            }, 50);
         }
         currentStep = step;
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function updateProgress(val) {
-        document.getElementById('progress-bar').style.width = val + '%';
+    function updateStepper(stepNumber) {
+        const items = document.querySelectorAll('.step-item');
+        items.forEach((item, index) => {
+            const idx = index + 1;
+            item.classList.remove('active', 'completed');
+            if (idx < stepNumber) {
+                item.classList.add('completed');
+                item.querySelector('.step-bubble').innerHTML = '✓';
+            } else if (idx === stepNumber) {
+                item.classList.add('active');
+                item.querySelector('.step-bubble').innerHTML = idx;
+            } else {
+                item.querySelector('.step-bubble').innerHTML = idx;
+            }
+        });
     }
 
     // Option Selection
@@ -2041,6 +2207,23 @@
         }
     }
 
+    function prevStep(step) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        if (step === 0) {
+            document.getElementById('welcome-screen').classList.add('active');
+            document.getElementById('stepper').style.display = 'none';
+            updateStepper(1);
+        } else if (step === 1) {
+            document.getElementById('step-1').classList.add('active');
+            updateStepper(2);
+        } else if (step === 2) {
+            document.getElementById('step-2').classList.add('active');
+            updateStepper(3);
+        }
+        currentStep = step;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     async function calculateResults() {
         if (!validateStep(2)) return;
 
@@ -2091,7 +2274,7 @@
             </div>
         `;
         document.getElementById('alternatives-container').innerHTML = '';
-        updateProgress(90);
+        updateStepper(4);
         window.scrollTo(0, 0);
 
         // If deterministic logic found a match, use it. Otherwise, use AI or Fallback.
@@ -2104,7 +2287,7 @@
                 renderResults(mainLine, altLines, reasoning);
                 currentRecommendedLine = mainLine.name;
                 await trackCompletion(currentRecommendedLine, reasoning, userAnswers);
-                updateProgress(100);
+                updateStepper(4);
             }, 1500);
             return;
         }
@@ -2135,7 +2318,7 @@
             renderResults(aiMainLine, aiAltLines, result.reasoning);
             currentRecommendedLine = aiMainLine ? aiMainLine.name : "No especificada";
             await trackCompletion(currentRecommendedLine, result.reasoning, userAnswers);
-            updateProgress(100);
+            updateStepper(4);
 
         } catch (error) {
             console.error("Error in AI recommendation:", error);
@@ -2165,7 +2348,7 @@
         localStorage.setItem('temp_current_answers', JSON.stringify(userAnswers));
         localStorage.setItem('temp_current_recommendation', currentRecommendedLine);
         
-        updateProgress(100);
+        updateStepper(4);
     }
 
     function renderResults(main, alts, reasoning) {
@@ -2834,22 +3017,42 @@
     function updateUserInfoTable(userInfo) {
         const userInfoBody = document.getElementById('user-info-body');
         if (userInfo.length === 0) {
-            userInfoBody.innerHTML = '<tr><td colspan="5" style="text-align:center">No hay información de usuarios aún</td></tr>';
+            userInfoBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 3rem; color: rgba(255,255,255,0.5);">No hay registros de contacto para el período seleccionado.</td></tr>';
             return;
         }
 
         userInfoBody.innerHTML = userInfo.map(u => `
             <tr>
-                <td style="font-size: 0.8rem;">${u.fecha || '-'}</td>
-                <td>${u.empresa || '-'}</td>
-                <td>${u.email || '-'}</td>
-                <td style="font-size: 0.8rem; font-weight: 600;">${u.recomendacion || '-'}</td>
-                <td style="font-size: 0.75rem; color: var(--text-muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${u.resumen || ''}">${u.resumen || '-'}</td>
+                <td style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">${u.fecha || '-'}</td>
+                <td style="font-weight: 700; color: white;">${u.empresa || '-'}</td>
+                <td>
+                    <a href="mailto:${u.email}" style="color: #a78bfa; text-decoration: none; display: flex; align-items: center; gap: 0.4rem;" title="Enviar email">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        ${u.email || '-'}
+                    </a>
+                </td>
+                <td>
+                    <span style="font-size: 0.8rem; font-weight: 600; padding: 0.2rem 0.5rem; background: rgba(124, 58, 237, 0.2); border-radius: 6px; color: #c4b5fd;">
+                        ${u.recomendacion || '-'}
+                    </span>
+                </td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            ${u.resumen || '-'}
+                        </span>
+                        <button class="btn" style="padding: 0.2rem 0.4rem; font-size: 0.65rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;" onclick="showSummaryDetail('${(u.resumen || '').replace(/'/g, "\\'")}', '${(u.empresa || 'Empresa').replace(/'/g, "\\'")}')">Ver</button>
+                    </div>
+                </td>
             </tr>
         `).join('');
         
         // Update global for CSV download
         window.currentAdminUserInfo = userInfo;
+    }
+
+    function showSummaryDetail(text, empresa) {
+        showAlert(`Detalle del caso: ${empresa}`, text);
     }
 
     function updateLineCounts(completions) {
@@ -3327,16 +3530,18 @@
             }
         });
 
-        // Apply additional filters (Search and Line)
+        // Apply additional filters (Line first, then Search)
         if (currentCommentFilters.line !== 'all') {
             comments = comments.filter(c => c.line === currentCommentFilters.line);
         }
 
         if (currentCommentFilters.search) {
+            const searchTerms = currentCommentFilters.search.split(' ').filter(t => t.length > 0);
             comments = comments.filter(c => {
                 const companyName = (c.sessionId ? (userMap[c.sessionId] || 'Usuario no identificado') : 'Usuario no identificado').toLowerCase();
                 const commentText = (c.comment || '').toLowerCase();
-                return companyName.includes(currentCommentFilters.search) || commentText.includes(currentCommentFilters.search);
+                const combinedText = `${companyName} ${commentText}`;
+                return searchTerms.every(term => combinedText.includes(term));
             });
         }
 
@@ -3583,8 +3788,8 @@
         // Reset UI
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('welcome-screen').classList.add('active');
-        document.getElementById('progress-container').style.display = 'none';
-        document.getElementById('progress-bar').style.width = '0%';
+        document.getElementById('stepper').style.display = 'none';
+        updateStepper(1);
         
         // Reset options
         document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
@@ -3609,11 +3814,9 @@
     }
 
     // Export functions to window for HTML access (since this is a module)
-    window.nextStep = nextStep;
-    window.selectOption = (question, value, element) => {
-        // This is a helper if needed, but we used event listeners
-    };
     window.calculateResults = calculateResults;
+    window.nextStep = nextStep;
+    window.prevStep = prevStep;
     window.selectSatisfaction = selectSatisfaction;
     window.updateCharCount = updateCharCount;
     window.sendFeedback = sendFeedback;
@@ -3631,6 +3834,7 @@
     window.restart = restart;
     window.toggleAllLines = toggleAllLines;
     window.toggleAllComments = toggleAllComments;
+    window.showSummaryDetail = showSummaryDetail;
     window.openLineModal = openLineModal;
     window.closeLineModal = closeLineModal;
     window.saveLine = saveLine;
