@@ -36,6 +36,36 @@
       },
       "required": ["line", "satisfaction", "date"]
     },
+    "ConfigQuestion": {
+      "title": "Configurable Question",
+      "description": "Definition of a question used in the simulator form.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "step": { "type": "number" },
+        "order": { "type": "number" },
+        "type": { "type": "string" },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "dependency": {
+          "type": "object",
+          "properties": {
+            "questionId": { "type": "string" },
+            "value": { "type": "string" }
+          }
+        }
+      },
+      "required": ["id", "text", "step", "order", "type", "options"]
+    },
     "Admin": {
       "title": "Admin",
       "description": "User with administrative privileges.",
@@ -59,6 +89,10 @@
     "stats_feedback": {
       "schema": "Feedback",
       "description": "Collection of user feedback."
+    },
+    "config_questions": {
+      "schema": "ConfigQuestion",
+      "description": "Dynamic questions for the simulator form."
     },
     "users": {
       "schema": "Admin",

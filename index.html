@@ -20,6 +20,17 @@
             animation: rotation 1s linear infinite;
         }
 
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.6; }
+            100% { transform: scale(0.9); opacity: 1; }
+        }
+
         @keyframes rotation {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -227,14 +238,107 @@
         .screen {
             display: none;
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(30px);
+            transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .screen.active {
             display: block;
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* Staggered entrance for options */
+        .option-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100px;
+            font-weight: 600;
+            animation: slideUpFade 0.5s ease backwards;
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .option-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-card.selected {
+            background: white;
+            color: #7c3aed;
+            border-color: white;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+            transform: scale(1.03);
+        }
+
+        /* Summary Recap */
+        .summary-recap {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            padding: 1rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .recap-item {
+            font-size: 0.8rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        /* Pulse for next btn */
+        .btn-pulse {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        /* Success transition */
+        .success-tick {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+            animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* Welcome Screen */
@@ -605,8 +709,6 @@
         .feedback-btn.inactive {
             opacity: 0.3;
             filter: grayscale(1);
-            cursor: not-allowed;
-            pointer-events: none;
         }
 
         .comment-area {
@@ -633,7 +735,7 @@
         .comment-textarea.dark-text {
             color: #1f2937;
             border-color: #d1d5db;
-            background: #f9fafb;
+            background: #ffffff;
         }
 
         .comment-textarea.dark-text::placeholder {
@@ -1130,7 +1232,11 @@
     </header>
 
     <!-- Welcome Screen -->
-    <section id="welcome-screen" class="screen active">
+    <section id="welcome-screen" class="screen active" style="position: relative; overflow: visible;">
+        <!-- Decor Elements -->
+        <div style="position: absolute; top: -50px; left: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; z-index: -1;"></div>
+        <div style="position: absolute; bottom: -100px; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%; z-index: -1;"></div>
+
         <h1 style="font-size: 2.2rem; margin-bottom: 1.5rem; text-transform: uppercase;">Líneas de financiamiento para la Transición Energética</h1>
         <p class="subtitle" style="color: white; font-size: 1.4rem; font-weight: 400; line-height: normal; max-width: 800px; opacity: 0.9; letter-spacing: 0.05em; margin-bottom: 2.5rem;">
             Respondé unas preguntas y encontrá la línea de financiamiento ideal para aumentar la eficiencia energética o incorporar energías renovables a tu emprendimiento productivo
@@ -1140,28 +1246,7 @@
 
     <!-- Form Step 1 -->
     <section id="step-1" class="screen">
-        <div class="question-group">
-            <label class="question-title">1. ¿Qué querés financiar?</label>
-            <div class="options-grid" data-question="purpose">
-                <div class="option-card" data-value="Energías Renovables">Energías Renovables</div>
-                <div class="option-card" data-value="Eficiencia Energética">Eficiencia Energética</div>
-                <div class="option-card" data-value="Triple Impacto" style="flex-direction: column;">
-                    <div>Triple Impacto</div>
-                    <span style="display: block; font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem; font-weight: 400;">Aporta valor en tres áreas: social, económica y ambiental.</span>
-                </div>
-            </div>
-        </div>
-
-        <div id="question-2-container" class="question-group" style="display: none;">
-            <label class="question-title">2. ¿Qué tipo de proyecto querés financiar?</label>
-            <div id="q2-note" style="color: white; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 1rem; font-weight: 600; background: rgba(255, 255, 255, 0.1); padding: 0.5rem 1rem; border-radius: 8px; display: none; text-align: center;">
-                Seleccioná hasta 3 opciones
-            </div>
-            <div id="options-grid-q2" class="options-grid" data-question="activity">
-                <!-- Dynamically populated -->
-            </div>
-        </div>
-
+        <div id="questions-container-step-1"></div>
         <div class="nav-buttons" style="display: flex; gap: 1rem; margin-top: 2rem;">
             <button class="btn btn-block" style="background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);" onclick="prevStep(0)">← Anterior</button>
             <button class="btn btn-primary btn-block" style="margin-top: 0;" onclick="nextStep(2)">Siguiente →</button>
@@ -1170,32 +1255,7 @@
 
     <!-- Form Step 2 -->
     <section id="step-2" class="screen">
-        <div id="question-3-container" class="question-group">
-            <label class="question-title">3. ¿Cuenta con certificado MiPyME?</label>
-            <div class="options-grid" data-question="hasMiPyME">
-                <div class="option-card" data-value="Si">Si</div>
-                <div class="option-card" data-value="No">No</div>
-            </div>
-        </div>
-
-        <div class="question-group">
-            <label class="question-title">4. Categoría del solicitante</label>
-            <div id="options-grid-category" class="options-grid" data-question="category">
-                <div class="option-card" data-value="Monotributista o Responsable Inscripto">Monotributista o Responsable Inscripto</div>
-                <div class="option-card" data-value="Pequeña y mediana empresa (PyME)">Pequeña y mediana empresa (PyME)</div>
-                <div class="option-card" data-value="Cooperativa">Cooperativa</div>
-            </div>
-        </div>
-
-        <div class="question-group">
-            <label class="question-title">5. ¿Qué monto de dinero desea solicitar?</label>
-            <div id="options-grid-amount" class="options-grid" data-question="amount">
-                <div class="option-card" data-value="Hasta 100 Millones">Hasta 100 Millones</div>
-                <div class="option-card" data-value="Hasta 200 Millones">Hasta 200 Millones</div>
-                <div class="option-card" data-value="Hasta 300 Millones">Hasta 300 Millones</div>
-            </div>
-        </div>
-
+        <div id="questions-container-step-2"></div>
         <div class="nav-buttons" style="display: flex; gap: 1rem; margin-top: 2rem;">
             <button class="btn btn-block" style="background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);" onclick="prevStep(1)">← Anterior</button>
             <button class="btn btn-primary btn-block" style="margin-top: 0;" onclick="calculateResults()">Ver mi recomendación →</button>
@@ -1204,7 +1264,7 @@
 
     <!-- Results Screen -->
     <section id="results-screen" class="screen">
-        <div class="results-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; gap: 1rem; flex-wrap: wrap;">
+        <div class="results-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;">
             <h2 style="font-size: 2.5rem; font-weight: 800; margin: 0;">¡Análisis Completo!</h2>
             <button onclick="downloadPDF()" style="background: white; color: #7c3aed; border: none; padding: 0.6rem 1.2rem; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.6rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)';">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -1212,13 +1272,15 @@
             </button>
         </div>
 
-        <h3 id="main-rec-title" class="secondary-title" style="text-align: center; font-size: 1.6rem; color: #7c3aed; background: #ede9fe; padding: 1.2rem; border-radius: 16px; margin-bottom: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Línea que más se adapta a tu perfil</h3>
+        <div id="results-summary" class="summary-recap" style="display: none;"></div>
+
+        <h3 id="main-rec-title" class="secondary-title" style="text-align: center; font-size: 1.6rem; color: #7c3aed; background: #ede9fe; padding: 1.2rem; border-radius: 16px; margin-bottom: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: none;">Línea que más se adapta a tu perfil</h3>
         <div id="main-recommendation" class="main-card">
             <!-- Injected by JS -->
         </div>
 
         <!-- Feedback Section -->
-        <div class="feedback-section" style="margin-top: 3rem; margin-bottom: 3rem;">
+        <div id="satisfaction-feedback-section" class="feedback-section" style="margin-top: 3rem; margin-bottom: 3rem; transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);">
             <p class="feedback-title">¿Obtuviste la respuesta que buscabas?</p>
             <div class="feedback-buttons">
                 <button class="feedback-btn yes" id="feedback-yes" onclick="selectSatisfaction('yes')">✓</button>
@@ -1244,7 +1306,7 @@
                 </div>
                 <div class="question-group" style="margin-bottom: 0;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Email de contacto</label>
-                    <input type="email" id="user-email" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="ejemplo@correo.com">
+                    <input type="email" id="user-email" class="comment-textarea dark-text" style="height: 44px; margin-bottom: 0;" placeholder="ejemplo@correo.com">
                 </div>
             </div>
             
@@ -1357,15 +1419,17 @@
                 </div>
             </div>
             <div style="display: flex; gap: 1rem; align-items: center;">
-                <div class="filter-group" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
-                    <label style="font-size: 0.8rem; font-weight: 600; color: white; white-space: nowrap;">Filtrar:</label>
-                    <select id="admin-filter-month" style="background: transparent; border: none; color: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; outline: none;">
-                        <option value="all" style="color: black;">Mes: Todos</option>
-                    </select>
-                    <div style="width: 1px; height: 15px; background: rgba(255,255,255,0.3);"></div>
-                    <select id="admin-filter-year" style="background: transparent; border: none; color: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; outline: none;">
-                        <option value="all" style="color: black;">Año: Todos</option>
-                    </select>
+                <div class="filter-group" style="display: flex; align-items: center; gap: 0.8rem; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
+                    <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                        <label style="font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em;">Desde:</label>
+                        <input type="date" id="admin-filter-start" style="background: transparent; border: none; color: white; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer;">
+                    </div>
+                    <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.2);"></div>
+                    <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                        <label style="font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em;">Hasta:</label>
+                        <input type="date" id="admin-filter-end" style="background: transparent; border: none; color: white; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer;">
+                    </div>
+                    <button onclick="resetAdminDateFilters()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; padding: 0.3rem 0.5rem; font-size: 0.7rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">Reset</button>
                 </div>
                 <button class="btn" style="border: 1px solid rgba(255,255,255,0.3); color: white; background: rgba(255,255,255,0.1);" onclick="handleLogout()">Cerrar sesión</button>
             </div>
@@ -1413,6 +1477,25 @@
                 <!-- Injected by JS -->
             </div>
             <p style="font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 1rem; text-align: center;">* Muestra la cantidad de veces que cada línea fue recomendada en el período seleccionado.</p>
+        </div>
+
+        <!-- Available Questions -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; margin-top: 2rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <h3 class="admin-section-title" style="margin-bottom: 0; color: white;">Preguntas Disponibles</h3>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <button class="btn" style="font-size: 0.8rem; padding: 0.4rem 1.25rem; border: 1px solid #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); border-radius: 10px;" onclick="openQuestionModal()">
+                    ➕ Agregar Pregunta
+                </button>
+                <button class="btn" style="font-size: 0.8rem; padding: 0.4rem 1.25rem; border: 1px solid rgba(255,255,255,0.4); color: white; background: rgba(255,255,255,0.1); border-radius: 10px;" onclick="if(confirm('¿Restablecer todas las preguntas a los valores predeterminados? Se perderán los cambios personalizados.')) seedDefaultQuestions()">
+                    🔄 Restablecer Predeterminados
+                </button>
+            </div>
+        </div>
+        <div id="admin-questions-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+            <!-- Injected by JS -->
         </div>
 
         <!-- Available Lines -->
@@ -1564,33 +1647,33 @@
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <div class="question-group" style="margin-bottom: 0;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Nombre de la línea</label>
-                    <input type="text" id="line-name" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Ej: Financiamiento Verde (Banco CFI)">
+                    <input type="text" id="line-name" class="comment-textarea dark-text" style="height: 44px;" placeholder="Ej: Financiamiento Verde (Banco CFI)">
                 </div>
                 
                 <div class="question-group" style="margin-bottom: 0;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Descripción corta</label>
-                    <textarea id="line-desc" class="comment-textarea" style="height: 80px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Breve descripción de la línea..."></textarea>
+                    <textarea id="line-desc" class="comment-textarea dark-text" style="min-height: 80px;" placeholder="Breve descripción de la línea..."></textarea>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="question-group" style="margin-bottom: 0;">
                         <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Monto Máximo</label>
-                        <input type="text" id="line-maxAmount" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Ej: $200.000.000">
+                        <input type="text" id="line-maxAmount" class="comment-textarea dark-text" style="height: 44px;" placeholder="Ej: $200.000.000">
                     </div>
                     <div class="question-group" style="margin-bottom: 0;">
                         <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Plazo</label>
-                        <input type="text" id="line-term" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Ej: Hasta 60 meses">
+                        <input type="text" id="line-term" class="comment-textarea dark-text" style="height: 44px;" placeholder="Ej: Hasta 60 meses">
                     </div>
                 </div>
 
                 <div class="question-group" style="margin-bottom: 0;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Tasa</label>
-                    <input type="text" id="line-rate" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Ej: 21% Fija">
+                    <input type="text" id="line-rate" class="comment-textarea dark-text" style="height: 44px;" placeholder="Ej: 21% Fija">
                 </div>
 
                 <div class="question-group" style="margin-bottom: 0;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">¿Por qué es ideal? (Para el análisis IA)</label>
-                    <textarea id="line-idealFor" class="comment-textarea" style="height: 80px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Explicación de por qué elegir esta línea..."></textarea>
+                    <textarea id="line-idealFor" class="comment-textarea dark-text" style="min-height: 80px;" placeholder="Explicación de por qué elegir esta línea..."></textarea>
                 </div>
 
                 <div class="question-group" style="margin-bottom: 0;">
@@ -1677,7 +1760,7 @@
 
                 <div class="question-group" style="margin-bottom: 0; display: none;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Información Detallada (Auto-completada)</label>
-                    <textarea id="line-moreInfo" class="comment-textarea" style="height: 120px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Detalles técnicos..."></textarea>
+                    <textarea id="line-moreInfo" class="comment-textarea dark-text" style="min-height: 120px;" placeholder="Detalles técnicos..."></textarea>
                 </div>
 
                 <div class="question-group" style="margin-bottom: 0;">
@@ -1705,6 +1788,82 @@
             <div style="margin-top: 2rem; display: flex; gap: 1rem;">
                 <button class="btn btn-primary style-btn" style="flex: 1; background: #7c3aed; color: white;" onclick="saveLine()">Guardar Línea</button>
                 <button class="btn style-btn" style="flex: 1; background: #f3f4f6; color: #4b5563;" onclick="closeLineModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Editor Modal -->
+    <div id="question-modal-overlay" class="modal-overlay" style="z-index: 3001;">
+        <div class="modal" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <span class="modal-close" onclick="closeQuestionModal()">&times;</span>
+            <h3 id="question-modal-title" style="margin-bottom: 1.5rem; color: #10b981;">Agregar/Editar Pregunta</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="question-group" style="margin-bottom: 0;">
+                        <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">ID Único (ej: city)</label>
+                        <input type="text" id="q-id" class="comment-textarea dark-text" style="height: 44px;" placeholder="id_de_pregunta">
+                    </div>
+                    <div class="question-group" style="margin-bottom: 0;">
+                        <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Orden de aparición</label>
+                        <input type="number" id="q-order" class="comment-textarea dark-text" style="height: 44px;" placeholder="1">
+                    </div>
+                </div>
+
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Título de la pregunta</label>
+                    <input type="text" id="q-text" class="comment-textarea dark-text" style="height: 44px;" placeholder="¿Cómo calificaría su proyecto?">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="question-group" style="margin-bottom: 0;">
+                        <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Interfaz (Paso)</label>
+                        <input type="number" id="q-step" class="comment-textarea dark-text" style="height: 44px;" min="1" placeholder="1">
+                        <p style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.25rem;">* Paso 1, 2, 3... Crea nuevas interfaces aumentando este número.</p>
+                    </div>
+                    <div class="question-group" style="margin-bottom: 0;">
+                        <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Tipo de selección</label>
+                        <select id="q-type" class="comment-textarea dark-text" style="height: 44px;" onchange="document.getElementById('q-max-options-group').style.display = this.value === 'multiple' ? 'block' : 'none'">
+                            <option value="single">Única (Botón)</option>
+                            <option value="multiple">Múltiple (Selección múltiple)</option>
+                        </select>
+                    </div>
+                    <div id="q-max-options-group" class="question-group" style="margin-bottom: 0; display: none;">
+                        <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Máximo de opciones</label>
+                        <input type="number" id="q-max-options" class="comment-textarea dark-text" style="height: 44px;" min="1" placeholder="1">
+                    </div>
+                </div>
+
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">¿Depende de otra pregunta?</label>
+                    <select id="q-depends-on" class="comment-textarea dark-text" style="height: 44px;">
+                        <option value="">No (Pregunta independiente)</option>
+                        <!-- Options will be populated dynamicallly -->
+                    </select>
+                    <p style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.25rem;">* Si depende de otra, esta pregunta solo se mostrará si la anterior tiene respuesta.</p>
+                </div>
+
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Opciones de respuesta</label>
+                    <p style="font-size: 0.7rem; color: #6b7280; margin-bottom: 0.5rem;">Definí las opciones de respuesta. Si la pregunta depende de otra, podés indicar qué valor de la pregunta padre activa cada opción.</p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr auto; gap: 0.5rem; font-size: 0.75rem; font-weight: 700; color: #6b7280; padding: 0 0.5rem;">
+                    <span>Respuesta Hijo</span>
+                    <span>Descripción (opcional)</span>
+                    <span>Activar si el Padre es:</span>
+                    <span></span>
+                </div>
+                <div id="q-options-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <!-- Option rows -->
+                </div>
+            </div>
+                    <button type="button" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; border-radius: 8px;" onclick="addQOptionRow()">+ Agregar Opción</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 2.5rem; display: flex; gap: 1rem;">
+                <button class="btn btn-primary style-btn" style="flex: 1; background: #10b981; color: white; border: none;" onclick="saveQuestion()">Guardar Pregunta</button>
+                <button class="btn style-btn" style="flex: 1; background: #f3f4f6; color: #4b5563;" onclick="closeQuestionModal()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -1856,6 +2015,19 @@
 
     let financialLines = [...initialFinancialLines];
 
+    function mergeFinancialLines(customLines) {
+        let merged = [...initialFinancialLines];
+        customLines.forEach(cl => {
+            const idx = merged.findIndex(ml => ml.id === cl.id || (cl.name && ml.name === cl.name));
+            if (idx !== -1) {
+                merged[idx] = { ...merged[idx], ...cl };
+            } else {
+                merged.push(cl);
+            }
+        });
+        return merged;
+    }
+
     // Load custom lines from Firestore (Real-time)
     function loadCustomLines() {
         const path = 'config_financial_lines';
@@ -1863,23 +2035,11 @@
             const q = query(collection(db, path));
             onSnapshot(q, (snapshot) => {
                 const customLines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                // Merge: Start with initial, then apply custom (overriding by ID or name)
-                let merged = [...initialFinancialLines];
-                
-                customLines.forEach(cl => {
-                    const idx = merged.findIndex(ml => ml.id === cl.id || ml.name === cl.name);
-                    if (idx !== -1) {
-                        merged[idx] = cl;
-                    } else {
-                        merged.push(cl);
-                    }
-                });
-
-                financialLines = merged;
+                financialLines = mergeFinancialLines(customLines);
                 
                 // If admin panel is open, refresh it
-                if (document.getElementById('admin-panel').style.display === 'block') {
+                const adminPanel = document.getElementById('admin-panel');
+                if (adminPanel && adminPanel.style.display === 'flex') {
                     refreshAdminUI();
                 }
             }, (error) => {
@@ -1891,6 +2051,123 @@
         }
     }
     loadCustomLines();
+
+    // Default questions in case Firestore is empty
+    const DEFAULT_QUESTIONS = [
+        {
+            id: 'purpose',
+            text: '1. ¿Qué querés financiar?',
+            step: 1,
+            order: 1,
+            type: 'single',
+            options: [
+                { value: 'Energías Renovables', description: '' },
+                { value: 'Eficiencia Energética', description: '' },
+                { value: 'Triple Impacto', description: 'Aporta valor en tres áreas: social, económica y ambiental.' }
+            ]
+        },
+        {
+            id: 'activity',
+            text: '2. ¿Qué tipo de proyecto querés financiar?',
+            step: 1,
+            order: 2,
+            type: 'multiple',
+            maxOptions: 3,
+            dependsOn: 'purpose',
+            options: [
+                // Energías Renovables
+                { value: 'Paneles solares fotovoltaicos', description: '', parentValue: 'Energías Renovables' },
+                { value: 'Termotanques solares', description: '', parentValue: 'Energías Renovables' },
+                { value: 'Sistemas renovables off-grid', description: '', parentValue: 'Energías Renovables' },
+                { value: 'Eficiencia en riego mediante renovables', description: '', parentValue: 'Energías Renovables' },
+                { value: 'Biodigestores', description: '', parentValue: 'Energías Renovables' },
+                { value: 'Calderas de biomasa', description: '', parentValue: 'Energías Renovables' },
+                { value: 'Prosumidores', description: '', parentValue: 'Energías Renovables' },
+                // Eficiencia Energética
+                { value: 'Equipamiento eléctrico de alta eficiencia', description: '', parentValue: 'Eficiencia Energética' },
+                { value: 'Recambio de motores', description: '', parentValue: 'Eficiencia Energética' },
+                { value: 'Mejoras en sistemas de aire comprimido', description: '', parentValue: 'Eficiencia Energética' },
+                { value: 'Iluminación LED industrial', description: '', parentValue: 'Eficiencia Energética' },
+                { value: 'Aislación térmica de techos y muros', description: '', parentValue: 'Eficiencia Energética' },
+                { value: 'Bombas de calor', description: '', parentValue: 'Eficiencia Energética' },
+                { value: 'Sistemas de gestión de energía', description: '', parentValue: 'Eficiencia Energética' },
+                // Triple Impacto
+                { value: 'Inversiones que generen impacto social (empleo inclusivo, desarrollo local), ambiental (economía circular, regeneración) y económico sostenible.', description: '', parentValue: 'Triple Impacto' }
+            ]
+        },
+        {
+            id: 'hasMiPyME',
+            text: '3. ¿Cuenta con certificado MiPyME?',
+            step: 2,
+            order: 3,
+            type: 'single',
+            options: [
+                { value: 'Si', description: '' },
+                { value: 'No', description: '' }
+            ]
+        },
+        {
+            id: 'category',
+            text: '4. Categoría del solicitante',
+            step: 2,
+            order: 4,
+            type: 'single',
+            options: [
+                { value: 'Monotributista o Responsable Inscripto', description: '' },
+                { value: 'Pequeña y mediana empresa (PyME)', description: '' },
+                { value: 'Cooperativa', description: '' }
+            ]
+        },
+        {
+            id: 'amount',
+            text: '5. ¿Qué monto de dinero desea solicitar?',
+            step: 2,
+            order: 5,
+            type: 'single',
+            options: [
+                { value: 'Hasta 100 Millones', description: '' },
+                { value: 'Hasta 200 Millones', description: '' },
+                { value: 'Hasta 300 Millones', description: '' }
+            ]
+        }
+    ];
+
+    let adminData = {
+        userInfo: [],
+        completions: [],
+        feedback: [],
+        visitas: [],
+        lines: [],
+        questions: [...DEFAULT_QUESTIONS]
+    };
+
+    function loadQuestions() {
+        const path = 'config_questions';
+        try {
+            const q = query(collection(db, path), orderBy('order'));
+            onSnapshot(q, (snapshot) => {
+                const qs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                if (qs.length > 0) {
+                    adminData.questions = qs;
+                } else {
+                    adminData.questions = [...DEFAULT_QUESTIONS];
+                }
+                renderForm();
+                
+                const adminPanel = document.getElementById('admin-panel');
+                if (adminPanel && adminPanel.style.display === 'block') {
+                    updateAdminQuestionsList();
+                }
+            }, (error) => {
+                console.error("Error loading questions:", error);
+                renderForm();
+            });
+        } catch (e) {
+            console.error("Critical error setting up questions listener:", e);
+            renderForm();
+        }
+    }
+    loadQuestions();
 
     let currentStep = 0;
 
@@ -1933,27 +2210,27 @@
 
     // Navigation
     function nextStep(step) {
-        if (step === 1) {
-            // Generate a unique ID for THIS simulation attempt
-            const newSessionId = 'sim_' + Math.random().toString(36).substr(2, 9) + Date.now();
-            localStorage.setItem('app_session_id', newSessionId);
+        if (step > 1 && !validateStep(step - 1)) return;
 
-            trackVisit(); // Count visit only when starting simulation
-            document.getElementById('welcome-screen').classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('step-1').classList.add('active');
-                document.getElementById('stepper').style.display = 'flex';
-                updateStepper(2);
-            }, 50);
-        } else if (step === 2) {
-            if (!validateStep(1)) return;
-            document.getElementById('step-1').classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('step-2').classList.add('active');
-                updateStepper(3);
-            }, 50);
+        // Session initialization on first move
+        if (step === 1 && !localStorage.getItem('app_session_id')) {
+             const newSessionId = 'sim_' + Math.random().toString(36).substr(2, 9) + Date.now();
+             localStorage.setItem('app_session_id', newSessionId);
+             trackVisit();
         }
-        currentStep = step;
+
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        
+        const nextScreen = document.getElementById(`step-${step}`);
+        if (nextScreen) {
+            if (step >= 1) document.getElementById('stepper').style.display = 'flex';
+            nextScreen.classList.add('active');
+            updateStepper(step + 1);
+            currentStep = step;
+        } else {
+            // If no more steps, assume we go to results
+            calculateResults();
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1974,214 +2251,19 @@
         });
     }
 
-    // Option Selection
-    document.querySelectorAll('.option-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const question = this.parentElement.dataset.question;
-            const value = this.dataset.value;
-
-            // Deselect others in the same question
-            this.parentElement.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-            
-            // Select this one
-            this.classList.add('selected');
-            userAnswers[question] = value;
-
-            // Conditional logic for Question 2 and Amount restriction
-            if (question === 'purpose' || question === 'hasMiPyME' || question === 'category') {
-                if (question === 'purpose') updateQuestion2(value);
-                updateAmountOptions();
-            }
-        });
-    });
-
-    function updateAmountOptions() {
-        const amountGrid = document.getElementById('options-grid-amount');
-        const categoryGrid = document.getElementById('options-grid-category');
-        const q3Container = document.getElementById('question-3-container');
-        if (!amountGrid || !categoryGrid || !q3Container) return;
-
-        const option200 = amountGrid.querySelector('[data-value="Hasta 200 Millones"]');
-        const option300 = amountGrid.querySelector('[data-value="Hasta 300 Millones"]');
-        const optionMonotributista = categoryGrid.querySelector('[data-value="Monotributista o Responsable Inscripto"]');
-        const optionCooperativa = categoryGrid.querySelector('[data-value="Cooperativa"]');
-        const optionPyME = categoryGrid.querySelector('[data-value="Pequeña y mediana empresa (PyME)"]');
+    // Option Selection and Question Logic
+    function validateStep(step, silent = false) {
+        // Find all questions assigned to this step
+        const stepQuestions = adminData.questions.filter(q => q.step === step);
         
-        const { purpose, hasMiPyME, category } = userAnswers;
-
-        // Logic for Question 3 visibility
-        if (purpose === 'Triple Impacto') {
-            q3Container.style.display = 'none';
-            delete userAnswers['hasMiPyME'];
-        } else {
-            q3Container.style.display = 'block';
-        }
-
-        // Logic for Category options (Hide Monotributista only for Triple Impacto)
-        if (purpose === 'Triple Impacto') {
-            optionMonotributista.style.display = 'none';
-            if (userAnswers['category'] === 'Monotributista o Responsable Inscripto') {
-                optionMonotributista.classList.remove('selected');
-                delete userAnswers['category'];
-            }
-        } else {
-            optionMonotributista.style.display = 'flex';
-        }
-
-        // Logic for Cooperativa (Hide if MiPyME is "Si")
-        if (hasMiPyME === 'Si') {
-            optionCooperativa.style.display = 'none';
-            if (userAnswers['category'] === 'Cooperativa') {
-                optionCooperativa.classList.remove('selected');
-                delete userAnswers['category'];
-            }
-        } else {
-            optionCooperativa.style.display = 'flex';
-        }
-
-        // Logic for PyME (Hide if MiPyME is "No")
-        if (hasMiPyME === 'No') {
-            optionPyME.style.display = 'none';
-            if (userAnswers['category'] === 'Pequeña y mediana empresa (PyME)') {
-                optionPyME.classList.remove('selected');
-                delete userAnswers['category'];
-            }
-        } else {
-            optionPyME.style.display = 'flex';
-        }
-
-        // Logic for 300M (Only for Triple Impacto)
-        if (purpose !== 'Triple Impacto') {
-            option300.style.display = 'none';
-            if (userAnswers['amount'] === 'Hasta 300 Millones') {
-                option300.classList.remove('selected');
-                delete userAnswers['amount'];
-            }
-        } else {
-            option300.style.display = 'flex';
-        }
-
-        // Logic for 200M
-        option200.style.display = 'flex';
-    }
-
-    function updateQuestion2(purposeValue) {
-        const container = document.getElementById('question-2-container');
-        const grid = document.getElementById('options-grid-q2');
-        const hint = document.getElementById('q2-hint');
-        
-        if (hint) {
-            hint.style.display = purposeValue === 'Triple Impacto' ? 'none' : 'block';
-        }
-        
-        const activities = {
-            'Eficiencia Energética': [
-                { text: 'Recambio de maquinarias productivas (Motores, máquinas, transporte, calderas, etc.)' },
-                { text: 'Readecuación de instalaciones para reducir consumo energético (Aislación, Recambio de conducción, Sistemas de control inteligente)' },
-                { text: 'Recambio de instalaciones de acondicionamiento de aire (Equipos de calefacción, refrigeración, ventilación, etc.)' },
-                { text: 'Recambio de sistemas de iluminación (Luminaria, LED, etc.)' },
-                { text: 'Otra medida que reduzca consumo energético o aumente producción utilizando mismo nivel de consumo' }
-            ],
-            'Energías Renovables': [
-                { text: 'Prosumidores', legend: 'Generás tu propia energía con paneles solares y reducís tu factura' },
-                { text: 'Sistemas renovables off-grid', legend: 'Sistema eléctrico independiente, sin conexión a la red' },
-                { text: 'Sistemas de biogás', legend: 'Generación de energía y/o gas a partir de biodigestores' },
-                { text: 'Sistema de bombeo y riego solar', legend: 'Extrae y bombea agua usando energía del sol' },
-                { text: 'Otro tipo de instalación que incorpore Energías Renovables' }
-            ],
-            'Triple Impacto': [
-                { text: 'Inversiones que impliquen simultáneamente: RENTABILIDAD ECONÓMICA (sostenible en el tiempo) con IMPACTO SOCIAL POSITIVO (mejorando la calidad de vida de colaboradores y la comunidad, incluyendo empleos dignos, equidad e inclusión) e IMPACTO AMBIENTAL POSITIVO (reduciendo la huella ambiental, utilizando energías renovables, aplicando economía circular, regenerando el entorno, etc.)' }
-            ]
-        };
-
-        const currentActivities = activities[purposeValue];
-        
-        const q2Note = document.getElementById('q2-note');
-        if (q2Note) {
-            if (purposeValue === 'Energías Renovables' || purposeValue === 'Eficiencia Energética') {
-                q2Note.style.display = 'block';
-            } else {
-                q2Note.style.display = 'none';
-            }
-        }
-        
-        if (currentActivities) {
-            grid.innerHTML = currentActivities.map(activityObj => {
-                const activity = activityObj.text;
-                const legend = activityObj.legend ? `<span style="display: block; font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem; font-weight: 400;">${activityObj.legend}</span>` : '';
-                
-                return `
-                    <div class="option-card ${purposeValue === 'Triple Impacto' ? 'full-width' : ''}" 
-                         data-value="${activity}" 
-                         style="flex-direction: column; ${purposeValue === 'Triple Impacto' ? 'grid-column: 1 / -1; font-size: 0.9rem; line-height: 1.5; padding: 2rem;' : ''}">
-                        <div>${activity}</div>
-                        ${legend}
-                    </div>
-                `;
-            }).join('');
-            
-            // Re-attach listeners to new cards
-            grid.querySelectorAll('.option-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const value = this.dataset.value;
-                    
-                    if (purposeValue === 'Triple Impacto') {
-                        // For Triple Impacto, it's a single selection (the definition itself)
-                        grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-                        this.classList.add('selected');
-                        userAnswers['activity'] = value;
-                        return;
-                    }
-
-                    if (!userAnswers['activity'] || !Array.isArray(userAnswers['activity'])) userAnswers['activity'] = [];
-                    
-                    if (this.classList.contains('selected')) {
-                        // Deselect
-                        this.classList.remove('selected');
-                        userAnswers['activity'] = userAnswers['activity'].filter(v => v !== value);
-                    } else {
-                        // Mutual exclusivity for Energías Renovables: Prosumidores vs Off-grid
-                        if (purposeValue === 'Energías Renovables') {
-                            if (value === 'Prosumidores' && userAnswers['activity'].includes('Sistemas renovables off-grid')) {
-                                showAlert('Opciones incompatibles', 'Un proyecto no puede ser "Prosumidor" (conectado a red) y "Off-grid" (independiente de la red) al mismo tiempo.');
-                                return;
-                            }
-                            if (value === 'Sistemas renovables off-grid' && userAnswers['activity'].includes('Prosumidores')) {
-                                showAlert('Opciones incompatibles', 'Los sistemas off-grid no son compatibles con la modalidad de Prosumidores.');
-                                return;
-                            }
-                        }
-
-                        // Select if under limit
-                        if (userAnswers['activity'].length < 3) {
-                            this.classList.add('selected');
-                            userAnswers['activity'].push(value);
-                        } else {
-                            showAlert('Límite alcanzado', 'Puedes seleccionar un máximo de 3 actividades.');
-                        }
-                    }
-                });
-            });
-
-            container.style.display = 'block';
-            userAnswers['activity'] = purposeValue === 'Triple Impacto' ? null : []; // Reset if purpose changed
-        } else {
-            container.style.display = 'none';
-            delete userAnswers['activity'];
-        }
-    }
-
-    function validateStep(step) {
-        const questions = step === 1 ? ['purpose'] : ['hasMiPyME', 'category', 'amount'];
-        if (step === 1 && document.getElementById('question-2-container').style.display !== 'none') {
-            questions.push('activity');
-        }
-        for (const q of questions) {
+        for (const q of stepQuestions) {
+            const container = document.getElementById('q-container-' + q.id);
             // Skip validation if the question container is hidden
-            if (q === 'hasMiPyME' && document.getElementById('question-3-container').style.display === 'none') continue;
+            if (container && container.style.display === 'none') continue;
             
-            if (!userAnswers[q] || (Array.isArray(userAnswers[q]) && userAnswers[q].length === 0)) {
-                alert('Por favor, respondé todas las preguntas para continuar.');
+            const answer = userAnswers[q.id];
+            if (!answer || (Array.isArray(answer) && answer.length === 0)) {
+                if (!silent) showAlert('Preguntas incompletas', `Por favor, respondé "${q.text}" para continuar.`);
                 return false;
             }
         }
@@ -2212,14 +2294,11 @@
         if (step === 0) {
             document.getElementById('welcome-screen').classList.add('active');
             document.getElementById('stepper').style.display = 'none';
-            updateStepper(1);
-        } else if (step === 1) {
-            document.getElementById('step-1').classList.add('active');
-            updateStepper(2);
-        } else if (step === 2) {
-            document.getElementById('step-2').classList.add('active');
-            updateStepper(3);
+        } else {
+            const prevScreen = document.getElementById(`step-${step}`);
+            if (prevScreen) prevScreen.classList.add('active');
         }
+        updateStepper(step + 1);
         currentStep = step;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -2227,55 +2306,56 @@
     async function calculateResults() {
         if (!validateStep(2)) return;
 
+        // Show loading state with multi-stage messages
+        document.getElementById('step-2').classList.remove('active');
+        const resultsScreen = document.getElementById('results-screen');
+        resultsScreen.classList.add('active');
+        
+        // Hide summary and results until ready
+        document.getElementById('results-summary').style.display = 'none';
+        document.getElementById('main-rec-title').style.display = 'none';
+        document.getElementById('user-info-section').style.display = 'none';
+        document.getElementById('alternatives-title').style.display = 'none';
+        
+        const loaderContainer = document.getElementById('main-recommendation');
+        loaderContainer.innerHTML = `
+            <div style="text-align: center; padding: 5rem 2rem; background: rgba(255,255,255,0.05); border-radius: 24px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);" id="analysis-loader">
+                <div class="loader-container" style="position: relative; width: 80px; height: 80px; margin: 0 auto 2.5rem;">
+                    <div class="loader" style="width: 100%; height: 100%; border-width: 4px; border-color: #7c3aed transparent #7c3aed transparent; animation: spin 1.2s linear infinite;"></div>
+                    <div style="position: absolute; top: 50%; left: 50%; translate: -50% -50%; width: 50px; height: 50px; background: rgba(124,58,237,0.2); border-radius: 50%; animation: pulse 2s infinite;"></div>
+                </div>
+                <h3 style="color: white; font-size: 1.75rem; font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.02em;" id="analysis-text">Iniciando diagnóstico...</h3>
+                <p style="color: rgba(255,255,255,0.5); font-size: 1rem; font-weight: 500;" id="analysis-subtext">Estamos analizando tu perfil empresarial.</p>
+                <div style="margin-top: 2.5rem; width: 100%; max-width: 300px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-left: auto; margin-right: auto; overflow: hidden;">
+                    <div id="loader-progress" style="width: 0%; height: 100%; background: #7c3aed; transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+        `;
+        
+        const loadingMessages = [
+            { t: "Analizando perfil...", s: "Evaluando rubro, escala MiPyME y antigüedad.", p: 25 },
+            { t: "Cruzando líneas...", s: "Filtrando convenios vigentes con Banco Nación y Santa Fe.", p: 50 },
+            { t: "Optimizando tasas...", s: "Aplicando subsidios provinciales y bonificaciones del CFI.", p: 75 },
+            { t: "Finalizando...", s: "Preparando tu hoja de ruta para la eficiencia energética.", p: 95 }
+        ];
+        
+        let msgIdx = 0;
+        const msgInterval = setInterval(() => {
+            const textEl = document.getElementById('analysis-text');
+            const subEl = document.getElementById('analysis-subtext');
+            const progressEl = document.getElementById('loader-progress');
+            if (textEl && subEl && msgIdx < loadingMessages.length) {
+                textEl.innerText = loadingMessages[msgIdx].t;
+                subEl.innerText = loadingMessages[msgIdx].s;
+                if (progressEl) progressEl.style.width = loadingMessages[msgIdx].p + '%';
+                msgIdx++;
+            }
+        }, 1200);
+
         // Deterministic logic based on user requirements
         let mainLine = null;
         let altLines = [];
         let reasoning = "";
-
-        const { purpose, hasMiPyME, category } = userAnswers;
-
-        if (purpose === 'Triple Impacto') {
-            mainLine = financialLines.find(l => l.criteria && l.criteria.purpose && l.criteria.purpose.includes('Triple Impacto'));
-            if (!mainLine) {
-                // Fallback if not found by criteria
-                mainLine = financialLines.find(l => l.name.toLowerCase().includes('triple impacto'));
-            }
-            altLines = financialLines.filter(l => l.id !== mainLine?.id && (l.id === 'eficiencia_energetica_bmr' || l.id === 'financiamiento_verde_cfi'));
-            reasoning = "Para proyectos de Triple Impacto, esta es la línea de financiamiento específica diseñada para potenciar su impacto social, ambiental y económico.";
-        } else if (purpose === 'Energías Renovables' || purpose === 'Eficiencia Energética') {
-            if (hasMiPyME === 'Si') {
-                if (category === 'Monotributista o Responsable Inscripto') {
-                    // Always BMR as main for Monotributista MiPyME (100M or 200M)
-                    mainLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
-                    altLines = [financialLines.find(l => l.id === 'financiamiento_verde_cfi')].filter(Boolean);
-                    reasoning = "Para monotributistas o responsables inscriptos con certificado MiPyME, la línea del Banco Municipal de Rosario (BMR) es la opción recomendada como prioridad por sus tasas bonificadas.";
-                } else if (category === 'Pequeña y mediana empresa (PyME)' || category === 'Cooperativa') {
-                    // Always CFI as main for PyME MiPyME (100M or 200M)
-                    mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi');
-                    altLines = [financialLines.find(l => l.id === 'eficiencia_energetica_bmr')].filter(Boolean);
-                    reasoning = "Como empresa o cooperativa con certificado MiPyME, la línea de Financiamiento Verde del CFI es su mejor opción principal para montos de hasta 200 millones, complementada por la línea del BMR como alternativa.";
-                }
-            } else if (hasMiPyME === 'No') {
-                if (category === 'Monotributista o Responsable Inscripto' || category === 'Cooperativa') {
-                    mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi');
-                    reasoning = "Al no contar con certificado MiPyME, la línea de Financiamiento Verde del CFI es la que mejor se adapta a su perfil de monotributista o cooperativa.";
-                }
-            }
-        }
-
-        // Show loading state
-        document.getElementById('step-2').classList.remove('active');
-        const resultsScreen = document.getElementById('results-screen');
-        resultsScreen.classList.add('active');
-        document.getElementById('main-recommendation').innerHTML = `
-            <div style="text-align: center; padding: 3rem;">
-                <div class="loader" style="margin: 0 auto 1.5rem;"></div>
-                <p style="color: white; font-weight: 600;">Analizando tu perfil...</p>
-            </div>
-        `;
-        document.getElementById('alternatives-container').innerHTML = '';
-        updateStepper(4);
-        window.scrollTo(0, 0);
 
         // If deterministic logic found a match, use it. Otherwise, use AI or Fallback.
         if (mainLine) {
@@ -2284,11 +2364,17 @@
                 altLines = financialLines.filter(l => l.id !== mainLine.id && !l.isSpecial).slice(0, 2);
             }
             setTimeout(async () => {
+                clearInterval(msgInterval);
                 renderResults(mainLine, altLines, reasoning);
                 currentRecommendedLine = mainLine.name;
                 await trackCompletion(currentRecommendedLine, reasoning, userAnswers);
                 updateStepper(4);
-            }, 1500);
+                
+                // Show UI elements
+                document.getElementById('results-summary').style.display = 'flex';
+                document.getElementById('main-rec-title').style.display = 'block';
+                document.getElementById('user-info-section').style.display = 'block';
+            }, 3200);
             return;
         }
 
@@ -2315,12 +2401,19 @@
             const aiMainLine = financialLines.find(l => l.id === result.recommendedLineId) || financialLines[0];
             const aiAltLines = (result.alternatives || []).map(id => financialLines.find(l => l.id === id)).filter(Boolean);
 
+            clearInterval(msgInterval);
             renderResults(aiMainLine, aiAltLines, result.reasoning);
             currentRecommendedLine = aiMainLine ? aiMainLine.name : "No especificada";
             await trackCompletion(currentRecommendedLine, result.reasoning, userAnswers);
             updateStepper(4);
+            
+            // Show UI elements
+            document.getElementById('results-summary').style.display = 'flex';
+            document.getElementById('main-rec-title').style.display = 'block';
+            document.getElementById('user-info-section').style.display = 'block';
 
         } catch (error) {
+            clearInterval(msgInterval);
             console.error("Error in AI recommendation:", error);
             fallbackRecommendation();
         }
@@ -2352,6 +2445,17 @@
     }
 
     function renderResults(main, alts, reasoning) {
+        // Render Summary Recap
+        const summary = document.getElementById('results-summary');
+        if (summary) {
+            summary.innerHTML = `
+                <div class="recap-item"><span>📌</span> <strong>Propósito:</strong> ${userAnswers.purpose || '-'}</div>
+                <div class="recap-item"><span>🏭</span> <strong>Categoría:</strong> ${userAnswers.category || '-'}</div>
+                <div class="recap-item"><span>💰</span> <strong>Monto:</strong> ${userAnswers.amount || '-'}</div>
+                ${userAnswers.hasMiPyME ? `<div class="recap-item"><span>📜</span> <strong>MiPyME:</strong> ${userAnswers.hasMiPyME}</div>` : ''}
+            `;
+        }
+
         // Show/Hide alternatives title
         const altTitle = document.getElementById('alternatives-title');
         const altContainer = document.getElementById('alternatives-container');
@@ -2366,48 +2470,56 @@
 
         // Render Main
         document.getElementById('main-recommendation').innerHTML = `
+            <div class="badge">Recomendación para tu perfil</div>
             <h4 class="line-title">${main.name}</h4>
             <p class="line-desc">${main.desc}</p>
             
             <div class="line-details">
                 <div class="detail-item">
                     <span>Monto Máximo</span>
-                    <strong>${main.maxAmount}</strong>
+                    <strong>${main.maxAmount || '-'}</strong>
                 </div>
                 <div class="detail-item">
-                    <span>Plazo de repago</span>
-                    <strong>${main.term}</strong>
+                    <span>Plazo</span>
+                    <strong>${main.term || '-'}</strong>
                 </div>
                 <div class="detail-item">
-                    <span>Tasa Estimada</span>
-                    <strong>${main.rate}</strong>
+                    <span>Tasa</span>
+                    <strong>${main.rate || '-'}</strong>
                 </div>
             </div>
 
-
-
-            ${main.links && main.links.length > 0 ? `
-            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.1);">
-                <h4 style="font-size: 1rem; color: #7c3aed; margin-bottom: 0.75rem;">Más información:</h4>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    ${main.links.map(l => {
-                        const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
-                        const linkText = isDriveLink ? 'Líneas de financiamiento' : l;
-                        return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: #1f2937; text-decoration: underline; font-size: 0.9rem; font-weight: 600; display: block; word-break: break-all;">${linkText}</a>`;
-                    }).join('')}
-                </div>
+            ${reasoning ? `
+            <div class="why-ideal">
+                <h4>Diagnóstico y Justificación:</h4>
+                <p>${reasoning}</p>
             </div>
             ` : ''}
 
-            ${main.contacts && main.contacts.length > 0 ? `
-            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 12px;">
-                <h4 style="font-size: 1rem; color: #7c3aed; margin-bottom: 0.75rem;">Canales de contacto:</h4>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    ${main.contacts.map(c => `<span style="font-size: 0.9rem; color: #1f2937; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
+            <div style="margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 1.5rem;">
+                ${main.links && main.links.length > 0 ? `
+                <div style="flex: 1; min-width: 250px;">
+                    <h4 style="font-size: 1.1rem; color: #7c3aed; margin-bottom: 0.75rem; font-weight: 700;">Más información:</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        ${main.links.map(l => {
+                            const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
+                            const linkText = isDriveLink ? 'Líneas de financiamiento' : (l.length > 40 ? l.substring(0, 40) + '...' : l);
+                            return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: #1f2937; text-decoration: underline; font-size: 0.95rem; font-weight: 600; display: block; word-break: break-all;">${linkText}</a>`;
+                        }).join('')}
+                    </div>
                 </div>
-                ${main.contactEpigraph ? `<p style="font-size: 0.8rem; margin-top: 0.75rem; color: #4b5563; font-style: italic; word-break: break-word;">${main.contactEpigraph}</p>` : ''}
+                ` : ''}
+
+                ${main.contacts && main.contacts.length > 0 ? `
+                <div style="flex: 1; min-width: 250px; padding: 1.25rem; background: #f3f4f6; border-radius: 16px;">
+                    <h4 style="font-size: 1.1rem; color: #7c3aed; margin-bottom: 0.75rem; font-weight: 700;">Canales de contacto:</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                        ${main.contacts.map(c => `<span style="font-size: 0.95rem; color: #1f2937; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
+                    </div>
+                    ${main.contactEpigraph ? `<p style="font-size: 0.85rem; margin-top: 0.75rem; color: #6b7280; font-style: italic; word-break: break-word; line-height: 1.4;">${main.contactEpigraph}</p>` : ''}
+                </div>
+                ` : ''}
             </div>
-            ` : ''}
         `;
 
         // Render Alternatives
@@ -2480,17 +2592,41 @@
     }
 
     function resetFeedbackUI() {
-        document.getElementById('feedback-yes').classList.remove('selected', 'inactive');
-        document.getElementById('feedback-no').classList.remove('selected', 'inactive');
-        document.getElementById('feedback-yes').style.pointerEvents = 'auto';
-        document.getElementById('feedback-no').style.pointerEvents = 'auto';
-        document.getElementById('feedback-comment').value = '';
-        document.getElementById('feedback-comment').disabled = false;
-        document.getElementById('char-count').innerText = '0';
-        document.getElementById('btn-send-feedback').disabled = false;
-        document.getElementById('btn-send-feedback').style.display = 'block';
-        document.getElementById('btn-send-feedback').innerText = "Enviar respuesta";
-        document.getElementById('feedback-thanks').style.display = 'none';
+        const btnYes = document.getElementById('feedback-yes');
+        const btnNo = document.getElementById('feedback-no');
+        const comment = document.getElementById('feedback-comment');
+        const btnSend = document.getElementById('btn-send-feedback');
+        const thanks = document.getElementById('feedback-thanks');
+        const count = document.getElementById('char-count');
+
+        if (btnYes) {
+            btnYes.classList.remove('selected', 'inactive');
+            btnYes.style.pointerEvents = 'auto';
+        }
+        if (btnNo) {
+            btnNo.classList.remove('selected', 'inactive');
+            btnNo.style.pointerEvents = 'auto';
+        }
+        if (comment) {
+            comment.value = '';
+            comment.disabled = false;
+        }
+        if (count) count.innerText = '0';
+        if (btnSend) {
+            btnSend.disabled = false;
+            btnSend.style.display = 'block';
+            btnSend.innerText = "Enviar respuesta";
+        }
+        if (thanks) thanks.style.display = 'none';
+
+        const section = document.getElementById('satisfaction-feedback-section');
+        if (section) {
+            section.style.display = 'block';
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+            section.style.filter = 'none';
+        }
+        
         currentSatisfaction = null;
         feedbackSent = false;
     }
@@ -2548,9 +2684,19 @@
         document.getElementById('btn-send-feedback').innerText = "✓ Enviado";
         document.getElementById('feedback-thanks').style.display = 'block';
 
+        // Subtle fade out after 2.5 seconds
         setTimeout(() => {
-            resetFeedbackUI();
-        }, 3000);
+            const section = document.getElementById('satisfaction-feedback-section');
+            if (section) {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(-20px)';
+                section.style.filter = 'blur(10px)';
+                
+                setTimeout(() => {
+                    section.style.display = 'none';
+                }, 800);
+            }
+        }, 2500);
     }
 
     // User Info Logic
@@ -2629,12 +2775,17 @@
         }
         
         // UI Feedback
-        emailInput.disabled = true;
-        companyInput.disabled = true;
-        btn.disabled = true;
-        btn.innerText = "✓ Información enviada";
-        btn.style.background = "var(--secondary)";
-        document.getElementById('user-info-thanks').style.display = 'block';
+        const section = document.getElementById('user-info-section');
+        if (section) {
+            section.style.transition = 'all 0.5s ease';
+            section.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div class="success-tick">✓</div>
+                    <h3 style="color: #10b981; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">¡Recibido!</h3>
+                    <p style="color: #4b5563;">Un asesor se contactará con <strong>${email}</strong> a la brevedad para guiarte en el proceso de la línea <strong>${recommendation}</strong>.</p>
+                </div>
+            `;
+        }
         
         console.log("Información de usuario guardada con éxito.");
     }
@@ -2703,35 +2854,41 @@
     }
 
     function openAdminModal() {
-        document.getElementById('admin-error').style.display = 'none';
-        document.getElementById('admin-password').value = '';
-        document.getElementById('admin-modal').style.display = 'flex';
-        
-        // Focus input and add enter listener
-        const passwordInput = document.getElementById('admin-password');
-        passwordInput.focus();
-        
-        if (!passwordInput.dataset.listenerAdded) {
-            passwordInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleAdminLogin();
-            });
-            passwordInput.dataset.listenerAdded = 'true';
+        const error = document.getElementById('admin-error');
+        const pass = document.getElementById('admin-password');
+        const modal = document.getElementById('admin-modal');
+
+        if (error) error.style.display = 'none';
+        if (pass) {
+            pass.value = '';
+            pass.focus();
+            if (!pass.dataset.listenerAdded) {
+                pass.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') handleAdminLogin();
+                });
+                pass.dataset.listenerAdded = 'true';
+            }
         }
+        if (modal) modal.style.display = 'flex';
     }
 
     function closeAdminModal() {
-        document.getElementById('admin-modal').style.display = 'none';
+        const modal = document.getElementById('admin-modal');
+        if (modal) modal.style.display = 'none';
     }
 
     function showAdminPanel() {
-        document.getElementById('admin-panel').style.display = 'flex';
-        document.getElementById('admin-datetime').innerText = formatDate(new Date());
+        const panel = document.getElementById('admin-panel');
+        const dt = document.getElementById('admin-datetime');
+        if (panel) panel.style.display = 'flex';
+        if (dt) dt.innerText = formatDate(new Date());
         renderAdminStats();
         setupAdminListeners();
     }
 
     function closeAdminPanel() {
-        document.getElementById('admin-panel').style.display = 'none';
+        const panel = document.getElementById('admin-panel');
+        if (panel) panel.style.display = 'none';
         // Stop listeners if needed
         if (window.adminUnsubscribes) {
             window.adminUnsubscribes.forEach(unsub => unsub());
@@ -2740,14 +2897,42 @@
     }
 
     window.adminUnsubscribes = [];
-    let adminData = {
-        userInfo: [],
-        completions: [],
-        feedback: [],
-        visitas: []
+    let currentAdminFilter = {
+        start: null,
+        end: null
     };
-    let currentAdminFilter = { month: 'all', year: 'all' };
+
+    function resetAdminDateFilters() {
+        document.getElementById('admin-filter-start').value = '';
+        document.getElementById('admin-filter-end').value = '';
+        currentAdminFilter.start = null;
+        currentAdminFilter.end = null;
+        refreshAdminUI();
+    }
     let currentCommentFilters = { search: '', line: 'all' };
+
+    function sortDataByDate(data, dateField, desc = true) {
+        return [...data].sort((a, b) => {
+            const parse = (val) => {
+                if (!val) return 0;
+                if (val instanceof Date) return val.getTime();
+                if (typeof val === 'string') {
+                    if (val.includes('/')) {
+                        const datePart = val.split(' ')[0];
+                        const parts = datePart.split('/');
+                        const timePart = val.split(' ')[1] || '00:00';
+                        return new Date(`${parts[2]}-${parts[1]}-${parts[0]}T${timePart}`).getTime();
+                    }
+                    return new Date(val).getTime();
+                }
+                if (val && typeof val === 'object' && val.seconds) return val.seconds * 1000;
+                return 0;
+            };
+            const dA = parse(a[dateField] || a['fecha'] || a['date']);
+            const dB = parse(b[dateField] || b['fecha'] || b['date']);
+            return desc ? dB - dA : dA - dB;
+        });
+    }
 
     function setupAdminListeners() {
         // Clear previous
@@ -2756,11 +2941,12 @@
         }
         window.adminUnsubscribes = [];
 
-        // Listen for consultations (User Info)
+        // Listen for consultations (User Info) - Removed orderBy
         const pathConsults = 'stats_usuarios_info';
-        const qConsults = query(collection(db, pathConsults), orderBy('fecha', 'desc'), limit(500));
+        const qConsults = query(collection(db, pathConsults));
         const unsubConsults = onSnapshot(qConsults, (snapshot) => {
-            adminData.userInfo = snapshot.docs.map(doc => doc.data());
+            const data = snapshot.docs.map(doc => doc.data());
+            adminData.userInfo = sortDataByDate(data, 'fecha', true).slice(0, 500);
             refreshAdminUI();
         }, (error) => {
             handleFirestoreError(error, OperationType.GET, pathConsults);
@@ -2778,46 +2964,60 @@
         });
         window.adminUnsubscribes.push(unsubCompletions);
 
-        // Listen for feedback
+        // Listen for feedback - Removed orderBy
         const pathFeedback = 'stats_feedback';
-        const qFeedback = query(collection(db, pathFeedback), orderBy('date', 'desc'), limit(500));
+        const qFeedback = query(collection(db, pathFeedback));
         const unsubFeedback = onSnapshot(qFeedback, (snapshot) => {
-            adminData.feedback = snapshot.docs.map(doc => doc.data());
+            const data = snapshot.docs.map(doc => doc.data());
+            adminData.feedback = sortDataByDate(data, 'date', true).slice(0, 500);
             refreshAdminUI();
         }, (error) => {
             handleFirestoreError(error, OperationType.GET, pathFeedback);
         });
         window.adminUnsubscribes.push(unsubFeedback);
 
-        // Listen for visits
+        // Listen for visits - Removed orderBy
         const pathVisits = 'stats_visitas_log';
-        const qVisits = query(collection(db, pathVisits), orderBy('date', 'desc'), limit(100));
+        const qVisits = query(collection(db, pathVisits));
         const unsubVisits = onSnapshot(qVisits, (snapshot) => {
-            adminData.visitas = snapshot.docs.map(doc => doc.data());
+            const data = snapshot.docs.map(doc => doc.data());
+            adminData.visitas = sortDataByDate(data, 'date', true).slice(0, 500);
             refreshAdminUI();
         }, (error) => {
             handleFirestoreError(error, OperationType.GET, pathVisits);
         });
         window.adminUnsubscribes.push(unsubVisits);
 
-        // Add listeners for filter changes
-        const monthSelect = document.getElementById('admin-filter-month');
-        const yearSelect = document.getElementById('admin-filter-year');
+        // Listen for lines
+        const pathLines = 'config_financial_lines';
+        const unsubLines = onSnapshot(collection(db, pathLines), (snapshot) => {
+            const customLines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            adminData.lines = customLines;
+            financialLines = mergeFinancialLines(customLines);
+            refreshAdminUI();
+        }, (error) => {
+            handleFirestoreError(error, OperationType.GET, pathLines);
+        });
+        window.adminUnsubscribes.push(unsubLines);
 
-        if (monthSelect && !monthSelect.dataset.listenerAdded) {
-            monthSelect.addEventListener('change', (e) => {
-                currentAdminFilter.month = e.target.value;
+        // Add listeners for date range filters
+        const startInput = document.getElementById('admin-filter-start');
+        const endInput = document.getElementById('admin-filter-end');
+
+        if (startInput && !startInput.dataset.listenerAdded) {
+            startInput.addEventListener('change', (e) => {
+                currentAdminFilter.start = e.target.value;
                 refreshAdminUI();
             });
-            monthSelect.dataset.listenerAdded = 'true';
+            startInput.dataset.listenerAdded = 'true';
         }
 
-        if (yearSelect && !yearSelect.dataset.listenerAdded) {
-            yearSelect.addEventListener('change', (e) => {
-                currentAdminFilter.year = e.target.value;
+        if (endInput && !endInput.dataset.listenerAdded) {
+            endInput.addEventListener('change', (e) => {
+                currentAdminFilter.end = e.target.value;
                 refreshAdminUI();
             });
-            yearSelect.dataset.listenerAdded = 'true';
+            endInput.dataset.listenerAdded = 'true';
         }
 
         // Add listeners for comment filters
@@ -2854,6 +3054,7 @@
             const filteredVisitas = filterDataByDate(adminData.visitas, 'date');
 
             if (document.getElementById('user-info-body')) updateUserInfoTable(filteredUserInfo);
+            if (document.getElementById('admin-questions-list')) updateAdminQuestionsList();
             if (document.getElementById('recommended-lines-list')) {
                 updateLineCounts(filteredCompletions);
                 updateDistributionChart(filteredCompletions);
@@ -2865,7 +3066,7 @@
             const visitElem = document.getElementById('stat-visitas');
             
             // Real-time counters from server for accuracy when not filtering
-            if (currentAdminFilter.month === 'all' && currentAdminFilter.year === 'all') {
+            if (!currentAdminFilter.start && !currentAdminFilter.end) {
                 // Completions - Non-blocking
                 const pathComp = 'stats_consultas_completadas';
                 getCountFromServer(collection(db, pathComp)).then(countSnapshot => {
@@ -2892,120 +3093,67 @@
 
     function filterDataByDate(data, dateField) {
         if (!data || !Array.isArray(data)) return [];
-        if (currentAdminFilter.month === 'all' && currentAdminFilter.year === 'all') return data;
         
+        const filterStart = currentAdminFilter.start ? new Date(currentAdminFilter.start) : null;
+        if (filterStart) filterStart.setHours(0, 0, 0, 0);
+        
+        const filterEnd = currentAdminFilter.end ? new Date(currentAdminFilter.end) : null;
+        if (filterEnd) filterEnd.setHours(23, 59, 59, 999);
+
+        // If no filter applied, return full data
+        if (!filterStart && !filterEnd) return data;
+
         return data.filter(item => {
             if (!item) return false;
-            const dateStr = item[dateField];
-            if (!dateStr) return false;
+            let dateStr = item[dateField];
             
-            let month, year;
-            if (dateStr.includes('-')) {
-                // ISO Format: YYYY-MM-DD
-                const parts = dateStr.split('T')[0].split('-');
-                if (parts.length >= 2) {
-                    year = parts[0];
-                    month = parseInt(parts[1]);
-                }
-            } else if (dateStr.includes('/')) {
-                // DD/MM/YYYY Format
-                const parts = dateStr.split(' ')[0].split('/');
-                if (parts.length >= 3) {
-                    month = parseInt(parts[1]);
-                    year = parts[2];
-                }
+            // Try fallback fields if specific field is missing
+            if (!dateStr) {
+                dateStr = item['fecha'] || item['date'] || item['timestamp'];
             }
             
-            if (!month || !year) return false;
+            if (!dateStr) return true; // Include if no date found (don't filter out unknown data)
             
-            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            const itemMonth = monthNames[month - 1];
+            let itemDate;
+            if (dateStr instanceof Date) {
+                itemDate = dateStr;
+            } else if (typeof dateStr === 'string') {
+                if (dateStr.includes('-')) {
+                    // ISO or YYYY-MM-DD
+                    itemDate = new Date(dateStr);
+                } else if (dateStr.includes('/')) {
+                    // DD/MM/YYYY Format
+                    const dateTimeParts = dateStr.split(' ');
+                    const dateParts = dateTimeParts[0].split('/');
+                    if (dateParts.length >= 3) {
+                        const timePart = dateTimeParts[1] || '00:00';
+                        itemDate = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}T${timePart}`);
+                    }
+                }
+            } else if (typeof dateStr === 'object' && dateStr.seconds) {
+                // Firestore Timestamp
+                itemDate = new Date(dateStr.seconds * 1000);
+            }
             
-            const monthMatch = currentAdminFilter.month === 'all' || itemMonth === currentAdminFilter.month;
-            const yearMatch = currentAdminFilter.year === 'all' || year === currentAdminFilter.year;
+            if (!itemDate || isNaN(itemDate.getTime())) return true;
             
-            return monthMatch && yearMatch;
+            if (filterStart && itemDate < filterStart) return false;
+            if (filterEnd && itemDate > filterEnd) return false;
+            
+            return true;
         });
     }
 
     function populateFilterDropdowns() {
-        const monthSelect = document.getElementById('admin-filter-month');
-        const yearSelect = document.getElementById('admin-filter-year');
-        if (!monthSelect || !yearSelect) return;
-        
-        const currentMonth = monthSelect.value;
-        const currentYear = yearSelect.value;
-        
-        const allDates = [
-            ...adminData.userInfo.map(d => d.fecha),
-            ...adminData.completions.map(d => d.date),
-            ...adminData.feedback.map(d => d.date),
-            ...adminData.visitas.map(d => d.date)
-        ].filter(Boolean);
-
-        const months = new Set();
-        const years = new Set();
-        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-
-        allDates.forEach(dateStr => {
-            let month, year;
-            if (dateStr.includes('-')) {
-                // ISO Format: YYYY-MM-DD
-                const parts = dateStr.split('T')[0].split('-');
-                if (parts.length >= 2) {
-                    year = parts[0];
-                    month = parseInt(parts[1]);
-                }
-            } else if (dateStr.includes('/')) {
-                // DD/MM/YYYY Format
-                const parts = dateStr.split(' ')[0].split('/');
-                if (parts.length >= 3) {
-                    month = parseInt(parts[1]);
-                    year = parts[2];
-                }
-            }
-            
-            if (month && year) {
-                months.add(monthNames[month - 1]);
-                years.add(year);
-            }
-        });
-
-        // Sort years descending
-        const sortedYears = Array.from(years).sort((a, b) => b - a);
-        // Sort months based on chronological order
-        const sortedMonths = Array.from(months).sort((a, b) => monthNames.indexOf(a) - monthNames.indexOf(b));
-
-        // Populate Month Select
-        let monthHtml = '<option value="all" style="color: black;">Mes: Todos</option>';
-        sortedMonths.forEach(m => {
-            monthHtml += `<option value="${m}" ${m === currentMonth ? 'selected' : ''} style="color: black;">${m}</option>`;
-        });
-        monthSelect.innerHTML = monthHtml;
-
-        // Populate Year Select
-        let yearHtml = '<option value="all" style="color: black;">Año: Todos</option>';
-        sortedYears.forEach(y => {
-            yearHtml += `<option value="${y}" ${y === currentYear ? 'selected' : ''} style="color: black;">${y}</option>`;
-        });
-        yearSelect.innerHTML = yearHtml;
-
-        // Populate Comment Line Filter
+        // Updated to support real-time line filter for comments
         const commentLineSelect = document.getElementById('comment-filter-line');
         if (commentLineSelect) {
             const currentLineFilter = commentLineSelect.value;
             let lineHtml = '<option value="all" style="color: black;">Todas las líneas</option>';
             
-            // Get unique lines from feedback
             const uniqueLines = new Set();
-            adminData.feedback.forEach(f => {
-                if (f.line) uniqueLines.add(f.line);
-            });
-            
-            // Also add from current financialLines to be sure
-            financialLines.forEach(l => {
-                if (l.name) uniqueLines.add(l.name);
-            });
+            adminData.feedback.forEach(f => { if (f.line) uniqueLines.add(f.line); });
+            financialLines.forEach(l => { if (l.name) uniqueLines.add(l.name); });
 
             Array.from(uniqueLines).sort().forEach(line => {
                 lineHtml += `<option value="${line}" ${line === currentLineFilter ? 'selected' : ''} style="color: black;">${line}</option>`;
@@ -3016,6 +3164,8 @@
 
     function updateUserInfoTable(userInfo) {
         const userInfoBody = document.getElementById('user-info-body');
+        if (!userInfoBody) return;
+        
         if (userInfo.length === 0) {
             userInfoBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 3rem; color: rgba(255,255,255,0.5);">No hay registros de contacto para el período seleccionado.</td></tr>';
             return;
@@ -3053,6 +3203,537 @@
 
     function showSummaryDetail(text, empresa) {
         showAlert(`Detalle del caso: ${empresa}`, text);
+    }
+
+    async function seedDefaultQuestions() {
+        for (const q of DEFAULT_QUESTIONS) {
+            await setDoc(doc(db, 'config_questions', q.id), q);
+        }
+    }
+
+    function renderForm() {
+        const stepsContainer = document.querySelector('.container');
+        if (!stepsContainer) return;
+
+        // Sort questions by order before rendering
+        const sortedQuestions = [...adminData.questions].sort((a, b) => a.order - b.order);
+
+        // Group questions by step
+        const questionsByStep = {};
+        sortedQuestions.forEach(q => {
+            if (!questionsByStep[q.step]) questionsByStep[q.step] = [];
+            questionsByStep[q.step].push(q);
+        });
+
+        // Ensure step containers exist and clear them
+        Object.keys(questionsByStep).forEach(step => {
+            let container = document.getElementById(`questions-container-step-${step}`);
+            if (!container) {
+                // If the section doesn't exist, we might need to create it
+                // For now, mapping step 1 to step-1 section and step 2 to step-2
+                // To support arbitrary steps, we should check if step-N section exists
+                let section = document.getElementById(`step-${step}`);
+                if (!section && step > 2) {
+                    // Create new step section before results
+                    const resultsSection = document.getElementById('results-screen');
+                    section = document.createElement('section');
+                    section.id = `step-${step}`;
+                    section.className = 'screen';
+                    section.innerHTML = `
+                        <div id="questions-container-step-${step}"></div>
+                        <div class="nav-buttons" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button class="btn btn-block" style="background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);" onclick="prevStep(${parseInt(step)-1})">← Anterior</button>
+                            <button id="step-btn-${step}" class="btn btn-primary btn-block" style="margin-top: 0;" onclick="nextStep(${parseInt(step)+1})">Siguiente →</button>
+                        </div>
+                    `;
+                    resultsSection.parentNode.insertBefore(section, resultsSection);
+                }
+                container = document.getElementById(`questions-container-step-${step}`);
+            }
+            if (container) container.innerHTML = '';
+        });
+
+        sortedQuestions.forEach(q => {
+            const container = document.getElementById(`questions-container-step-${q.step}`);
+            if (!container) return;
+
+            const html = `
+                <div class="question-group" id="q-container-${q.id}" ${q.dependsOn ? 'style="display:none;"' : ''}>
+                    <label class="question-title">${q.text}</label>
+                    <div class="options-grid" data-question="${q.id}" data-type="${q.type}" ${q.maxOptions ? `data-max="${q.maxOptions}"` : ''} id="options-grid-${q.id}">
+                        ${(q.options || []).map((opt, index) => `
+                            <div class="option-card" data-value="${opt.value}" id="opt-${q.id}-${opt.value.replace(/\s+/g, '-')}" style="animation-delay: ${index * 0.05}s">
+                                <div>${opt.value}</div>
+                                ${opt.description ? `<span style="display: block; font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem; font-weight: 400;">${opt.description}</span>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+
+        // Re-attach listeners to option cards
+        setupOptionCardListeners();
+        // Initial process logic for visibility
+        processFlowLogic();
+    }
+
+    function setupOptionCardListeners() {
+        const cards = document.querySelectorAll('.option-card');
+        cards.forEach(card => {
+            if (card.dataset.listener) return;
+            card.dataset.listener = 'true';
+
+            card.addEventListener('click', () => {
+                const grid = card.closest('.options-grid');
+                if (!grid) return;
+
+                const qId = grid.dataset.question;
+                const type = grid.dataset.type; // single or multiple
+                const max = parseInt(grid.dataset.max || '1');
+                const val = card.dataset.value;
+
+                if (type === 'single') {
+                    grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    userAnswers[qId] = val;
+                    
+                    // UX Improvement: Auto-scroll to next question if on mobile
+                    if (window.innerWidth < 768) {
+                        const nextQuestion = card.closest('.question-group').nextElementSibling;
+                        if (nextQuestion && nextQuestion.classList.contains('question-group')) {
+                             setTimeout(() => {
+                                 nextQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                             }, 300);
+                        }
+                    }
+                } else if (type === 'multiple') {
+                    const isSelected = card.classList.contains('selected');
+                    const selected = grid.querySelectorAll('.option-card.selected');
+                    
+                    if (isSelected) {
+                        card.classList.remove('selected');
+                    } else {
+                        // Mutual exclusivity for Energías Renovables: Prosumidores vs Off-grid
+                        const purpose = userAnswers['purpose'];
+                        if (purpose === 'Energías Renovables') {
+                            if (val === 'Prosumidores' && (userAnswers['activity'] || []).includes('Sistemas renovables off-grid')) {
+                                showAlert('Opciones incompatibles', 'Un proyecto no puede ser "Prosumidor" (conectado a red) y "Off-grid" (independiente de la red) al mismo tiempo.');
+                                return;
+                            }
+                            if (val === 'Sistemas renovables off-grid' && (userAnswers['activity'] || []).includes('Prosumidores')) {
+                                showAlert('Opciones incompatibles', 'Los sistemas off-grid no son compatibles con la modalidad de Prosumidores.');
+                                return;
+                            }
+                        }
+
+                        if (selected.length < max) {
+                            card.classList.add('selected');
+                        } else {
+                            showAlert('Límite alcanzado', `Puedes seleccionar un máximo de ${max} actividades.`);
+                        }
+                    }
+                    
+                    // Update userAnswers with all currently selected values
+                    userAnswers[qId] = Array.from(grid.querySelectorAll('.option-card.selected')).map(c => c.dataset.value);
+                }
+
+                // Global logic handler for all dependencies
+                processFlowLogic();
+            });
+        });
+    }
+
+    function processFlowLogic() {
+        const { purpose, hasMiPyME, category } = userAnswers;
+
+        // Visual feedback: Highlight next button if step is valid
+        const nextBtns = document.querySelectorAll('.nav-buttons .btn-primary');
+        nextBtns.forEach(btn => {
+            const stepStr = btn.getAttribute('onclick')?.match(/\((\d+)\)/)?.[1];
+            if (stepStr) {
+                const targetStep = parseInt(stepStr);
+                const currentStepToVal = targetStep - 1;
+                if (validateStep(currentStepToVal, true)) {
+                    btn.classList.add('btn-pulse');
+                } else {
+                    btn.classList.remove('btn-pulse');
+                }
+            }
+        });
+
+        // 1. Generic Dynamic Logic for ALL questions
+        adminData.questions.forEach(q => {
+            const container = document.getElementById('q-container-' + q.id);
+            if (!container) return;
+
+            // Visibility based on dependsOn
+            if (q.dependsOn) {
+                const parentAnswer = userAnswers[q.dependsOn];
+                if (!parentAnswer || (Array.isArray(parentAnswer) && parentAnswer.length === 0)) {
+                    container.style.display = 'none';
+                    // If question is hidden, we should clear its answers to maintain consistency
+                    if (userAnswers[q.id]) {
+                        delete userAnswers[q.id];
+                        // Also remove selected classes from its cards
+                        const grid = document.getElementById('options-grid-' + q.id);
+                        if (grid) grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                    }
+                    return;
+                }
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'block';
+            }
+
+            // Options filtering based on parentValue
+            if (q.options && q.options.length > 0) {
+                const grid = document.getElementById('options-grid-' + q.id);
+                if (grid) {
+                    const parentAnswer = q.dependsOn ? userAnswers[q.dependsOn] : null;
+                    const cards = grid.querySelectorAll('.option-card');
+                    let visibleCount = 0;
+                    
+                    cards.forEach(card => {
+                        const optValue = card.dataset.value;
+                        const optData = q.options.find(o => o.value === optValue);
+                        
+                        if (optData && optData.parentValue) {
+                            const triggers = optData.parentValue.split(',').map(s => s.trim());
+                            const show = Array.isArray(parentAnswer) 
+                                ? parentAnswer.some(val => triggers.includes(val))
+                                : triggers.includes(String(parentAnswer));
+                            
+                            card.style.display = show ? 'flex' : 'none';
+                            if (show) visibleCount++;
+                            
+                            // If it's hidden but was selected, deselect it
+                            if (!show && card.classList.contains('selected')) {
+                                card.classList.remove('selected');
+                                if (Array.isArray(userAnswers[q.id])) {
+                                    userAnswers[q.id] = userAnswers[q.id].filter(v => v !== optValue);
+                                } else if (userAnswers[q.id] === optValue) {
+                                    delete userAnswers[q.id];
+                                }
+                            }
+                        } else {
+                            card.style.display = 'flex';
+                            visibleCount++;
+                        }
+                    });
+
+                    // Special case for Triple Impacto full-width options
+                    if (purpose === 'Triple Impacto') {
+                        cards.forEach(card => {
+                            if (card.style.display !== 'none') {
+                                card.classList.add('full-width');
+                                card.style.gridColumn = '1 / -1';
+                            }
+                        });
+                    } else {
+                        cards.forEach(card => {
+                            card.classList.remove('full-width');
+                            card.style.gridColumn = '';
+                        });
+                    }
+
+                    // If no options are visible, hide the container
+                    if (visibleCount === 0 && q.options.some(o => o.parentValue)) {
+                        container.style.display = 'none';
+                    }
+                }
+            }
+            if (q.id === 'activity' && purpose === 'Triple Impacto') {
+                // Special handling if needed, but generic logic usually covers it
+            }
+        });
+
+        const q3Container = document.getElementById('q-container-hasMiPyME');
+        if (q3Container && purpose === 'Triple Impacto') {
+            q3Container.style.display = 'none';
+            delete userAnswers['hasMiPyME'];
+        }
+
+        // Category/Amount dynamic filtering adjustments
+        const categoryGrid = document.getElementById('options-grid-category');
+        const amountGrid = document.getElementById('options-grid-amount');
+        if (categoryGrid && amountGrid) {
+            const optionMonotributista = categoryGrid.querySelector('[data-value="Monotributista o Responsable Inscripto"]');
+            const option300 = amountGrid.querySelector('[data-value="Hasta 300 Millones"]');
+
+            if (optionMonotributista) {
+                const showMono = purpose !== 'Triple Impacto';
+                optionMonotributista.style.display = showMono ? 'flex' : 'none';
+            }
+            if (option300) {
+                const show300 = purpose === 'Triple Impacto';
+                option300.style.display = show300 ? 'flex' : 'none';
+            }
+        }
+    }
+
+     function updateAdminQuestionsList() {
+        const list = document.getElementById('admin-questions-list');
+        if (!list) return;
+
+        list.innerHTML = adminData.questions.map(q => `
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); position: relative; transition: all 0.3s ease;" class="admin-q-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <span style="font-size: 0.7rem; color: ${q.step === 1 ? '#10b981' : '#3b82f6'}; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; background: ${q.step === 1 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)'}; padding: 0.3rem 0.6rem; border-radius: 6px;">
+                            Interfaz ${q.step} (Orden: ${q.order})
+                        </span>
+                        <span style="font-size: 0.7rem; color: #a78bfa; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(167, 139, 250, 0.1); padding: 0.3rem 0.6rem; border-radius: 6px;">
+                            ${q.type === 'multiple' ? `Múltiple (Máx: ${q.maxOptions || 1})` : 'Única'}
+                        </span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="editQuestion('${q.id}')" style="background: none; border: none; color: white; cursor: pointer; opacity: 0.6; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path></svg>
+                        </button>
+                        <button onclick="deleteQuestion('${q.id}')" style="background: none; border: none; color: #ef4444; cursor: pointer; opacity: 0.6; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <p style="color: white; font-weight: 700; margin: 0; font-size: 1.1rem; line-height: 1.3;">${q.text}</p>
+                <div style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                    ${(q.options || []).map(opt => `
+                        <span style="font-size: 0.65rem; color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">
+                            ${opt.value}
+                        </span>
+                    `).join('')}
+                    ${q.id === 'activity' ? '<span style="font-size: 0.65rem; color: #10b981; font-weight: 700;">+ Opciones dinámicas</span>' : ''}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    let currentEditingQuestionId = null;
+
+    function openQuestionModal(id = null) {
+        currentEditingQuestionId = id;
+        const modal = document.getElementById('question-modal-overlay');
+        const title = document.getElementById('question-modal-title');
+        const qIdInput = document.getElementById('q-id');
+        const qTextInput = document.getElementById('q-text');
+        const qStepInput = document.getElementById('q-step');
+        const qOrderInput = document.getElementById('q-order');
+        const qTypeSelect = document.getElementById('q-type');
+        const qMaxOptionsInput = document.getElementById('q-max-options');
+        const qMaxOptionsGroup = document.getElementById('q-max-options-group');
+        const qDependsOnSelect = document.getElementById('q-depends-on');
+        const optionsContainer = document.getElementById('q-options-container');
+
+        if (!modal) return;
+
+        // Reset
+        optionsContainer.innerHTML = '';
+        qIdInput.disabled = false;
+        qMaxOptionsGroup.style.display = 'none';
+        
+        // Populate "Depends on" select with current questions (excluding self)
+        qDependsOnSelect.innerHTML = '<option value="">No (Pregunta independiente)</option>';
+        adminData.questions.forEach(q => {
+            if (q.id !== id) {
+                qDependsOnSelect.innerHTML += `<option value="${q.id}">${q.text} (${q.id})</option>`;
+            }
+        });
+
+        // Event for parent options loading
+        qDependsOnSelect.onchange = () => {
+            const parentId = qDependsOnSelect.value;
+            const parentQ = adminData.questions.find(q => q.id === parentId);
+            
+            // Refresh all existing option rows to show parent triggers if needed
+            const rows = document.querySelectorAll('.q-option-row');
+            rows.forEach(row => {
+                const parentTriggerContainer = row.querySelector('.q-parent-trigger-container');
+                const hiddenInput = row.querySelector('.q-opt-parent-val');
+                const statusPh = row.querySelector('.q-no-dependency-placeholder');
+                
+                if (parentId) {
+                    // Update parent trigger container with new parent's options
+                    if (parentTriggerContainer) {
+                        // Reset triggers when parent changes to avoid stale/incompatible values
+                        hiddenInput.value = '';
+                        
+                        if (parentQ && parentQ.options) {
+                            parentTriggerContainer.innerHTML = renderParentTriggerOptions(parentQ.options, []);
+                            parentTriggerContainer.style.display = 'flex';
+                        } else {
+                            parentTriggerContainer.innerHTML = '';
+                            parentTriggerContainer.style.display = 'none';
+                        }
+                    }
+                    if (statusPh) statusPh.style.display = 'none';
+                } else {
+                    // No dependency selected
+                    hiddenInput.value = '';
+                    if (parentTriggerContainer) {
+                        parentTriggerContainer.style.display = 'none';
+                        parentTriggerContainer.innerHTML = '';
+                    }
+                    if (statusPh) statusPh.style.display = 'block';
+                }
+            });
+        };
+
+        if (id) {
+            const q = adminData.questions.find(q => q.id === id);
+            if (q) {
+                title.innerText = 'Editar Pregunta';
+                qIdInput.value = q.id;
+                qIdInput.disabled = true;
+                qTextInput.value = q.text;
+                qStepInput.value = q.step;
+                qOrderInput.value = q.order;
+                qTypeSelect.value = q.type || 'single';
+                qMaxOptionsInput.value = q.maxOptions || '1';
+                qMaxOptionsGroup.style.display = q.type === 'multiple' ? 'block' : 'none';
+                qDependsOnSelect.value = q.dependsOn || '';
+                if (q.options) {
+                    q.options.forEach(opt => addQOptionRow(opt.value, opt.description, opt.parentValue));
+                }
+            }
+        } else {
+            title.innerText = 'Nueva Pregunta';
+            qIdInput.value = '';
+            qTextInput.value = '';
+            qStepInput.value = '1';
+            qOrderInput.value = adminData.questions.length + 1;
+            qTypeSelect.value = 'single';
+            qMaxOptionsInput.value = '1';
+            qMaxOptionsGroup.style.display = 'none';
+            qDependsOnSelect.value = '';
+            addQOptionRow();
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    function closeQuestionModal() {
+        const modal = document.getElementById('question-modal-overlay');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function renderParentTriggerOptions(options = [], selectedValues = []) {
+        if (!options || options.length === 0) return '<p style="font-size: 0.65rem; color: #9ca3af; margin: 0;">El padre no tiene opciones definidas.</p>';
+        return options.map(opt => {
+            const isChecked = selectedValues.includes(opt.value);
+            return `
+                <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; padding: 0.25rem 0.6rem; background: ${isChecked ? '#7c3aed' : '#f8fafc'}; color: ${isChecked ? 'white' : '#475569'}; border: 1px solid ${isChecked ? '#7c3aed' : '#e2e8f0'}; border-radius: 6px; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-weight: 500;">
+                    <input type="checkbox" value="${opt.value}" ${isChecked ? 'checked' : ''} onchange="updateParentValueInput(this); refreshParentOptionStyles(this)" style="display: none;">
+                    ${opt.value}
+                </label>
+            `;
+        }).join('');
+    }
+
+    window.refreshParentOptionStyles = function(checkbox) {
+        const label = checkbox.parentElement;
+        const isChecked = checkbox.checked;
+        label.style.background = isChecked ? '#7c3aed' : '#f8fafc';
+        label.style.color = isChecked ? 'white' : '#475569';
+        label.style.borderColor = isChecked ? '#7c3aed' : '#e2e8f0';
+    };
+
+    function addQOptionRow(val = '', desc = '', parentVal = '') {
+        const container = document.getElementById('q-options-container');
+        const qDependsOnSelect = document.getElementById('q-depends-on');
+        if (!container) return;
+
+        const parentId = qDependsOnSelect.value;
+        const parentQ = adminData.questions.find(q => q.id === parentId);
+        const currentParentValues = parentVal ? parentVal.split(',').map(s => s.trim()) : [];
+
+        const div = document.createElement('div');
+        div.className = 'q-option-row';
+        div.style = 'display: grid; grid-template-columns: 1fr 1fr 1.5fr auto; gap: 0.5rem; align-items: flex-start; margin-bottom: 0.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9;';
+        div.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <input type="text" class="comment-textarea dark-text q-opt-value" style="height: 38px; font-size: 0.85rem;" placeholder="Ej: Sí" value="${val}">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <input type="text" class="comment-textarea dark-text q-opt-desc" style="height: 38px; font-size: 0.8rem;" placeholder="Descripción corta" value="${desc}">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <div class="q-parent-trigger-container" style="display: ${parentId ? 'flex' : 'none'}; flex-wrap: wrap; gap: 0.35rem; background: #ffffff; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 8px; min-height: 38px; max-height: 120px; overflow-y: auto;">
+                    ${renderParentTriggerOptions(parentQ ? parentQ.options : [], currentParentValues)}
+                </div>
+                <input type="hidden" class="q-opt-parent-val" value="${parentVal || ''}">
+                <p class="q-no-dependency-placeholder" style="display: ${!parentId ? 'block' : 'none'}; font-size: 0.65rem; color: #9ca3af; margin: 0; padding: 0.6rem; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center;">Sin dependencia previa</p>
+            </div>
+            <button onclick="this.parentElement.remove()" style="background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; cursor: pointer; padding: 0.4rem; border-radius: 8px; display: flex; align-items: center; justify-content: center; height: 38px; width: 38px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+        `;
+        container.appendChild(div);
+    }
+
+    window.updateParentValueInput = function(checkbox) {
+        const row = checkbox.closest('.q-option-row');
+        const hiddenInput = row.querySelector('.q-opt-parent-val');
+        const checkboxes = row.querySelectorAll('input[type="checkbox"]:checked');
+        const values = Array.from(checkboxes).map(cb => cb.value);
+        hiddenInput.value = values.join(', ');
+    }
+
+    async function saveQuestion() {
+        const id = document.getElementById('q-id').value.trim();
+        const text = document.getElementById('q-text').value.trim();
+        const step = parseInt(document.getElementById('q-step').value);
+        const order = parseInt(document.getElementById('q-order').value);
+        const type = document.getElementById('q-type').value;
+        const maxOptions = type === 'multiple' ? parseInt(document.getElementById('q-max-options').value || '1') : 1;
+        const dependsOn = document.getElementById('q-depends-on').value;
+        const optionRows = document.querySelectorAll('.q-option-row');
+
+        if (!id || !text) {
+            showAlert('Error', 'El ID y el texto son obligatorios');
+            return;
+        }
+
+        // Unique ID Validation
+        if (!currentEditingQuestionId) { // Only check if creating a new question
+            const existingQ = adminData.questions.find(q => q.id === id);
+            if (existingQ) {
+                showAlert('Error', `Ya existe una pregunta con el ID '${id}'. Por favor, elige un ID diferente.`);
+                return;
+            }
+        }
+
+        const options = Array.from(optionRows).map(row => ({
+            value: row.querySelector('.q-opt-value').value.trim(),
+            description: row.querySelector('.q-opt-desc').value.trim(),
+            parentValue: row.querySelector('.q-opt-parent-val').value.trim()
+        })).filter(opt => opt.value !== '');
+
+        if (options.length === 0 && id !== 'activity') {
+            showAlert('Error', 'Debes añadir al menos una opción');
+            return;
+        }
+
+        const qData = { id, text, step, order, type, maxOptions, options, dependsOn };
+
+        try {
+            await setDoc(doc(db, 'config_questions', id), qData);
+            closeQuestionModal();
+            showAlert('Éxito', 'Pregunta guardada correctamente');
+        } catch (e) {
+            showAlert('Error', 'No se pudo guardar la pregunta: ' + e.message);
+        }
+    }
+
+    async function deleteQuestion(id) {
+        if (!confirm('¿Estás seguro de eliminar esta pregunta? Esto podría afectar la lógica de recomendación.')) return;
+        try {
+            await deleteDoc(doc(db, 'config_questions', id));
+            showAlert('Éxito', 'Pregunta eliminada correctamente');
+        } catch (e) {
+            showAlert('Error', 'No se pudo eliminar la pregunta');
+        }
     }
 
     function updateLineCounts(completions) {
@@ -3099,19 +3780,29 @@
                         <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4);" onclick="deleteLine('${lineObj ? lineObj.id : ''}', '${name !== "No especificada" ? name : ''}')">🗑️</button>
                         ` : ''}
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem; padding-right: 4rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; padding-right: 4rem;">
                         <span style="font-weight: 800; color: white; font-size: 1.1rem;">${isLinea0 ? 'Línea 0' : `Línea ${displayIndex}`}:</span>
                         <span style="font-weight: 600; font-size: 1.1rem;">
                             ${name}
                         </span>
                     </div>
+                    
+                    ${lineObj ? `
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.8); line-height: 1.4; margin-bottom: 0.75rem; max-width: 90%;">${lineObj.desc}</p>
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 12px;">
+                            <div style="flex: 1;"><span style="display: block; font-size: 0.65rem; text-transform: uppercase; opacity: 0.6; font-weight: 700;">Monto Máx.</span> <strong style="font-size: 0.85rem;">${lineObj.maxAmount || '-'}</strong></div>
+                            <div style="flex: 1;"><span style="display: block; font-size: 0.65rem; text-transform: uppercase; opacity: 0.6; font-weight: 700;">Plazo</span> <strong style="font-size: 0.85rem;">${lineObj.term || '-'}</strong></div>
+                            <div style="flex: 1;"><span style="display: block; font-size: 0.65rem; text-transform: uppercase; opacity: 0.6; font-weight: 700;">Tasa</span> <strong style="font-size: 0.85rem;">${lineObj.rate || '-'}</strong></div>
+                        </div>
+                    ` : ''}
+
                     ${!isLinea0 ? `
-                    <p style="font-size: 1rem; opacity: 0.9;">
-                        "Esta línea se recomendó a <span style="font-weight: 800; color: #7c3aed; background: white; padding: 0.1rem 0.6rem; border-radius: 8px; margin: 0 0.2rem;">${count}</span> usuarios"
+                    <p style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.5rem;">
+                        💡 Recomendado <span style="font-weight: 800; color: #7c3aed; background: white; padding: 0.1rem 0.6rem; border-radius: 8px; margin: 0 0.2rem;">${count}</span> veces
                     </p>
                     ` : `
-                    <p style="font-size: 0.9rem; opacity: 0.8; font-style: italic;">
-                        Esta línea es informativa y no se incluye en las recomendaciones automáticas.
+                    <p style="font-size: 0.85rem; opacity: 0.7; font-style: italic; margin-top: 0.5rem;">
+                        Informativa (no automatizada).
                     </p>
                     `}
                 </div>
@@ -3209,17 +3900,44 @@
         const modal = document.getElementById('line-modal-overlay');
         const title = document.getElementById('line-modal-title');
         
+        const nameInput = document.getElementById('line-name');
+        const descInput = document.getElementById('line-desc');
+        const maxInput = document.getElementById('line-maxAmount');
+        const termInput = document.getElementById('line-term');
+        const rateInput = document.getElementById('line-rate');
+        const idealInput = document.getElementById('line-idealFor');
+        const infoInput = document.getElementById('line-moreInfo');
+        const epigraphInput = document.getElementById('line-contact-epigraph');
+
+        if (modal) modal.style.display = 'flex';
+        if (title) title.innerText = lineId ? 'Editar Línea de Financiamiento' : 'Nueva Línea de Financiamiento';
+
         // Reset fields
-        document.getElementById('line-name').value = fallbackName || '';
-        document.getElementById('line-desc').value = '';
-        document.getElementById('line-maxAmount').value = '';
-        document.getElementById('line-term').value = '';
-        document.getElementById('line-rate').value = '';
-        document.getElementById('line-idealFor').value = '';
-        document.getElementById('line-moreInfo').value = '';
-        document.getElementById('line-links-container').innerHTML = '';
-        document.getElementById('line-contact-epigraph').value = '';
-        document.getElementById('contact-methods-container').innerHTML = '';
+        if (nameInput) nameInput.value = fallbackName || '';
+        if (descInput) descInput.value = '';
+        if (maxInput) maxInput.value = '';
+        if (termInput) termInput.value = '';
+        if (rateInput) rateInput.value = '';
+        if (idealInput) idealInput.value = '';
+        if (infoInput) infoInput.value = '';
+        if (epigraphInput) epigraphInput.value = '';
+
+        // Reset borders
+        if (nameInput) nameInput.style.borderColor = '#e5e7eb';
+        if (descInput) descInput.style.borderColor = '#e5e7eb';
+        if (maxInput) maxInput.style.borderColor = '#e5e7eb';
+        if (termInput) termInput.style.borderColor = '#e5e7eb';
+        if (rateInput) rateInput.style.borderColor = '#e5e7eb';
+        if (idealInput) idealInput.style.borderColor = '#e5e7eb';
+
+        const linksContainer = document.getElementById('line-links-container');
+        if (linksContainer) linksContainer.innerHTML = '';
+        
+        const epigraphInput2 = document.getElementById('line-contact-epigraph');
+        if (epigraphInput2) epigraphInput2.value = '';
+        
+        const contactsContainer = document.getElementById('contact-methods-container');
+        if (contactsContainer) contactsContainer.innerHTML = '';
 
         // Reset criteria checkboxes
         document.querySelectorAll('#line-modal-overlay input[type="checkbox"]').forEach(cb => cb.checked = false);
@@ -3480,13 +4198,22 @@
 
     function updateFeedbackStats(feedback) {
         const total = feedback.length;
+        const statPos = document.getElementById('stat-positivas');
+        const statNeg = document.getElementById('stat-negativas');
+        const statPosCount = document.getElementById('stat-positivas-count');
+        const statNegCount = document.getElementById('stat-negativas-count');
+        const chartYes = document.getElementById('chart-yes');
+        const chartNo = document.getElementById('chart-no');
+        const chartYesLabel = document.getElementById('chart-yes-label');
+        const chartNoLabel = document.getElementById('chart-no-label');
+
         if (total === 0) {
-            document.getElementById('stat-positivas').innerText = '0%';
-            document.getElementById('stat-negativas').innerText = '0%';
-            document.getElementById('stat-positivas-count').innerText = '0 respuestas';
-            document.getElementById('stat-negativas-count').innerText = '0 respuestas';
-            document.getElementById('chart-yes').style.width = '0%';
-            document.getElementById('chart-no').style.width = '0%';
+            if (statPos) statPos.innerText = '0%';
+            if (statNeg) statNeg.innerText = '0%';
+            if (statPosCount) statPosCount.innerText = '0 respuestas';
+            if (statNegCount) statNegCount.innerText = '0 respuestas';
+            if (chartYes) chartYes.style.width = '0%';
+            if (chartNo) chartNo.style.width = '0%';
             return;
         }
 
@@ -3496,30 +4223,29 @@
         const posPerc = Math.round((positives / total) * 100);
         const negPerc = Math.round((negatives / total) * 100);
 
-        document.getElementById('stat-positivas').innerText = `${posPerc}%`;
-        document.getElementById('stat-negativas').innerText = `${negPerc}%`;
-        document.getElementById('stat-positivas-count').innerText = `${positives} respuestas (✓)`;
-        document.getElementById('stat-negativas-count').innerText = `${negatives} respuestas (✗)`;
+        if (statPos) statPos.innerText = `${posPerc}%`;
+        if (statNeg) statNeg.innerText = `${negPerc}%`;
+        if (statPosCount) statPosCount.innerText = `${positives} respuestas (✓)`;
+        if (statNegCount) statNegCount.innerText = `${negatives} respuestas (✗)`;
         
-        const chartYes = document.getElementById('chart-yes');
-        const chartNo = document.getElementById('chart-no');
+        if (chartYes) chartYes.style.width = `${posPerc}%`;
+        if (chartNo) chartNo.style.width = `${negPerc}%`;
         
-        chartYes.style.width = `${posPerc}%`;
-        chartNo.style.width = `${negPerc}%`;
-        
-        document.getElementById('chart-yes-label').innerText = posPerc;
-        document.getElementById('chart-no-label').innerText = negPerc;
+        if (chartYesLabel) chartYesLabel.innerText = posPerc;
+        if (chartNoLabel) chartNoLabel.innerText = negPerc;
     }
 
     let showAllComments = false;
     function toggleAllComments() {
         showAllComments = !showAllComments;
-        document.getElementById('toggle-all-comments').innerText = showAllComments ? 'Ver solo últimos 5' : 'Ver historial completo';
+        const btn = document.getElementById('toggle-all-comments');
+        if (btn) btn.innerText = showAllComments ? 'Ver solo últimos 5' : 'Ver historial completo';
         updateCommentsList(filterDataByDate(adminData.feedback, 'date'));
     }
 
     function updateCommentsList(feedback) {
         const commentsList = document.getElementById('comments-history-list');
+        if (!commentsList) return;
         let comments = feedback.filter(f => f.comment && f.comment.trim() !== '');
         
         // Build a map of sessionId -> company name from adminData.userInfo for real-time lookup
@@ -3644,28 +4370,43 @@
     });
 
     function showAlert(title, message) {
-        document.getElementById('modal-title').innerText = title;
-        document.getElementById('modal-body').innerText = message;
+        const titleElem = document.getElementById('modal-title');
+        const bodyElem = document.getElementById('modal-body');
         const okBtn = document.getElementById('modal-ok-btn');
-        okBtn.innerText = 'Entendido';
-        okBtn.onclick = closeModal;
-        document.getElementById('modal-cancel-btn').style.display = 'none';
-        document.getElementById('modal-overlay').style.display = 'flex';
+        const cancelBtn = document.getElementById('modal-cancel-btn');
+        const overlay = document.getElementById('modal-overlay');
+
+        if (titleElem) titleElem.innerText = title;
+        if (bodyElem) bodyElem.innerText = message;
+        if (okBtn) {
+            okBtn.innerText = 'Entendido';
+            okBtn.onclick = closeModal;
+        }
+        if (cancelBtn) cancelBtn.style.display = 'none';
+        if (overlay) overlay.style.display = 'flex';
     }
 
     function showConfirm(title, message, onConfirm) {
-        document.getElementById('modal-title').innerText = title;
-        document.getElementById('modal-body').innerText = message;
+        const titleElem = document.getElementById('modal-title');
+        const bodyElem = document.getElementById('modal-body');
         const okBtn = document.getElementById('modal-ok-btn');
-        okBtn.innerText = 'Confirmar';
-        okBtn.onclick = () => {
-            closeModal();
-            onConfirm();
-        };
         const cancelBtn = document.getElementById('modal-cancel-btn');
-        cancelBtn.style.display = 'block';
-        cancelBtn.onclick = closeModal;
-        document.getElementById('modal-overlay').style.display = 'flex';
+        const overlay = document.getElementById('modal-overlay');
+
+        if (titleElem) titleElem.innerText = title;
+        if (bodyElem) bodyElem.innerText = message;
+        if (okBtn) {
+            okBtn.innerText = 'Confirmar';
+            okBtn.onclick = () => {
+                closeModal();
+                onConfirm();
+            };
+        }
+        if (cancelBtn) {
+            cancelBtn.style.display = 'block';
+            cancelBtn.onclick = closeModal;
+        }
+        if (overlay) overlay.style.display = 'flex';
     }
 
     async function clearAllData(btnElement) {
@@ -3676,6 +4417,7 @@
                 // We need a way to ask for a password inside the confirm flow
                 // Let's modify the modal temporarily to show an input
                 const modalBody = document.getElementById('modal-body');
+                if (!modalBody) return;
                 const originalContent = modalBody.innerHTML;
                 
                 modalBody.innerHTML = `
@@ -3838,9 +4580,17 @@
     window.openLineModal = openLineModal;
     window.closeLineModal = closeLineModal;
     window.saveLine = saveLine;
+    window.editLine = openLineModal;
     window.deleteLine = deleteLine;
     window.addContactRow = addContactRow;
     window.addLinkRow = addLinkRow;
+    window.openQuestionModal = openQuestionModal;
+    window.editQuestion = openQuestionModal;
+    window.closeQuestionModal = closeQuestionModal;
+    window.saveQuestion = saveQuestion;
+    window.deleteQuestion = deleteQuestion;
+    window.addQOptionRow = addQOptionRow;
+    window.resetAdminDateFilters = resetAdminDateFilters;
 
     async function downloadPDF() {
         const { purpose, amount, category } = userAnswers;
@@ -3850,28 +4600,29 @@
         const altRecContent = document.getElementById('alternatives-container').cloneNode(true);
 
         const container = document.createElement('div');
-        container.style.padding = '20px';
-        container.style.fontFamily = 'Inter, sans-serif';
+        container.style.padding = '40px';
+        container.style.fontFamily = "'Inter', Arial, sans-serif";
         container.style.background = '#ffffff';
+        container.style.color = '#000000';
+        container.style.width = '700px'; // Slightly narrower to avoid scaling issues on A4 with margins
 
         const header = `
-            <div style="border-bottom: 2px solid #7c3aed; padding-bottom: 15px; margin-bottom: 25px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h1 style="color: #7c3aed; margin: 0; font-size: 24px;">Suma Eficiencia</h1>
-                        <p style="margin: 5px 0 0; font-size: 14px; color: #666;">Resultados de Evaluación de Financiamiento</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 12px; color: #888;">Fecha: ${new Date().toLocaleDateString('es-AR')}</div>
-                    </div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #7c3aed; padding-bottom: 15px; margin-bottom: 25px;">
+                <div>
+                    <h1 style="color: #7c3aed; margin: 0; font-size: 26px; font-weight: 950; letter-spacing: -1.2px;">Suma Eficiencia</h1>
+                    <p style="margin: 4px 0 0; font-size: 14px; color: #374151; font-weight: 600;">Transición Energética de Santa Fe</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 11px; color: #1f2937; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Gobierno de Santa Fe</div>
+                    <div style="font-size: 10px; color: #6b7280; font-weight: 600; margin-top: 2px;">Ministerio de Desarrollo Productivo</div>
+                    <div style="font-size: 10px; color: #9ca3af; margin-top: 4px;">Generado: ${new Date().toLocaleDateString('es-AR')}</div>
                 </div>
             </div>
-            <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
-                <h2 style="font-size: 14px; margin: 0 0 10px; color: #4b5563; text-transform: uppercase; font-weight: 700;">Perfil del Solicitante</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; font-size: 12px; color: #1f2937;">
-                    <div><strong>Propósito:</strong> ${purpose || '-'}</div>
-                    <div><strong>Categoría:</strong> ${category || '-'}</div>
-                    <div><strong>Monto estimado:</strong> ${amount || '-'}</div>
+            <div style="background: #fdfdfd; border: 1.5px solid #f3f4f6; padding: 15px 20px; border-radius: 12px; margin-bottom: 25px; page-break-inside: avoid;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 11.5px;">
+                    <div><span style="color: #6b7280; font-size: 8.5px; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 800; letter-spacing: 0.5px;">Propósito</span> <strong style="color: #111827;">${purpose || '-'}</strong></div>
+                    <div><span style="color: #6b7280; font-size: 8.5px; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 800; letter-spacing: 0.5px;">Monto</span> <strong style="color: #111827;">${amount || '-'}</strong></div>
+                    <div><span style="color: #6b7280; font-size: 8.5px; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 800; letter-spacing: 0.5px;">Empresa</span> <strong style="color: #111827;">${category || '-'}</strong></div>
                 </div>
             </div>
         `;
@@ -3880,61 +4631,69 @@
 
         const formatCard = (card, isMain = false) => {
             card.style.background = '#ffffff';
-            card.style.border = '1px solid #e5e7eb';
-            card.style.borderRadius = '12px';
-            card.style.padding = '20px';
-            card.style.marginBottom = isMain ? '0' : '15px';
+            card.style.border = '1px solid #d1d5db';
+            card.style.borderRadius = '8px';
+            card.style.padding = isMain ? '15px' : '12px';
+            card.style.marginBottom = '15px';
             card.style.boxShadow = 'none';
-            card.style.color = '#111827';
+            card.style.color = '#000000';
             card.style.backdropFilter = 'none';
-            card.style.width = 'auto';
+            card.style.width = '100%';
+            card.style.boxSizing = 'border-box';
             card.style.height = 'auto';
             card.style.display = 'block';
+            card.style.pageBreakInside = 'avoid';
+            card.style.position = 'relative';
             
             const titles = card.querySelectorAll('.line-title, .alt-title');
             titles.forEach(t => {
                 t.style.color = '#7c3aed';
-                t.style.fontSize = isMain ? '22px' : '18px';
+                t.style.fontSize = isMain ? '18px' : '15px';
                 t.style.fontWeight = '800';
-                t.style.margin = '0 0 10px 0';
+                t.style.margin = '0 0 6px 0';
                 t.style.display = 'block';
+                t.style.pageBreakAfter = 'avoid';
             });
 
             const descs = card.querySelectorAll('.line-desc, .alt-desc');
             descs.forEach(d => {
-                d.style.color = '#4b5563';
-                d.style.fontSize = '14px';
-                d.style.lineHeight = '1.5';
-                d.style.marginBottom = '15px';
+                d.style.color = '#374151';
+                d.style.fontSize = isMain ? '12px' : '11.5px';
+                d.style.lineHeight = '1.3';
+                d.style.marginBottom = '10px';
                 d.style.display = 'block';
             });
 
             const detailItemsGrid = card.querySelector('.line-details');
             if (detailItemsGrid) {
-                detailItemsGrid.style.display = 'grid';
-                detailItemsGrid.style.gridTemplateColumns = '1fr 1fr 1fr';
-                detailItemsGrid.style.gap = '15px';
-                detailItemsGrid.style.borderTop = '1px solid #f3f4f6';
-                detailItemsGrid.style.borderBottom = '1px solid #f3f4f6';
-                detailItemsGrid.style.padding = '15px 0';
-                detailItemsGrid.style.margin = '15px 0';
+                detailItemsGrid.style.display = 'flex';
+                detailItemsGrid.style.flexDirection = 'row';
+                detailItemsGrid.style.gap = '12px';
+                detailItemsGrid.style.borderTop = '1px solid #e5e7eb';
+                detailItemsGrid.style.borderBottom = '1px solid #e5e7eb';
+                detailItemsGrid.style.padding = '8px 0';
+                detailItemsGrid.style.margin = '8px 0';
+                detailItemsGrid.style.pageBreakInside = 'avoid';
                 
                 const details = detailItemsGrid.querySelectorAll('.detail-item');
                 details.forEach(d => {
+                    d.style.flex = '1';
                     d.style.display = 'block';
                     const span = d.querySelector('span');
                     if (span) {
-                        span.style.fontSize = '11px';
+                        span.style.fontSize = '8.5px';
                         span.style.color = '#6b7280';
                         span.style.textTransform = 'uppercase';
-                        span.style.marginBottom = '4px';
+                        span.style.fontWeight = '700';
+                        span.style.marginBottom = '1px';
                         span.style.display = 'block';
                     }
                     const strong = d.querySelector('strong');
                     if (strong) {
-                        strong.style.fontSize = '14px';
-                        strong.style.color = '#111827';
+                        strong.style.fontSize = '12px';
+                        strong.style.color = '#000000';
                         strong.style.display = 'block';
+                        strong.style.fontWeight = '800';
                     }
                 });
             }
@@ -3942,61 +4701,122 @@
             const whyIdeal = card.querySelector('.why-ideal');
             if (whyIdeal) {
                 whyIdeal.style.background = '#f9fafb';
-                whyIdeal.style.borderLeft = '4px solid #7c3aed';
-                whyIdeal.style.padding = '15px';
-                whyIdeal.style.borderRadius = '0 8px 8px 0';
+                whyIdeal.style.borderLeft = '3px solid #7c3aed';
+                whyIdeal.style.padding = '10px 12px';
+                whyIdeal.style.borderRadius = '0 4px 4px 0';
                 whyIdeal.style.display = 'block';
+                whyIdeal.style.marginTop = '10px';
+                whyIdeal.style.pageBreakInside = 'avoid';
                 
                 const h4 = whyIdeal.querySelector('h4');
                 if (h4) {
-                    h4.style.fontSize = '11px';
-                    h4.style.color = '#6b7280';
-                    h4.style.margin = '0 0 5px 0';
+                    h4.style.fontSize = '9px';
+                    h4.style.color = '#7c3aed';
+                    h4.style.margin = '0 0 3px 0';
+                    h4.style.fontWeight = '900';
                     h4.style.textTransform = 'uppercase';
                 }
                 const p = whyIdeal.querySelector('p');
                 if (p) {
-                    p.style.fontSize = '13px';
+                    p.style.fontSize = '11.5px';
                     p.style.color = '#1f2937';
                     p.style.margin = '0';
-                    p.style.lineHeight = '1.4';
+                    p.style.lineHeight = '1.3';
                 }
             }
 
-            // Hide buttons in PDF
-            card.querySelectorAll('.btn').forEach(b => b.style.display = 'none');
+            // Style links in PDF
+            card.querySelectorAll('a').forEach(link => {
+                link.style.color = '#7c3aed';
+                link.style.textDecoration = 'none';
+                link.style.fontWeight = '700';
+                link.style.fontSize = '11px';
+                link.style.display = 'block';
+                link.style.margin = '3px 0';
+            });
+            
+            // Style contacts in PDF
+            const contactContainers = card.querySelectorAll('div[style*="f3f4f6"], div[style*="rgba(255,255,255,0.1)"]');
+            contactContainers.forEach(container => {
+                container.style.display = 'block';
+                container.style.background = '#f3f4f6';
+                container.style.borderRadius = '6px';
+                container.style.padding = '10px';
+                container.style.marginTop = '10px';
+                container.style.border = '1px solid #e5e7eb';
+                container.style.pageBreakInside = 'avoid';
+                
+                const title = container.querySelector('h4, h5');
+                if (title) {
+                    title.style.fontSize = '10px';
+                    title.style.color = '#7c3aed';
+                    title.style.margin = '0 0 4px 0';
+                    title.style.fontWeight = '900';
+                    title.style.textTransform = 'uppercase';
+                }
+                
+                container.querySelectorAll('span').forEach(s => {
+                    s.style.fontSize = '11.5px';
+                    s.style.color = '#1f2937';
+                    s.style.display = 'block';
+                    s.style.marginBottom = '2px';
+                    const strong = s.querySelector('strong');
+                    if (strong) strong.style.fontWeight = '800';
+                });
+                
+                const epi = container.querySelector('p');
+                if (epi) {
+                    epi.style.fontSize = '9px';
+                    epi.style.marginTop = '4px';
+                    epi.style.color = '#6b7280';
+                }
+            });
+
+            // Hide buttons/feedback UI in PDF
+            card.querySelectorAll('.btn, .feedback-section').forEach(b => b.style.display = 'none');
         };
 
         const mainSection = document.createElement('div');
-        mainSection.style.marginBottom = '30px';
-        mainSection.innerHTML = `<h2 style="font-size: 18px; color: #7c3aed; font-weight: 700; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid #eee;">${mainRecTitle}</h2>`;
+        mainSection.style.marginBottom = '25px';
+        mainSection.innerHTML = `<h2 style="font-size: 16px; color: #7c3aed; font-weight: 900; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid #f3f4f6; text-transform: uppercase; letter-spacing: 0.5px;">Recomendación Principal</h2>`;
         formatCard(mainRecContent, true);
         mainSection.appendChild(mainRecContent);
         container.appendChild(mainSection);
 
         if (altRecContent && altRecContent.children.length > 0) {
-            const altSection = document.createElement('div');
-            altSection.innerHTML = `<h2 style="font-size: 18px; color: #7c3aed; font-weight: 700; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid #eee;">${altRecTitle}</h2>`;
+            const altSectionTitle = document.createElement('h2');
+            altSectionTitle.style.fontSize = '16px';
+            altSectionTitle.style.color = '#7c3aed';
+            altSectionTitle.style.fontWeight = '900';
+            altSectionTitle.style.marginBottom = '12px';
+            altSectionTitle.style.marginTop = '25px';
+            altSectionTitle.style.paddingBottom = '6px';
+            altSectionTitle.style.borderBottom = '2px solid #7c3aed';
+            altSectionTitle.style.textTransform = 'uppercase';
+            altSectionTitle.style.letterSpacing = '0.5px';
+            altSectionTitle.innerText = altRecTitle;
+            container.appendChild(altSectionTitle);
             
-            const altGrid = document.createElement('div');
-            altGrid.style.display = 'grid';
-            altGrid.style.gridTemplateColumns = '1fr 1fr';
-            altGrid.style.gap = '15px';
+            const altList = document.createElement('div');
+            altList.style.display = 'flex';
+            altList.style.flexDirection = 'column';
+            altList.style.gap = '15px';
             
             Array.from(altRecContent.children).forEach(child => {
                 const cardClone = child.cloneNode(true);
                 formatCard(cardClone);
-                altGrid.appendChild(cardClone);
+                cardClone.style.pageBreakInside = 'avoid';
+                altList.appendChild(cardClone);
             });
             
-            altSection.appendChild(altGrid);
-            container.appendChild(altSection);
+            container.appendChild(altList);
         }
 
         const footer = `
-            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #9ca3af; font-size: 10px;">
-                <p style="margin: 0;">Este es un resumen informativo generado por el simulador Suma Eficiencia.</p>
-                <p style="margin: 5px 0 0;">Gobierno de Santa Fe - Ministerio de Desarrollo Productivo</p>
+            <div style="margin-top: 50px; padding-top: 25px; border-top: 1.5px solid #7c3aed; text-align: center; color: #4b5563; font-size: 11px;">
+                <p style="margin: 0; font-weight: 600;">Este es un resumen informativo generado por el simulador interactivo Suma Eficiencia.</p>
+                <p style="margin: 6px 0 0; font-size: 10px; color: #9ca3af;">Ministerio de Desarrollo Productivo - Gobierno de Santa Fe</p>
+                <p style="margin: 15px 0 0; font-size: 9px; color: #d1d5db;">El presente documento no constituye una pre-aprobación crediticia ni otorga derechos sobre las líneas mencionadas. Sujeto a evaluación bancaria.</p>
             </div>
         `;
         const footerEl = document.createElement('div');
@@ -4004,11 +4824,12 @@
         container.appendChild(footerEl);
 
         const opt = {
-            margin: [15, 15],
+            margin: [15, 10, 15, 10], // top, left, bottom, right
             filename: `Evaluacion_Suma_Eficiencia_${new Date().getTime()}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
         const btn = document.querySelector('button[onclick="downloadPDF()"]');
