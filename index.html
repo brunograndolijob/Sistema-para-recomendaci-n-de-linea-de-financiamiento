@@ -2316,6 +2316,7 @@
         document.getElementById('main-rec-title').style.display = 'none';
         document.getElementById('user-info-section').style.display = 'none';
         document.getElementById('alternatives-title').style.display = 'none';
+        document.getElementById('satisfaction-feedback-section').style.display = 'none';
         
         const loaderContainer = document.getElementById('main-recommendation');
         loaderContainer.innerHTML = `
@@ -2369,11 +2370,6 @@
                 currentRecommendedLine = mainLine.name;
                 await trackCompletion(currentRecommendedLine, reasoning, userAnswers);
                 updateStepper(4);
-                
-                // Show UI elements
-                document.getElementById('results-summary').style.display = 'flex';
-                document.getElementById('main-rec-title').style.display = 'block';
-                document.getElementById('user-info-section').style.display = 'block';
             }, 3200);
             return;
         }
@@ -2406,11 +2402,6 @@
             currentRecommendedLine = aiMainLine ? aiMainLine.name : "No especificada";
             await trackCompletion(currentRecommendedLine, result.reasoning, userAnswers);
             updateStepper(4);
-            
-            // Show UI elements
-            document.getElementById('results-summary').style.display = 'flex';
-            document.getElementById('main-rec-title').style.display = 'block';
-            document.getElementById('user-info-section').style.display = 'block';
 
         } catch (error) {
             clearInterval(msgInterval);
@@ -2459,7 +2450,17 @@
         // Show/Hide alternatives title
         const altTitle = document.getElementById('alternatives-title');
         const altContainer = document.getElementById('alternatives-container');
+        const userInfoSection = document.getElementById('user-info-section');
+        const resultsSummary = document.getElementById('results-summary');
+        const mainRecTitle = document.getElementById('main-rec-title');
+        const feedbackSection = document.getElementById('satisfaction-feedback-section');
         
+        // Ensure all result-related sections are visible
+        if (userInfoSection) userInfoSection.style.display = 'block';
+        if (resultsSummary) resultsSummary.style.display = 'flex';
+        if (mainRecTitle) mainRecTitle.style.display = 'block';
+        if (feedbackSection) feedbackSection.style.display = 'block';
+
         // Alternatives are now shown for everyone as per request
         const finalAlts = alts;
 
@@ -2776,11 +2777,19 @@
         
         // UI Feedback
         const section = document.getElementById('user-info-section');
-        if (section) {
-            section.style.transition = 'all 0.5s ease';
-            section.innerHTML = `
-                <div style="text-align: center; padding: 2rem;">
-                    <div class="success-tick">✓</div>
+        const thanks = document.getElementById('user-info-thanks');
+        const saveBtn = document.getElementById('btn-save-user-info');
+        
+        if (thanks && saveBtn) {
+            // Hide form elements instead of replacing innerHTML
+            const inputs = section.querySelectorAll('input, .question-group, p:not(#user-info-thanks)');
+            inputs.forEach(el => el.style.display = 'none');
+            saveBtn.style.display = 'none';
+            
+            thanks.style.display = 'block';
+            thanks.innerHTML = `
+                <div style="text-align: center; padding: 1rem;">
+                    <div class="success-tick" style="margin: 0 auto 1rem;">✓</div>
                     <h3 style="color: #10b981; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">¡Recibido!</h3>
                     <p style="color: #4b5563;">Un asesor se contactará con <strong>${email}</strong> a la brevedad para guiarte en el proceso de la línea <strong>${recommendation}</strong>.</p>
                 </div>
@@ -4537,15 +4546,29 @@
         document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
         
         // Reset forms
-        document.getElementById('user-email').value = '';
-        document.getElementById('user-company').value = '';
-        document.getElementById('user-email').disabled = false;
-        document.getElementById('user-company').disabled = false;
-        const saveBtn = document.getElementById('btn-save-user-info');
-        saveBtn.disabled = false;
-        saveBtn.innerText = "Enviar información y finalizar";
-        saveBtn.style.background = "#7c3aed";
-        document.getElementById('user-info-thanks').style.display = 'none';
+        const userInfoSection = document.getElementById('user-info-section');
+        if (userInfoSection) {
+            const hiddenEls = userInfoSection.querySelectorAll('[style*="display: none"]');
+            hiddenEls.forEach(el => {
+                if (el.id !== 'user-info-thanks') el.style.display = '';
+            });
+            // Re-show specific hidden ones
+            userInfoSection.querySelectorAll('input, .question-group, p:not(#user-info-thanks)').forEach(el => el.style.display = '');
+            const saveBtn = document.getElementById('btn-save-user-info');
+            if (saveBtn) {
+                saveBtn.style.display = 'block';
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Enviar información y finalizar";
+                saveBtn.style.background = "#7c3aed";
+            }
+            const thanks = document.getElementById('user-info-thanks');
+            if (thanks) thanks.style.display = 'none';
+
+            document.getElementById('user-email').value = '';
+            document.getElementById('user-company').value = '';
+            document.getElementById('user-email').disabled = false;
+            document.getElementById('user-company').disabled = false;
+        }
         
         resetFeedbackUI();
         
