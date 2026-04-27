@@ -2358,18 +2358,34 @@
         let altLines = [];
         let reasoning = "";
 
-        // PRIORITIZE CFI: If multiple lines match roughly, we want CFI to be the main recommendation
-        // because it has better rates as per user request.
-        const matchesCFI = financialLines.find(l => 
-            l.id === 'financiamiento_verde_cfi' && 
-            l.criteria.purpose.includes(userAnswers.purpose) && 
-            l.criteria.amount.includes(userAnswers.amount)
-        );
+        // Check for BMR Exception: Monotributista/RI, Certificate, Renewable/Efficiency, up to 100M
+        const isBMRException = 
+            (userAnswers.purpose === 'Energías Renovables' || userAnswers.purpose === 'Eficiencia Energética') &&
+            userAnswers.hasMiPyME === 'Si' &&
+            userAnswers.category === 'Monotributista o Responsable Inscripto' &&
+            userAnswers.amount === 'Hasta 100 Millones';
 
-        if (matchesCFI) {
-            mainLine = matchesCFI;
-            reasoning = matchesCFI.idealFor || "Esta línea es nuestra recomendación principal por contar con las tasas más competitivas del mercado y plazos extendidos.";
-            altLines = financialLines.filter(l => l.id !== mainLine.id).slice(0, 2);
+        if (isBMRException) {
+            const bmrLine = financialLines.find(l => l.id === 'eficiencia_energetica_bmr');
+            if (bmrLine) {
+                mainLine = bmrLine;
+                reasoning = "Para este perfil específico de Monotributista/Responsable Inscripto con montos hasta $100M, recomendamos el Banco Municipal de Rosario (BMR) por su agilidad y rapidez de otorgamiento en comparación con otras líneas.";
+                altLines = financialLines.filter(l => l.id !== mainLine.id).slice(0, 2);
+            }
+        } else {
+            // PRIORITIZE CFI: If multiple lines match roughly, we want CFI to be the main recommendation
+            // because it has better rates as per user request.
+            const matchesCFI = financialLines.find(l => 
+                l.id === 'financiamiento_verde_cfi' && 
+                l.criteria.purpose.includes(userAnswers.purpose) && 
+                l.criteria.amount.includes(userAnswers.amount)
+            );
+
+            if (matchesCFI) {
+                mainLine = matchesCFI;
+                reasoning = matchesCFI.idealFor || "Esta línea es nuestra recomendación principal por contar con las tasas más competitivas del mercado y plazos extendidos.";
+                altLines = financialLines.filter(l => l.id !== mainLine.id).slice(0, 2);
+            }
         }
 
         // If deterministic logic found a match, use it. Otherwise, use AI or Fallback.
@@ -2401,10 +2417,11 @@
 
                 INSTRUCCIONES:
                 1. Analiza críticamente cómo cada línea se ajusta al perfil del usuario.
-                2. IMPORTANTE: Prioriza siempre la línea con el ID "financiamiento_verde_cfi" (CFI) como recomendación principal si ésta coincide con el propósito y monto solicitado por el usuario, ya que presenta las mejores tasas de interés.
-                3. Selecciona la línea que mejor coincida (respetando la prioridad anterior).
-                4. Proporciona un razonamiento detallado y profesional (en español).
-                5. Identifica hasta 2 alternativas si existen.
+                2. EXCEPCIÓN PRIORITARIA: Si el usuario es Monotributista o Responsable Inscripto, tiene certificado MiPyME (Si), financia Renovables o Eficiencia, y solicita hasta 100M, PRIORIZA siempre la línea del BMR ("eficiencia_energetica_bmr") porque es más veloz.
+                3. REGLA GENERAL: En cualquier otro caso que no sea la excepción mencionada, prioriza siempre la línea con el ID "financiamiento_verde_cfi" (CFI) si ésta coincide con el propósito y monto, ya que presenta las mejores tasas.
+                4. Selecciona la línea que mejor coincida (respetando estas reglas de prioridad).
+                5. Proporciona un razonamiento detallado y profesional (en español).
+                6. Identifica hasta 2 alternativas si existen.
             `;
 
             const response = await getGeminiResponse(prompt);
@@ -2426,12 +2443,23 @@
     }
 
     function fallbackRecommendation() {
+        const isBMRException = 
+            (userAnswers.purpose === 'Energías Renovables' || userAnswers.purpose === 'Eficiencia Energética') &&
+            userAnswers.hasMiPyME === 'Si' &&
+            userAnswers.category === 'Monotributista o Responsable Inscripto' &&
+            userAnswers.amount === 'Hasta 100 Millones';
+
         const scores = financialLines.map(line => {
             let score = 0;
             if (line.criteria.purpose && line.criteria.purpose.includes(userAnswers.purpose)) score += 20;
             if (line.criteria.amount && line.criteria.amount.includes(userAnswers.amount)) score += 15;
-            // Extra weight for CFI if it already matches purpose/amount
-            if (line.id === 'financiamiento_verde_cfi' && score >= 20) score += 5;
+            
+            if (isBMRException) {
+                if (line.id === 'eficiencia_energetica_bmr') score += 50;
+            } else {
+                // Extra weight for CFI if check passed
+                if (line.id === 'financiamiento_verde_cfi' && score >= 20) score += 5;
+            }
             return { ...line, score };
         });
         scores.sort((a, b) => b.score - a.score);
