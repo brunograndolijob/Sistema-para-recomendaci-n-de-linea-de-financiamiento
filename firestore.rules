@@ -73,7 +73,7 @@ service cloud.firestore {
     // Rules
     // ===============================================================
 
-    // User Info: Public can create and read
+    // User Info: Only Admin can read
     match /stats_usuarios_info/{docId} {
       allow create: if 
         request.resource.data.keys().hasAll(['fecha', 'email', 'empresa', 'recomendacion', 'resumen']) &&
@@ -86,7 +86,7 @@ service cloud.firestore {
       allow delete: if true;
     }
 
-    // Consultation Stats: Public can create and read
+    // Consultation Stats: Public reading
     match /stats_consultas_completadas/{docId} {
       allow create: if 
         request.resource.data.keys().hasAll(['line', 'date']) &&
@@ -96,16 +96,16 @@ service cloud.firestore {
       allow delete: if true;
     }
 
-    // Visits Log: Public can create and read
+    // Visits Log: Public reading and creation
     match /stats_visitas_log/{docId} {
       allow create: if 
         request.resource.data.keys().hasAll(['date']) &&
         request.resource.data.date is string;
-      allow read: if true;
+      allow read: if true; // Public access for stats
       allow delete: if true;
     }
 
-    // Feedback: Public can create and read
+    // Feedback: Public reading
     match /stats_feedback/{docId} {
       allow create: if 
         request.resource.data.keys().hasAll(['line', 'satisfaction', 'date']) &&
