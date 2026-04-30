@@ -1299,15 +1299,20 @@
             <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #7c3aed; text-align: center;">¿Querés avanzar con esta línea?</h3>
             <p style="color: #4b5563; margin-bottom: 2rem; text-align: center;">Dejanos tus datos y un asesor se contactará para guiarte en el proceso.</p>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                 <div class="question-group" style="margin-bottom: 0;">
-                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Nombre de la empresa</label>
-                    <input type="text" id="user-company" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Nombre de tu organización">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Nombre del usuario</label>
+                    <input type="text" id="user-name" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Tu nombre completo">
                 </div>
                 <div class="question-group" style="margin-bottom: 0;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Email de contacto</label>
                     <input type="email" id="user-email" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="ejemplo@correo.com">
                 </div>
+            </div>
+
+            <div class="question-group" style="margin-bottom: 1.5rem;">
+                <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Nombre de la empresa</label>
+                <input type="text" id="user-company" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Nombre de tu organización">
             </div>
             
             <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 1.5rem; line-height: 1.4; font-style: italic;">
@@ -1823,9 +1828,10 @@
                     </div>
                     <div class="question-group" style="margin-bottom: 0;">
                         <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Tipo de selección</label>
-                        <select id="q-type" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" onchange="document.getElementById('q-max-options-group').style.display = this.value === 'multiple' ? 'block' : 'none'">
+                        <select id="q-type" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" onchange="document.getElementById('q-max-options-group').style.display = this.value === 'multiple' ? 'block' : 'none'; document.getElementById('q-options-container').style.display = this.value === 'text' ? 'none' : 'block'">
                             <option value="single">Única (Botón)</option>
                             <option value="multiple">Múltiple (Selección múltiple)</option>
+                            <option value="text">Respuesta libre (Texto)</option>
                         </select>
                     </div>
                     <div id="q-max-options-group" class="question-group" style="margin-bottom: 0; display: none;">
@@ -2137,6 +2143,26 @@
                 { value: 'Hasta 200 Millones', description: '' },
                 { value: 'Hasta 300 Millones', description: '' }
             ]
+        },
+        {
+            id: 'activity_desc',
+            text: '6. Describí brevemente tu actividad principal o el proyecto a financiar',
+            step: 2,
+            order: 6,
+            type: 'text'
+        },
+        {
+            id: 'desired_term',
+            text: '7. ¿En qué plazo estimás devolver el financiamiento?',
+            step: 2,
+            order: 7,
+            type: 'single',
+            options: [
+                { value: 'Hasta 12 meses', description: '' },
+                { value: 'Hasta 24 meses', description: '' },
+                { value: 'Hasta 36 meses', description: '' },
+                { value: 'Más de 36 meses', description: '' }
+            ]
         }
     ];
 
@@ -2185,6 +2211,7 @@
 
     // EXPORT FUNCTIONS TO WINDOW IMMEDIATELY
     window.deleteLine = deleteLine;
+    window.shareRecommendation = shareRecommendation;
     window.openLineModal = openLineModal;
     window.calculateResults = calculateResults;
     window.nextStep = nextStep;
@@ -2450,11 +2477,20 @@
                 LÍNEAS DISPONIBLES:
                 ${JSON.stringify(financialLines, null, 2)}
 
-                INSTRUCCIONES:
-                1. Analiza críticamente cómo cada línea se ajusta al perfil del usuario.
-                2. Selecciona la línea con el ID que mejor coincida.
-                3. Proporciona un razonamiento detallado y profesional (en español).
-                4. Identifica hasta 2 alternativas si existen.
+                INSTRUCCIONES CRÍTICAS:
+                1. Analiza de forma exhaustiva la descripción de la actividad del usuario y el plazo deseado para la inversión mencionados en los datos.
+                2. Evalúa la compatibilidad técnica: ¿El propósito de la línea (purpose/idealFor) coincide con la actividad descrita?
+                3. Evalúa la compatibilidad financiera: ¿El plazo solicitado por el usuario entra dentro del rango permitido por la línea (term)?
+                4. Selecciona el ID de la línea que representa la recomendación principal.
+                5. Proporciona un razonamiento detallado y profesional (en español) que explique explícitamente cómo la línea elegida satisface la necesidad específica de la actividad del usuario y se ajusta a su plazo preferido.
+                6. Sugiere hasta 2 alternativas viables si existen.
+
+                FORMATO DE RESPUESTA (JSON):
+                {
+                    "recommendedLineId": "ID de la línea",
+                    "reasoning": "Explicación detallada...",
+                    "alternatives": ["ID1", "ID2"]
+                }
             `;
 
             const response = await getGeminiResponse(prompt);
@@ -2495,6 +2531,12 @@
         renderResults(mainLine, scores.slice(1, 3), reasoning);
         currentRecommendedLine = mainLine ? mainLine.name : "No especificada";
         
+        // Show UI elements
+        document.getElementById('results-summary').style.display = 'flex';
+        document.getElementById('main-rec-title').style.display = 'block';
+        document.getElementById('user-info-section').style.display = 'block';
+        document.getElementById('alternatives-title').style.display = 'block';
+
         // Track completion even in fallback
         trackCompletion(currentRecommendedLine, reasoning, userAnswers);
         
@@ -2503,6 +2545,72 @@
         localStorage.setItem('temp_current_recommendation', currentRecommendedLine);
         
         updateStepper(4);
+    }
+
+    async function shareRecommendation(lineName) {
+        const shareData = {
+            title: 'Recomendación de Financiamiento',
+            text: `He recibido una recomendación de financiamiento ideal para mi proyecto: ${lineName}. Consultá vos también las líneas para la transición energética en Santa Fe.`,
+            url: window.location.href
+        };
+
+        if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            try {
+                await navigator.share(shareData);
+                console.log('Shared successfully');
+            } catch (err) {
+                console.log('Share error or cancelled:', err);
+            }
+        } else {
+            // Fallback: Copy to clipboard and show options
+            const shareText = `${shareData.text}\n\n${shareData.url}`;
+            
+            try {
+                await navigator.clipboard.writeText(shareText);
+                
+                // Construct sharing URLs
+                const encodedText = encodeURIComponent(shareText);
+                const encodedUrl = encodeURIComponent(shareData.url);
+                
+                const whatsappUrl = `https://wa.me/?text=${encodedText}`;
+                const emailUrl = `mailto:?subject=${encodeURIComponent(shareData.title)}&body=${encodedText}`;
+                
+                // Create a temporary popover/modal or just open options
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.inset = '0';
+                overlay.style.background = 'rgba(0,0,0,0.5)';
+                overlay.style.display = 'flex';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                overlay.style.zIndex = '10000';
+                overlay.onclick = () => document.body.removeChild(overlay);
+
+                overlay.innerHTML = `
+                    <div style="background: white; padding: 2rem; border-radius: 24px; width: 90%; max-width: 400px; position: relative;" onclick="event.stopPropagation()">
+                        <h3 style="color: #111827; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 800;">Compartir recomendación</h3>
+                        <p style="color: #4b5563; font-size: 0.95rem; margin-bottom: 2rem;">¡Enlace copiado al portapapeles! También podés compartir directamente por:</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <a href="${whatsappUrl}" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: #25D366; color: white; padding: 1rem; border-radius: 12px; font-weight: 700; text-decoration: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+                                WhatsApp
+                            </a>
+                            <a href="${emailUrl}" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: #4b5563; color: white; padding: 1rem; border-radius: 12px; font-weight: 700; text-decoration: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                Email
+                            </a>
+                        </div>
+                        
+                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 1.5rem; width: 100%; padding: 0.75rem; background: #f3f4f6; color: #4b5563; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;">Cerrar</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            } catch (err) {
+                console.error('Failed to copy/share:', err);
+                showAlert('Error', 'No se pudo compartir el enlace.');
+            }
+        }
     }
 
     function renderResults(main, alts, reasoning) {
@@ -2531,7 +2639,13 @@
 
         // Render Main
         document.getElementById('main-recommendation').innerHTML = `
-            <div class="badge">Recomendación para tu perfil</div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 1rem;">
+                <div class="badge">Recomendación para tu perfil</div>
+                <button onclick="shareRecommendation('${main.name.replace(/'/g, "\\'")}')" class="btn" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(124, 58, 237, 0.1); color: #7c3aed; border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 99px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(124, 58, 237, 0.2)'" onmouseout="this.style.background='rgba(124, 58, 237, 0.1)'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    Compartir
+                </button>
+            </div>
             <h4 class="line-title">${main.name}</h4>
             <p class="line-desc">${main.desc}</p>
             
@@ -2764,9 +2878,12 @@
     function saveUserInfo() {
         const emailInput = document.getElementById('user-email');
         const companyInput = document.getElementById('user-company');
+        const nameInput = document.getElementById('user-name');
         const btn = document.getElementById('btn-save-user-info');
+        
         const email = emailInput.value.trim();
         const company = companyInput.value.trim();
+        const name = nameInput ? nameInput.value.trim() : '';
         
         // Validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -2777,22 +2894,25 @@
             emailInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
             hasError = true;
         } else {
-            emailInput.style.borderColor = 'rgba(255,255,255,0.3)';
+            emailInput.style.borderColor = '#e5e7eb';
             emailInput.style.boxShadow = 'none';
         }
 
-        if (!company) {
-            companyInput.style.borderColor = '#ef4444';
-            companyInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+        if (!name) {
+            if (nameInput) {
+                nameInput.style.borderColor = '#ef4444';
+                nameInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+            }
             hasError = true;
         } else {
-            companyInput.style.borderColor = 'rgba(255,255,255,0.3)';
-            companyInput.style.boxShadow = 'none';
+            if (nameInput) {
+                nameInput.style.borderColor = '#e5e7eb';
+                nameInput.style.boxShadow = 'none';
+            }
         }
 
         if (hasError) {
-            const errorMsg = !email || !company ? 'Por favor, completa todos los campos.' : 'Por favor, ingresa un email válido.';
-            alert(errorMsg);
+            alert('Por favor, ingresa tu nombre y un email válido.');
             return;
         }
 
@@ -2814,6 +2934,7 @@
         const sessionId = localStorage.getItem('app_session_id');
         const userInfoData = {
             fecha: formatDate(now),
+            nombre: name,
             email: email,
             empresa: company,
             recomendacion: recommendation,
@@ -2856,7 +2977,9 @@
             purpose: "Propósito",
             amount: "Monto Solicitado",
             category: "Categoría",
-            activity: "Actividad Específica"
+            activity: "Actividad Específica",
+            activity_desc: "Descripción de Actividad",
+            desired_term: "Plazo Deseado"
         };
         
         const summary = Object.entries(answers).map(([key, value]) => {
@@ -3102,12 +3225,24 @@
             const visitElem = document.getElementById('stat-visitas');
             const compElem = document.getElementById('stat-completadas');
             
-            // Set basic filtered counts (max 1500 from current memory)
-            if (visitElem) visitElem.innerText = filteredVisitas.length;
-            if (compElem) compElem.innerText = filteredCompletions.length;
+            const isFiltered = !!(currentAdminFilter.start || currentAdminFilter.end);
+
+            // Set basic filtered counts: Base + Live (if not filtered)
+            if (visitElem) visitElem.innerText = isFiltered ? filteredVisitas.length : (619 + adminData.visitas.length);
+            if (compElem) compElem.innerText = isFiltered ? filteredCompletions.length : (394 + adminData.completions.length);
             
             // If No filter is active, get absolute total from server (accurate even if > 1500)
-            if (!currentAdminFilter.start && !currentAdminFilter.end) {
+            if (!isFiltered) {
+                const pathVisits = 'stats_visitas_log';
+                getCountFromServer(collection(db, pathVisits)).then(countSnapshot => {
+                    visitElem.innerText = 619 + countSnapshot.data().count;
+                });
+                
+                const pathComp = 'stats_consultas_completadas';
+                getCountFromServer(collection(db, pathComp)).then(countSnapshot => {
+                    compElem.innerText = 394 + countSnapshot.data().count;
+                });
+            } else {
                 // Visits Total
                 const pathVisits = 'stats_visitas_log';
                 getCountFromServer(collection(db, pathVisits)).then(countSnapshot => {
@@ -3295,9 +3430,15 @@
             const container = document.getElementById(`questions-container-step-${q.step}`);
             if (!container) return;
 
-            const html = `
-                <div class="question-group" id="q-container-${q.id}" ${q.dependsOn ? 'style="display:none;"' : ''}>
-                    <label class="question-title">${q.text}</label>
+            let innerHtml = '';
+            if (q.type === 'text') {
+                innerHtml = `
+                    <textarea class="comment-textarea" placeholder="Escribí aquí..." 
+                        oninput="userAnswers['${q.id}'] = this.value; processFlowLogic();"
+                        style="height: 100px; color: white; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 1rem; font-family: inherit; width: 100%; box-sizing: border-box; outline: none; margin-top: 0.5rem; transition: border-color 0.2s ease;">${userAnswers[q.id] || ''}</textarea>
+                `;
+            } else {
+                innerHtml = `
                     <div class="options-grid" data-question="${q.id}" data-type="${q.type}" ${q.maxOptions ? `data-max="${q.maxOptions}"` : ''} id="options-grid-${q.id}">
                         ${(q.options || []).map((opt, index) => `
                             <div class="option-card" data-value="${opt.value}" id="opt-${q.id}-${opt.value.replace(/\s+/g, '-')}" style="animation-delay: ${index * 0.05}s">
@@ -3306,6 +3447,13 @@
                             </div>
                         `).join('')}
                     </div>
+                `;
+            }
+
+            const html = `
+                <div class="question-group" id="q-container-${q.id}" ${q.dependsOn ? 'style="display:none;"' : ''}>
+                    <label class="question-title">${q.text}</label>
+                    ${innerHtml}
                 </div>
             `;
             container.innerHTML += html;
@@ -3572,10 +3720,18 @@
         qMaxOptionsGroup.style.display = 'none';
         
         // Populate "Depends on" select with current questions (excluding self)
-        qDependsOnSelect.innerHTML = '<option value="">No (Pregunta independiente)</option>';
-        adminData.questions.forEach(q => {
-            if (q.id !== id) {
-                qDependsOnSelect.innerHTML += `<option value="${q.id}">${q.text} (${q.id})</option>`;
+        qDependsOnSelect.innerHTML = '';
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'No (Pregunta independiente)';
+        qDependsOnSelect.appendChild(defaultOption);
+        
+        adminData.questions.forEach(qOpt => {
+            if (qOpt.id !== id) {
+                const opt = document.createElement('option');
+                opt.value = qOpt.id;
+                opt.textContent = `${qOpt.text} (${qOpt.id})`;
+                qDependsOnSelect.appendChild(opt);
             }
         });
 
@@ -3835,15 +3991,27 @@
 
     function updateLineCounts(completions) {
         const lineCounts = {};
+        const isFiltered = !!(currentAdminFilter.start || currentAdminFilter.end);
         
-        // Initialize all available lines with 0
+        // Initialize with base counts (only if not filtered)
         financialLines.forEach(line => {
             if (line && line.name) {
-                lineCounts[line.name] = 0;
+                let count = 0;
+                if (!isFiltered) {
+                    if (line.name === 'Leasing Sustentable (Banco Santa Fe)') count = 5;
+                    if (line.name === 'Eficiencia Energética (Banco Municipal de Rosario)') count = 140;
+                    if (line.name === 'Financiamiento Verde (Banco CFI)') count = 176;
+                }
+                lineCounts[line.name] = count;
             }
         });
 
-        // Count recommendations from completions
+        // Add Triple Impacto legacy count if not filtered
+        if (!isFiltered) {
+            lineCounts['Triple impacto (Banco CFI)'] = (lineCounts['Triple impacto (Banco CFI)'] || 0) + 38;
+        }
+
+        // ALWAYS Count recommendations from completions (Real-time live data)
         completions.forEach(c => {
             const lineName = c.line || "No especificada";
             if (lineCounts.hasOwnProperty(lineName)) {
@@ -3937,10 +4105,25 @@
         if (!distChart) return;
 
         const lineCounts = {};
+        const isFiltered = !!(currentAdminFilter.start || currentAdminFilter.end);
+
         financialLines.forEach(line => {
-            if (line && line.name) lineCounts[line.name] = 0;
+            if (line && line.name) {
+                let count = 0;
+                if (!isFiltered) {
+                    if (line.name === 'Leasing Sustentable (Banco Santa Fe)') count = 5;
+                    if (line.name === 'Eficiencia Energética (Banco Municipal de Rosario)') count = 140;
+                    if (line.name === 'Financiamiento Verde (Banco CFI)') count = 176;
+                }
+                lineCounts[line.name] = count;
+            }
         });
 
+        if (!isFiltered) {
+            lineCounts['Triple impacto (Banco CFI)'] = (lineCounts['Triple impacto (Banco CFI)'] || 0) + 38;
+        }
+
+        // ALWAYS count live recommendations from Firestore
         completions.forEach(c => {
             const lineName = c.line || c.lineaRecomendada || "No especificada";
             if (lineCounts.hasOwnProperty(lineName)) {
