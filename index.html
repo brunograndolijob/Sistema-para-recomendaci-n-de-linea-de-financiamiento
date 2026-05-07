@@ -1296,49 +1296,31 @@
         </div>
 
         <div id="user-info-section" class="feedback-section" style="background: white; padding: 2.5rem; border-radius: 24px; margin-top: 3rem; margin-bottom: 3rem; text-align: left; color: var(--text-dark); box-shadow: var(--shadow-lg);">
-            <div id="user-info-form">
-                <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #7c3aed; text-align: center;">¿Querés registrar tu consulta?</h3>
-                <p style="color: #4b5563; margin-bottom: 2rem; text-align: center;">Completá los siguientes datos para finalizar el proceso.</p>
-                
-                <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
-                    <div class="question-group" style="margin-bottom: 0;">
-                        <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Nombre de la empresa</label>
-                        <input type="text" id="user-company" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Nombre completo de la empresa o razón social">
-                    </div>
-                    <div class="question-group" style="margin-bottom: 0;">
-                        <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Email de contacto</label>
-                        <input type="email" id="user-email" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="ejemplo@correo.com">
-                    </div>
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #7c3aed; text-align: center;">¿Querés avanzar con esta línea?</h3>
+            <p style="color: #4b5563; margin-bottom: 2rem; text-align: center;">Dejanos tus datos y un asesor se contactará para guiarte en el proceso.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Nombre del usuario</label>
+                    <input type="text" id="user-name" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Tu nombre completo">
                 </div>
-                
-                <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 1.5rem; line-height: 1.4; font-style: italic;">
-                    "Estos datos serán utilizados por el Ministerio de Desarrollo Productivo para brindarle información correspondiente para avanzar en la gestión."
-                </p>
-                
-                <button class="btn btn-primary btn-block" id="btn-save-user-info" onclick="window.showUserInfoConfirmation()" style="background: #7c3aed; color: white; margin-top: 0;">Registrar consulta</button>
-            </div>
-<div id="user-info-confirmation" style="display: none;">
-                <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #7c3aed; text-align: center;">Confirmá tus datos</h3>
-                <p style="color: #4b5563; margin-bottom: 2rem; text-align: center;">Antes de registrar tu consulta, por favor confirmá que la información sea correcta:</p>
-                
-                <div style="background: #f3f4f6; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; color: #1f2937; border: 1px solid #e5e7eb;">
-                    <p style="margin-bottom: 0.5rem;"><strong>📌 Empresa:</strong> <span id="conf-company"></span></p>
-                    <p style="margin-bottom: 0.5rem;"><strong>📧 Email:</strong> <span id="conf-email"></span></p>
-                    <p style="margin-bottom: 0.5rem;"><strong>⭐ Recomendación:</strong> <span id="conf-recommendation"></span></p>
-                    <p style="margin-top: 0.75rem; font-size: 0.9rem; line-height: 1.4; padding-top: 0.75rem; border-top: 1px solid #d1d5db;"><strong>📝 Resumen:</strong> <span id="conf-summary"></span></p>
-                </div>
-
-                <p style="margin-bottom: 1.5rem; font-weight: 600; text-align: center; color: #1f2937;">¿Confirmás que los datos son correctos?</p>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <button class="btn" onclick="window.hideUserInfoConfirmation()" style="background: #e5e7eb; color: #4b5563; border: none; font-weight: 600;">No, corregir</button>
-                    <button class="btn btn-primary" onclick="window.confirmAndSendToWebhook()" style="background: #7c3aed; color: white; border: none; font-weight: 600;">Sí, registrar</button>
+                <div class="question-group" style="margin-bottom: 0;">
+                    <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Email de contacto</label>
+                    <input type="email" id="user-email" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="ejemplo@correo.com">
                 </div>
             </div>
 
-            <div id="user-info-result" style="display: none;">
-                <!-- Content handled by JS -->
+            <div class="question-group" style="margin-bottom: 1.5rem;">
+                <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #4b5563;">Nombre de la empresa</label>
+                <input type="text" id="user-company" class="comment-textarea" style="height: 44px; margin-bottom: 0; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Nombre de tu organización">
             </div>
+            
+            <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 1.5rem; line-height: 1.4; font-style: italic;">
+                "Estos datos serán utilizados por el Ministerio de Desarrollo Productivo para brindarle información correspondiente para avanzar en la gestión."
+            </p>
+            
+            <button class="btn btn-primary btn-block" id="btn-save-user-info" onclick="saveUserInfo()" style="background: #7c3aed; color: white; margin-top: 0;">Enviar información y finalizar</button>
+            <p id="user-info-thanks" style="display: none; color: #059669; font-weight: 700; margin-top: 1rem; text-align: center;">¡Información enviada correctamente!</p>
         </div>
 
         <h3 id="alternatives-title" class="secondary-title">Opciones que podrían interesarte</h3>
@@ -1538,21 +1520,10 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #7c3aed;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 <h3 class="admin-section-title" style="margin-bottom: 0; color: white;">Historial de Información de Contacto</h3>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
-                <div style="display: flex; gap: 0.75rem;">
-                    <button class="btn" style="background: rgba(124, 58, 237, 0.1); border: 1px solid #7c3aed; color: white; font-size: 0.75rem; padding: 0.5rem 1rem;" onclick="showScriptHelper()">📜 Ver Código Script</button>
-                    <button class="btn" style="background: rgba(124, 58, 237, 0.1); border: 1px solid #7c3aed; color: white; font-size: 0.75rem; padding: 0.5rem 1rem;" onclick="configureSheetsSync()">⚙️ Configurar Webhook</button>
-                    <button class="btn" id="btn-sync-sheets" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; border: 1px solid #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; gap: 0.5rem;" onclick="syncWithGoogleSheets()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"></path></svg>
-                        Sincronizar Sheets
-                    </button>
-                    <button class="btn" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; border: 1px solid rgba(255,255,255,0.4); color: white; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; gap: 0.5rem;" onclick="downloadUserInfoCSV()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        Exportar CSV
-                    </button>
-                </div>
-                <div id="sync-status-badge" style="font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 4px;"></div>
-            </div>
+            <button class="btn" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; border: 1px solid rgba(255,255,255,0.4); color: white; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; gap: 0.5rem;" onclick="downloadUserInfoCSV()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Exportar CSV
+            </button>
         </div>
         <div class="table-container" style="margin-bottom: 3rem; background: rgba(0,0,0,0.3); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);">
             <table id="user-info-table">
@@ -1918,15 +1889,6 @@
     import { GoogleGenAI, Type } from "@google/genai";
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-
-    // Google Sheets Sync Configuration
-    const SYNC_CONFIG = {
-        spreadsheetId: '16HH6ESKAPmoU-Xw-rlwp-E2FUphBm9aizdeVpg1_lxo',
-        isConfigured: () => {
-            const url = localStorage.getItem('google_sheets_webhook_url') || '';
-            return url && url.includes('script.google.com/macros/s/');
-        }
-    };
 
     const OperationType = {
         CREATE: 'create',
@@ -2913,12 +2875,15 @@
     }
 
     // User Info Logic
-    function showUserInfoConfirmation() {
+    function saveUserInfo() {
         const emailInput = document.getElementById('user-email');
         const companyInput = document.getElementById('user-company');
+        const nameInput = document.getElementById('user-name');
+        const btn = document.getElementById('btn-save-user-info');
         
         const email = emailInput.value.trim();
         const company = companyInput.value.trim();
+        const name = nameInput ? nameInput.value.trim() : '';
         
         // Validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -2933,24 +2898,29 @@
             emailInput.style.boxShadow = 'none';
         }
 
-        if (!company) {
-            companyInput.style.borderColor = '#ef4444';
-            companyInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+        if (!name) {
+            if (nameInput) {
+                nameInput.style.borderColor = '#ef4444';
+                nameInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+            }
             hasError = true;
         } else {
-            companyInput.style.borderColor = '#e5e7eb';
-            companyInput.style.boxShadow = 'none';
+            if (nameInput) {
+                nameInput.style.borderColor = '#e5e7eb';
+                nameInput.style.boxShadow = 'none';
+            }
         }
 
         if (hasError) {
-            alert('Por favor, ingresá el nombre de tu empresa y un email válido.');
+            alert('Por favor, ingresa tu nombre y un email válido.');
             return;
         }
 
-        // Prepare data for summary
+        // Ensure we have a recommendation and summary
         let recommendation = currentRecommendedLine;
         let answers = userAnswers;
 
+        // Try to recover from temp storage if global variables are lost
         if (!recommendation) {
             recommendation = localStorage.getItem('temp_current_recommendation') || "No especificada";
         }
@@ -2960,135 +2930,46 @@
             } catch (e) { answers = {}; }
         }
 
-        const summary = getCaseSummary(answers);
-
-        // Fill confirmation fields
-        document.getElementById('conf-company').innerText = company;
-        document.getElementById('conf-email').innerText = email;
-        document.getElementById('conf-recommendation').innerText = recommendation;
-        document.getElementById('conf-summary').innerText = summary;
-
-        // Switch views
-        document.getElementById('user-info-form').style.display = 'none';
-        document.getElementById('user-info-confirmation').style.display = 'block';
-    }
-
-    function hideUserInfoConfirmation() {
-        document.getElementById('user-info-form').style.display = 'block';
-        document.getElementById('user-info-confirmation').style.display = 'none';
-    }
-
-    async function confirmAndSendToWebhook() {
-        const company = document.getElementById('user-company').value.trim();
-        const email = document.getElementById('user-email').value.trim();
-        
-        let recommendation = currentRecommendedLine || localStorage.getItem('temp_current_recommendation') || "No especificada";
-        let answers = userAnswers;
-        if (Object.keys(answers).length === 0) {
-            try { answers = JSON.parse(localStorage.getItem('temp_current_answers') || '{}'); } catch (e) {}
-        }
-        const summary = getCaseSummary(answers);
-
-        // UI state: Loading
-        const confSection = document.getElementById('user-info-confirmation');
-        const resultSection = document.getElementById('user-info-result');
-        
-        confSection.innerHTML = `
-            <div style="text-align: center; padding: 2rem;">
-                <div class="loader" style="margin: 0 auto 1.5rem auto; border-top-color: #7c3aed;"></div>
-                <p style="color: #4b5563;">Registrando tu consulta en tiempo real...</p>
-            </div>
-        `;
-
-        const payload = {
-            nombre_empresa: company,
-            email: email,
-            recomendacion: recommendation,
-            resumen_caso: summary,
-            fecha: new Date().toLocaleString('es-AR')
-        };
-
-        const trySend = async () => {
-            const url = localStorage.getItem('google_sheets_webhook_url') || '';
-            
-            if (!url || !url.startsWith('http')) {
-                console.warn("No valid Webhook URL configured. Sync is pending configuration in Admin.");
-                return false;
-            }
-
-            try {
-                // Try sending as text/plain to avoid CORS preflight issues common with GAS
-                await fetch(url, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(payload)
-                });
-                return true; 
-            } catch (e) {
-                console.error("Critical failure sending to Sheets:", e);
-                return false;
-            }
-        };
-
-        try {
-            const sentToSheets = await trySend();
-            
-            saveUserInfoBackup(company, email, recommendation, summary);
-
-            // Success UI
-            confSection.style.display = 'none';
-            resultSection.innerHTML = `
-                <div style="text-align: center; padding: 1rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-                    <h3 style="color: #10b981; font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem;">¡Perfecto!</h3>
-                    <p style="color: #4b5563; line-height: 1.6;">Tu consulta fue registrada exitosamente ${sentToSheets ? 'en nuestra base de datos y Google Sheets' : 'en nuestro sistema'}. Nuestro equipo se pondrá en contacto con vos a la brevedad al email <strong>${email}</strong>. ¿Hay algo más en lo que pueda ayudarte?</p>
-                </div>
-            `;
-            resultSection.style.display = 'block';
-
-        } catch (error) {
-            console.error("Submission error:", error);
-            confSection.style.display = 'none';
-            resultSection.innerHTML = `
-                <div style="text-align: center; padding: 1rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
-                    <h3 style="color: #ef4444; font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem;">Hubo un inconveniente</h3>
-                    <p style="color: #4b5563; line-height: 1.6;">No pudimos guardar tus datos automáticamente. Por favor intentá nuevamente o contactanos directamente.</p>
-                    <button class="btn" onclick="location.reload()" style="background: #e5e7eb; color: #4b5563; margin-top: 1.5rem;">Reintentar</button>
-                </div>
-            `;
-            resultSection.style.display = 'block';
-        }
-    }
-
-    function saveUserInfoBackup(company, email, recommendation, summary) {
         const now = new Date();
         const sessionId = localStorage.getItem('app_session_id');
         const userInfoData = {
             fecha: formatDate(now),
-            nombre: company, 
+            nombre: name,
             email: email,
             empresa: company,
             recomendacion: recommendation,
-            resumen: summary,
+            resumen: getCaseSummary(answers),
             sessionId: sessionId
         };
 
+        // Save to LocalStorage (backup)
         const userInfoLog = JSON.parse(localStorage.getItem('stats_usuarios_info') || '[]');
         userInfoLog.push(userInfoData);
         localStorage.setItem('stats_usuarios_info', JSON.stringify(userInfoLog));
         
+        // Save to Firebase
         const path = 'stats_usuarios_info';
         try {
             addDoc(collection(db, path), userInfoData);
         } catch (e) { 
             handleFirestoreError(e, OperationType.CREATE, path);
+            console.error("Error saving user info to Firebase:", e); 
         }
-    }
-
-    function saveUserInfo() {
-        showUserInfoConfirmation();
+        
+        // UI Feedback
+        const section = document.getElementById('user-info-section');
+        if (section) {
+            section.style.transition = 'all 0.5s ease';
+            section.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div class="success-tick">✓</div>
+                    <h3 style="color: #10b981; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">¡Recibido!</h3>
+                    <p style="color: #4b5563;">Un asesor se contactará con <strong>${email}</strong> a la brevedad para guiarte en el proceso de la línea <strong>${recommendation}</strong>.</p>
+                </div>
+            `;
+        }
+        
+        console.log("Información de usuario guardada con éxito.");
     }
 
     function getCaseSummary(answers = userAnswers) {
@@ -5247,147 +5128,7 @@
         }
     }
 
-    async function syncWithGoogleSheets() {
-        const btn = document.getElementById('btn-sync-sheets');
-        const originalText = btn.innerHTML;
-        
-        const url = localStorage.getItem('google_sheets_webhook_url');
-        if (!url) {
-            alert('Primero configurá el Webhook usando el botón de Configuración.');
-            configureSheetsSync();
-            return;
-        }
-
-        const userInfo = window.currentAdminUserInfo || JSON.parse(localStorage.getItem('stats_usuarios_info') || '[]');
-        if (userInfo.length === 0) {
-            alert('No hay datos registrados en el historial para sincronizar.');
-            return;
-        }
-
-        if (!confirm(`Se enviarán ${userInfo.length} registros a la hoja de cálculo. ¿Continuar?`)) return;
-
-        btn.disabled = true;
-        btn.innerHTML = `<span class="loader" style="width: 12px; height: 12px; border-width: 2px; margin-right: 8px;"></span> Sincronizando...`;
-
-        let successCount = 0;
-        let failCount = 0;
-
-        for (const user of userInfo) {
-            try {
-                const payload = {
-                    nombre_empresa: user.empresa,
-                    email: user.email,
-                    recomendacion: user.recomendacion,
-                    resumen_caso: user.resumen,
-                    fecha: user.fecha
-                };
-
-                await fetch(url, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(payload)
-                });
-                successCount++;
-            } catch (e) {
-                console.error("Sync error:", e);
-                failCount++;
-            }
-        }
-
-        alert(`Sincronización finalizada.\n\n✅ Enviados: ${successCount}\n❌ Fallidos: ${failCount}\n\nNota: Si el contador de éxitos es positivo pero no ves los datos, revisá que el script en Google Sheets esté bien pegado e implementado.`);
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-    }
-
-    function updateSyncStatusBadge() {
-        const badge = document.getElementById('sync-status-badge');
-        if (!badge) return;
-        
-        if (SYNC_CONFIG.isConfigured()) {
-            badge.innerHTML = '✅ Sincronización activa';
-            badge.style.background = 'rgba(16, 185, 129, 0.2)';
-            badge.style.color = '#10b981';
-        } else {
-            badge.innerHTML = '⚠️ Sin configurar';
-            badge.style.background = 'rgba(239, 68, 68, 0.2)';
-            badge.style.color = '#ef4444';
-        }
-    }
-
-    function showScriptHelper() {
-        const scriptCode = `function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
-  
-  sheet.appendRow([
-    data.fecha || new Date().toLocaleString(),
-    data.nombre_empresa,
-    data.email,
-    data.recomendacion,
-    data.resumen_caso
-  ]);
-  
-  return ContentService.createTextOutput("Success").setMimeType(ContentService.MimeType.TEXT);
-}`;
-        
-        const modal = document.createElement('div');
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.backgroundColor = 'rgba(0,0,0,0.85)';
-        modal.style.zIndex = '9999';
-        modal.style.display = 'flex';
-        modal.style.alignItems = 'center';
-        modal.style.justifyContent = 'center';
-        modal.style.padding = '20px';
-        
-        modal.innerHTML = `
-            <div style="background: white; width: 100%; max-width: 600px; border-radius: 15px; padding: 30px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative;">
-                <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280;">&times;</button>
-                <h3 style="color: #7c3aed; margin-bottom: 1.5rem; font-size: 1.5rem;">Copia este código en tu Google Sheet</h3>
-                <p style="color: #4b5563; margin-bottom: 1rem; font-size: 0.9rem;">1. En tu Hoja de Cálculo, ve a <strong>Extensiones > Apps Script</strong>.</p>
-                <p style="color: #4b5563; margin-bottom: 1rem; font-size: 0.9rem;">2. Borra lo que haya y pega esto:</p>
-                <textarea readonly style="width: 100%; height: 200px; font-family: monospace; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; background: #f9fafb; margin-bottom: 1rem; font-size: 0.8rem;">${scriptCode}</textarea>
-                <p style="color: #4b5563; margin-bottom: 1rem; font-size: 0.9rem;">3. Clic <strong>Implementar > Nueva implementación</strong>.</p>
-                <p style="color: #4b5563; margin-bottom: 1.5rem; font-size: 0.9rem;">4. Selecciona <strong>Aplicación web</strong>, y en 'Quién tiene acceso' pon <strong>Cualquiera</strong>.</p>
-                <button onclick="this.parentElement.parentElement.remove()" style="background: #7c3aed; color: white; width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer;">Entendido</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-
-    function configureSheetsSync() {
-        const currentUrl = localStorage.getItem('google_sheets_webhook_url') || '';
-        const url = prompt("Pegá aquí el 'Web App URL' generado por Google Apps Script:\n(Debe empezar con https://script.google.com/macros/s/)", currentUrl);
-        
-        if (url !== null) {
-            if (url.trim() === '') {
-                localStorage.removeItem('google_sheets_webhook_url');
-                alert("Sincronización desactivada.");
-            } else if (url.includes('script.google.com/macros/s/')) {
-                localStorage.setItem('google_sheets_webhook_url', url.trim());
-                alert("✅ Webhook configurado correctamente.");
-            } else {
-                alert("❌ El URL no es válido. Asegúrate de copiar el URL de la 'Aplicación web' (no el de la hoja de cálculo).");
-            }
-            if (window.updateSyncStatusBadge) window.updateSyncStatusBadge();
-        }
-    }
-
-    window.showScriptHelper = showScriptHelper;
-    window.configureSheetsSync = configureSheetsSync;
-    window.syncWithGoogleSheets = syncWithGoogleSheets;
-    window.updateSyncStatusBadge = updateSyncStatusBadge;
-    
-    // Initialize badge if we are in admin panel
-    setTimeout(updateSyncStatusBadge, 1000);
     window.downloadPDF = downloadPDF;
-    window.showUserInfoConfirmation = showUserInfoConfirmation;
-    window.hideUserInfoConfirmation = hideUserInfoConfirmation;
-    window.confirmAndSendToWebhook = confirmAndSendToWebhook;
 </script>
 
 
