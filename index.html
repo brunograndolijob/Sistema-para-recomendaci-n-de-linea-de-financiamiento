@@ -1538,15 +1538,19 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #7c3aed;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 <h3 class="admin-section-title" style="margin-bottom: 0; color: white;">Historial de Información de Contacto</h3>
             </div>
-            <div style="display: flex; gap: 0.75rem;">
-                <button class="btn" id="btn-sync-sheets" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; border: 1px solid #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; gap: 0.5rem;" onclick="syncWithGoogleSheets()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"></path></svg>
-                    Sincronizar Sheets
-                </button>
-                <button class="btn" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; border: 1px solid rgba(255,255,255,0.4); color: white; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; gap: 0.5rem;" onclick="downloadUserInfoCSV()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Exportar CSV
-                </button>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+                <div style="display: flex; gap: 0.75rem;">
+                    <button class="btn" style="background: rgba(124, 58, 237, 0.1); border: 1px solid #7c3aed; color: white; font-size: 0.75rem; padding: 0.5rem 1rem;" onclick="configureSheetsSync()">⚙️ Configurar Webhook</button>
+                    <button class="btn" id="btn-sync-sheets" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; border: 1px solid #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; gap: 0.5rem;" onclick="syncWithGoogleSheets()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"></path></svg>
+                        Sincronizar Sheets
+                    </button>
+                    <button class="btn" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; border: 1px solid rgba(255,255,255,0.4); color: white; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; gap: 0.5rem;" onclick="downloadUserInfoCSV()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Exportar CSV
+                    </button>
+                </div>
+                <div id="sync-status-badge" style="font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 4px;"></div>
             </div>
         </div>
         <div class="table-container" style="margin-bottom: 3rem; background: rgba(0,0,0,0.3); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);">
@@ -1917,10 +1921,12 @@
     // Google Sheets Sync Configuration
     const SYNC_CONFIG = {
         spreadsheetId: '16HH6ESKAPmoU-Xw-rlwp-E2FUphBm9aizdeVpg1_lxo',
-        // IMPORTANT: The user must replace this with their actual Google Apps Script Deployment ID
         webhookUrl: 'https://script.google.com/macros/s/AKfycbzV-X8W9A-Y9Z-R7W-v_p8M-E_w-Z_T_o-E_X_I-o_T_X_X_E/exec',
-        backupWebhookUrl: "https://script.google.com/macros/s/https://docs.google.com/spreadsheets/d/16HH6ESKAPmoU-Xw-rlwp-E2FUphBm9aizdeVpg1_lxo/edit?gid=0#gid=0/exec", // The one provided by user
-        lastKnownWorkingUrl: localStorage.getItem('google_sheets_webhook_url') || ''
+        backupWebhookUrl: "https://script.google.com/macros/s/https://docs.google.com/spreadsheets/d/16HH6ESKAPmoU-Xw-rlwp-E2FUphBm9aizdeVpg1_lxo/edit?gid=0#gid=0/exec",
+        isConfigured: () => {
+            const url = localStorage.getItem('google_sheets_webhook_url') || '';
+            return url && url.startsWith('https://script.google.com/macros/s/') && url.endsWith('/exec');
+        }
     };
 
     const OperationType = {
@@ -3004,51 +3010,26 @@
         };
 
         const trySend = async () => {
-            // Priority: Last known working > Configured macro > User provided URL
-            const urlsToTry = [
-                SYNC_CONFIG.lastKnownWorkingUrl,
-                SYNC_CONFIG.webhookUrl,
-                SYNC_CONFIG.backupWebhookUrl
-            ].filter(u => u && u.startsWith('http') && !u.includes('XXXXXXXXXXXX'));
-
-            if (urlsToTry.length === 0) {
-                console.warn("No valid Webhook URL configured. Saving only to Firestore.");
+            const url = localStorage.getItem('google_sheets_webhook_url') || '';
+            
+            if (!url || !url.startsWith('http')) {
+                console.warn("No valid Webhook URL configured. Sync is pending configuration in Admin.");
                 return false;
             }
 
-            for (const url of urlsToTry) {
-                try {
-                    // Try CORS first
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        mode: 'cors',
-                        headers: { 'Content-Type': 'text/plain' },
-                        body: JSON.stringify(payload),
-                        redirect: 'follow'
-                    });
-                    
-                    if (response.ok) {
-                        localStorage.setItem('google_sheets_webhook_url', url);
-                        return true;
-                    }
-                } catch (e) {
-                    // Fallback to no-cors
-                    try {
-                        await fetch(url, {
-                            method: 'POST',
-                            mode: 'no-cors',
-                            headers: { 'Content-Type': 'text/plain' },
-                            body: JSON.stringify(payload),
-                            redirect: 'follow'
-                        });
-                        localStorage.setItem('google_sheets_webhook_url', url);
-                        return true;
-                    } catch (e2) {
-                        console.error(`Failed to send to ${url}`, e2);
-                    }
-                }
+            try {
+                // Try sending as text/plain to avoid CORS preflight issues common with GAS
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return true; 
+            } catch (e) {
+                console.error("Critical failure sending to Sheets:", e);
+                return false;
             }
-            return false;
         };
 
         try {
@@ -5317,7 +5298,45 @@
         btn.innerHTML = originalText;
     }
 
+    function updateSyncStatusBadge() {
+        const badge = document.getElementById('sync-status-badge');
+        if (!badge) return;
+        
+        if (SYNC_CONFIG.isConfigured()) {
+            badge.innerHTML = '✅ Sincronización activa';
+            badge.style.background = 'rgba(16, 185, 129, 0.2)';
+            badge.style.color = '#10b981';
+        } else {
+            badge.innerHTML = '⚠️ Sin configurar';
+            badge.style.background = 'rgba(239, 68, 68, 0.2)';
+            badge.style.color = '#ef4444';
+        }
+    }
+
+    function configureSheetsSync() {
+        const currentUrl = localStorage.getItem('google_sheets_webhook_url') || '';
+        const url = prompt("Para sincronizar en tiempo real:\n1. Abrí tu Hoja de Cáculo\n2. Extensiones > Apps Script\n3. Pegá el script de vinculación\n4. Implementar > Nueva implementación > Web app\n5. Copiá el 'Web App URL' y pegalo acá:\n\n(Ej: https://script.google.com/macros/s/AKfycb.../exec)", currentUrl);
+        
+        if (url !== null) {
+            if (url.trim() === '') {
+                localStorage.removeItem('google_sheets_webhook_url');
+                alert("Configuración eliminada. La sincronización en tiempo real se ha desactivado.");
+            } else if (url.startsWith('https://script.google.com/macros/s/') && url.endsWith('/exec')) {
+                localStorage.setItem('google_sheets_webhook_url', url.trim());
+                alert("✅ Webhook configurado con éxito. Ahora los datos se enviarán en tiempo real.");
+            } else {
+                alert("❌ El URL no parece ser un Webhook válido de Google Apps Script.\nDebe empezar con 'https://script.google.com/macros/s/' y terminar en '/exec'");
+            }
+            updateSyncStatusBadge();
+        }
+    }
+
+    window.configureSheetsSync = configureSheetsSync;
     window.syncWithGoogleSheets = syncWithGoogleSheets;
+    window.updateSyncStatusBadge = updateSyncStatusBadge;
+    
+    // Initialize badge if we are in admin panel
+    setTimeout(updateSyncStatusBadge, 1000);
     window.downloadPDF = downloadPDF;
     window.showUserInfoConfirmation = showUserInfoConfirmation;
     window.hideUserInfoConfirmation = hideUserInfoConfirmation;
