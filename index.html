@@ -514,6 +514,15 @@
             width: 100%;
             height: 6px;
             background: #7c3aed;
+            transition: background 0.3s ease;
+        }
+
+        .main-card.is-main::before {
+            background: #7c3aed !important;
+        }
+
+        .main-card.is-alt::before {
+            background: #9ca3af !important;
         }
 
         .badge {
@@ -718,8 +727,35 @@
         .feedback-buttons {
             display: flex;
             justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            align-items: center;
+            gap: 1.75rem;
+            margin: 1.5rem auto 2.25rem auto;
+            padding: 0.5rem 1rem;
+            max-width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            .feedback-buttons {
+                gap: 1.5rem;
+                padding: 0.25rem 0.5rem;
+                margin: 1.25rem auto 2rem auto;
+            }
+        }
+
+        .feedback-btn,
+        .feedback-btn.yes,
+        .feedback-btn.no,
+        .feedback-btn:hover,
+        .feedback-btn:not(.inactive):hover,
+        .feedback-btn.yes:hover,
+        .feedback-btn.no:hover,
+        .feedback-btn.selected,
+        .feedback-btn.selected.yes,
+        .feedback-btn.selected.no,
+        .feedback-btn.inactive,
+        .feedback-btn.inactive:hover,
+        .feedback-btn.inactive:active {
+            cursor: pointer !important;
         }
 
         .feedback-btn {
@@ -732,24 +768,165 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            cursor: pointer;
+            cursor: pointer !important;
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
             color: white;
         }
 
         .feedback-btn:not(.inactive):hover {
             transform: scale(1.05);
+            cursor: pointer !important;
         }
 
-        .feedback-btn.yes:hover { background: rgba(34, 197, 94, 0.2); border-color: #22c55e; }
-        .feedback-btn.no:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+        .feedback-btn.yes:hover { 
+            background: rgba(34, 197, 94, 0.2); 
+            border-color: #22c55e; 
+            cursor: pointer !important;
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+        }
+        .feedback-btn.no:hover { 
+            background: rgba(239, 68, 68, 0.2); 
+            border-color: #ef4444; 
+            cursor: pointer !important;
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
 
-        .feedback-btn.selected.yes { background: #22c55e; border-color: #22c55e; }
-        .feedback-btn.selected.no { background: #ef4444; border-color: #ef4444; }
+        .feedback-btn.selected.yes { background: #22c55e; border-color: #22c55e; cursor: pointer !important; }
+        .feedback-btn.selected.no { background: #ef4444; border-color: #ef4444; cursor: pointer !important; }
 
         .feedback-btn.inactive {
             opacity: 0.3;
             filter: grayscale(1);
+            cursor: pointer !important;
+        }
+
+        /* Tabs for Recommendation Switching */
+        .rec-tab {
+            padding: 0.85rem 1.75rem;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer !important;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            min-width: 170px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+
+        .rec-tab:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.24);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.45);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .rec-tab.active {
+            background: white !important;
+            color: #7c3aed !important;
+            border-color: white !important;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2) !important;
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        /* Slide Animations for custom switcher transitions */
+        @keyframes slideInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(40px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes slideInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-40px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        .main-card-slide-right {
+            animation: slideInRight 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+        }
+
+        .main-card-slide-left {
+            animation: slideInLeft 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+        }
+
+        .carousel-arrow-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #ede9fe;
+            color: #7c3aed;
+            font-size: 1.6rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer !important;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.15);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 15;
+            user-select: none;
+        }
+
+        .carousel-arrow-btn:hover {
+            background: #7c3aed;
+            color: white;
+            border-color: #7c3aed;
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.35);
+            transform: translateY(-50%) scale(1.12);
+        }
+
+        .carousel-arrow-btn:active {
+            transform: translateY(-50%) scale(0.92);
+        }
+
+        .carousel-arrow-btn.left-arrow {
+            left: -26px;
+        }
+
+        .carousel-arrow-btn.right-arrow {
+            right: -26px;
+        }
+
+        /* Adjust positions for tablet and mobile responsive design */
+        @media (max-width: 900px) {
+            .carousel-arrow-btn.left-arrow {
+                left: 12px;
+                width: 44px;
+                height: 44px;
+                font-size: 1.35rem;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(8px);
+            }
+            .carousel-arrow-btn.right-arrow {
+                right: 12px;
+                width: 44px;
+                height: 44px;
+                font-size: 1.35rem;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(8px);
+            }
         }
 
         .comment-area {
@@ -1155,9 +1332,33 @@
             position: absolute;
             top: 1rem;
             right: 1rem;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f3f4f6;
+            color: #374151;
+            cursor: pointer !important;
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid #e5e7eb;
+            z-index: 100;
+        }
+
+        .modal-close:hover {
+            background: #ef4444 !important;
+            color: white !important;
+            border-color: #ef4444 !important;
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        }
+
+        .modal-close:active {
+            transform: scale(0.9) rotate(90deg);
         }
 
         /* Contact Footer */
@@ -1337,6 +1538,7 @@
         <div id="results-summary" class="summary-recap" style="display: none;"></div>
 
         <h3 id="main-rec-title" class="secondary-title" style="text-align: center; font-size: 1.6rem; color: #7c3aed; background: #ede9fe; padding: 1.2rem; border-radius: 16px; margin-bottom: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: none;">Línea que más se adapta a tu perfil</h3>
+        <div id="recommendation-tabs" style="display: none; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;"></div>
         <div id="main-recommendation" class="main-card">
             <!-- Injected by JS -->
         </div>
@@ -1432,7 +1634,8 @@
 
     <!-- Admin Auth Modal -->
     <div id="admin-modal" class="modal-overlay" onclick="closeAdminModal()">
-        <div class="modal" onclick="event.stopPropagation()" style="text-align: center;">
+        <div class="modal" onclick="event.stopPropagation()" style="text-align: center; position: relative;">
+            <span class="modal-close" onclick="closeAdminModal()">&times;</span>
             <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔒</div>
             <h3 style="margin-bottom: 0.5rem; color: #7c3aed; font-size: 1.5rem; font-weight: 800;">Acceso Restringido</h3>
             <p style="color: #4b5563; margin-bottom: 1.5rem; font-size: 0.95rem;">Ingresá la contraseña para acceder al panel de estadísticas.</p>
@@ -1732,11 +1935,13 @@
 
     <!-- Line Editor Modal -->
     <div id="line-modal-overlay" class="modal-overlay" style="z-index: 3000;">
-        <div class="modal" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <span class="modal-close" onclick="closeLineModal()">&times;</span>
-            <h3 id="line-modal-title" style="margin-bottom: 1.5rem; color: #7c3aed;">Agregar/Editar Línea</h3>
+        <div class="modal" style="max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+            <div style="padding: 2rem 2.5rem 1.25rem 2.5rem; flex-shrink: 0; border-bottom: 2px solid #f3f4f6; position: relative;">
+                <span class="modal-close" onclick="closeLineModal()" style="top: 1.5rem; right: 1.5rem;">&times;</span>
+                <h3 id="line-modal-title" style="margin: 0; color: #7c3aed; font-size: 1.5rem; font-weight: 800;">Agregar/Editar Línea</h3>
+            </div>
             
-            <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="flex-grow: 1; overflow-y: auto; padding: 2rem 2.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
                 <div class="question-group" style="margin-bottom: 0;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Nombre de la línea</label>
                     <input type="text" id="line-name" class="comment-textarea" style="height: 44px; color: #1f2937; border-color: #e5e7eb; background: #f9fafb;" placeholder="Ej: Financiamiento Verde (Banco CFI)">
@@ -1818,22 +2023,24 @@
                         <input type="text" id="line-contact-epigraph" class="comment-textarea dark-text" style="height: 36px; font-size: 0.8rem;" placeholder="Ej: Horario de atención de 8 a 16hs">
                     </div>
                 </div>
-            </div>
 
-            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
-                <button class="btn btn-primary style-btn" style="flex: 1; background: #7c3aed; color: white;" onclick="saveLine()">Guardar Línea</button>
-                <button class="btn style-btn" style="flex: 1; background: #f3f4f6; color: #4b5563;" onclick="closeLineModal()">Cancelar</button>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-shrink: 0;">
+                    <button class="btn btn-primary style-btn" style="flex: 1; background: #7c3aed; color: white;" onclick="saveLine()">Guardar Línea</button>
+                    <button class="btn style-btn" style="flex: 1; background: #f3f4f6; color: #4b5563;" onclick="closeLineModal()">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Question Editor Modal -->
     <div id="question-modal-overlay" class="modal-overlay" style="z-index: 3001;">
-        <div class="modal" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <span class="modal-close" onclick="closeQuestionModal()">&times;</span>
-            <h3 id="question-modal-title" style="margin-bottom: 1.5rem; color: #10b981;">Agregar/Editar Pregunta</h3>
+        <div class="modal" style="max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+            <div style="padding: 2rem 2.5rem 1.25rem 2.5rem; flex-shrink: 0; border-bottom: 2px solid #f3f4f6; position: relative;">
+                <span class="modal-close" onclick="closeQuestionModal()" style="top: 1.5rem; right: 1.5rem;">&times;</span>
+                <h3 id="question-modal-title" style="margin: 0; color: #10b981; font-size: 1.5rem; font-weight: 800;">Agregar/Editar Pregunta</h3>
+            </div>
             
-            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div style="flex-grow: 1; overflow-y: auto; padding: 2rem 2.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="question-group" style="margin-bottom: 0;">
                         <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">ID Único (ej: city)</label>
@@ -1882,39 +2089,39 @@
                 <div class="question-group" style="margin-bottom: 0;">
                     <label class="question-title" style="font-size: 0.9rem; margin-bottom: 0.4rem; color: #4b5563;">Opciones de respuesta</label>
                     <p style="font-size: 0.7rem; color: #6b7280; margin-bottom: 0.5rem;">Definí las opciones de respuesta. Si la pregunta depende de otra, podés indicar qué valor de la pregunta padre activa cada opción.</p>
-            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr auto; gap: 0.5rem; font-size: 0.75rem; font-weight: 700; color: #6b7280; padding: 0 0.5rem;">
-                    <span>Respuesta Hijo</span>
-                    <span>Descripción (opcional)</span>
-                    <span>Activar si el Padre es:</span>
-                    <span></span>
-                </div>
-                <div id="q-options-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    <!-- Option rows -->
-                </div>
-            </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr auto; gap: 0.5rem; font-size: 0.75rem; font-weight: 700; color: #6b7280; padding: 0 0.5rem;">
+                            <span>Respuesta Hijo</span>
+                            <span>Descripción (opcional)</span>
+                            <span>Activar si el Padre es:</span>
+                            <span></span>
+                        </div>
+                        <div id="q-options-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <!-- Option rows -->
+                        </div>
+                    </div>
                     <button type="button" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; border-radius: 8px;" onclick="addQOptionRow()">+ Agregar Opción</button>
                 </div>
-            </div>
 
-            <div style="margin-top: 1.5rem; padding: 1.5rem; background: #f9fafb; border-radius: 12px; border: 1px solid #e5e7eb;">
-                <h4 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 1rem; font-weight: 800;">Vista Previa en Tiempo Real</h4>
-                <div id="q-preview-container" style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-                    <!-- Preview content will be injected here -->
-                    <div style="text-align: center; color: #9ca3af; font-style: italic; font-size: 0.85rem;">Completa los campos para ver la previsualización</div>
+                <div style="margin-top: 1.5rem; padding: 1.5rem; background: #f9fafb; border-radius: 12px; border: 1px solid #e5e7eb;">
+                    <h4 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 1rem; font-weight: 800;">Vista Previa en Tiempo Real</h4>
+                    <div id="q-preview-container" style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                        <!-- Preview content will be injected here -->
+                        <div style="text-align: center; color: #9ca3af; font-style: italic; font-size: 0.85rem;">Completa los campos para ver la previsualización</div>
+                    </div>
                 </div>
-            </div>
 
-            <div style="margin-top: 2.5rem; display: flex; gap: 1rem;">
-                <button class="btn btn-primary style-btn" style="flex: 1; background: #10b981; color: white; border: none;" onclick="saveQuestion()">Guardar Pregunta</button>
-                <button class="btn style-btn" style="flex: 1; background: #f3f4f6; color: #4b5563;" onclick="closeQuestionModal()">Cancelar</button>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-shrink: 0;">
+                    <button class="btn btn-primary style-btn" style="flex: 1; background: #10b981; color: white; border: none;" onclick="saveQuestion()">Guardar Pregunta</button>
+                    <button class="btn style-btn" style="flex: 1; background: #f3f4f6; color: #4b5563;" onclick="closeQuestionModal()">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
 
 <script type="module">
     import { db, auth, loginWithGoogle, logout } from './src/firebase.ts';
-    import { collection, addDoc, query, orderBy, onSnapshot, limit, getDoc, doc, getDocs, deleteDoc, writeBatch, getCountFromServer, setDoc } from 'firebase/firestore';
+    import { collection, addDoc, query, orderBy, onSnapshot, limit, getDoc, doc, getDocs, deleteDoc, writeBatch, getCountFromServer, setDoc, increment } from 'firebase/firestore';
     import { onAuthStateChanged } from 'firebase/auth';
     import { GoogleGenAI, Type } from "@google/genai";
 
@@ -2091,7 +2298,11 @@
                     if (!criteriaChoices.amount) criteriaChoices.amount = [];
                 } else {
                     criteriaChoices = JSON.parse(JSON.stringify(defaultCriteriaChoices));
-                    await setDoc(docRef, criteriaChoices);
+                    try {
+                        await setDoc(docRef, criteriaChoices);
+                    } catch (writeErr) {
+                        console.warn("Could not auto-seed criteria choices (user might not be authenticated as Admin or is offline):", writeErr);
+                    }
                 }
                 
                 // Real-time synchronization: Re-render criteria options container inside open line modal without losing current checks
@@ -2424,6 +2635,8 @@
     let currentRecommendedLine = "";
     let currentSatisfaction = null;
     let feedbackSent = false;
+    let currentResultCards = [];
+    let currentCardIndex = 0;
 
     // EXPORT FUNCTIONS TO WINDOW IMMEDIATELY
     window.deleteLine = deleteLine;
@@ -2433,6 +2646,9 @@
     window.nextStep = nextStep;
     window.prevStep = prevStep;
     window.restart = restart;
+    window.prevCard = prevCard;
+    window.nextCard = nextCard;
+    window.goToCard = goToCard;
     window.openAdminModal = openAdminModal;
     window.closeAdminModal = closeAdminModal;
     window.handleAdminLogin = handleAdminLogin;
@@ -2576,21 +2792,53 @@
     }
 
     // Recommendation Logic
-    async function trackCompletion(lineName, reasoning, answers) {
+    async function trackCompletion(lineName, reasoning, answers, alternatives) {
         const completionData = { 
             line: lineName || "No especificada", 
+            alternatives: alternatives || [],
             date: formatDate(new Date()),
             reasoning: reasoning || "Recomendación automática",
             answers: answers || userAnswers
         };
         
-        const path = 'stats_consultas_completadas';
         try {
-            await addDoc(collection(db, path), completionData);
-            console.log("Consulta completada trackeada con éxito.");
+            const batch = writeBatch(db);
+            
+            // Add the completion record
+            const compDocRef = doc(collection(db, 'stats_consultas_completadas'));
+            batch.set(compDocRef, completionData);
+            
+            // Collect all recommended lines to update (both main and alternatives)
+            const linesToIncrement = [];
+            if (lineName && lineName !== "No especificada") {
+                linesToIncrement.push(lineName);
+            }
+            if (alternatives && Array.isArray(alternatives)) {
+                alternatives.forEach(alt => {
+                    if (alt && alt !== "No especificada" && !linesToIncrement.includes(alt)) {
+                        linesToIncrement.push(alt);
+                    }
+                });
+            }
+            
+            // For each of these lines, find its id in financialLines or initialFinancialLines and increment its counter
+            linesToIncrement.forEach(name => {
+                const lineObj = (typeof financialLines !== 'undefined' ? financialLines.find(l => l.name === name) : null) || 
+                                (typeof initialFinancialLines !== 'undefined' ? initialFinancialLines.find(l => l.name === name) : null);
+                if (lineObj && lineObj.id) {
+                    const lineRef = doc(db, 'config_financial_lines', lineObj.id);
+                    batch.set(lineRef, {
+                        visitCount: increment(1),
+                        recommendationCount: increment(1)
+                    }, { merge: true });
+                }
+            });
+            
+            await batch.commit();
+            console.log("Consulta completada y contadores actualizados en Firebase con éxito.");
         } catch (e) { 
-            handleFirestoreError(e, OperationType.CREATE, path);
-            console.error("Error saving completion to Firebase:", e); 
+            handleFirestoreError(e, OperationType.WRITE, 'stats_consultas_completadas');
+            console.error("Error saving completion and incrementing counters in Firebase:", e); 
         }
     }
 
@@ -2662,17 +2910,24 @@
         let altLines = [];
         let reasoning = "";
 
+        if (String(userAnswers['hasMiPyME']).trim().toLowerCase() === 'no') {
+            mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi') || financialLines.find(l => l.name.toLowerCase().includes('cfi')) || financialLines[0];
+            altLines = financialLines.filter(l => l.id !== mainLine.id).slice(0, 2);
+            reasoning = `
+                <div style="line-height: 1.6; font-size: 0.95rem; color: rgba(255,255,255,0.95);">
+                    <p style="margin-bottom: 1rem;">Hemos realizado el análisis de tu perfil y determinamos que la opción óptima para tu proyecto es el <strong>Financiamiento Verde (Banco CFI)</strong>. Este programa es el único que posee un esquema normativo flexible para productores, emprendedores y PyMEs santafesinas que aún no tienen constituido o renovado su Certificado MiPyME.</p>
+                    <p style="margin-bottom: 1rem;">Ofrece un plazo excepcional de hasta <strong>60 meses</strong> para su amortización (con sistema Alemán) y una estructura de tasas preferenciales diseñada para la transición hacia energías limpias y mejoras en eficiencia (fijada al 21% los primeros dos años).</p>
+                </div>
+            `;
+        }
+
         // If deterministic logic found a match, use it. Otherwise, use AI or Fallback.
         if (mainLine) {
-            // Ensure we have some alternatives if none were set
-            if (altLines.length === 0) {
-                altLines = financialLines.filter(l => l.id !== mainLine.id && !l.isSpecial).slice(0, 2);
-            }
             setTimeout(async () => {
                 clearInterval(msgInterval);
                 renderResults(mainLine, altLines, reasoning);
                 currentRecommendedLine = mainLine.name;
-                await trackCompletion(currentRecommendedLine, reasoning, userAnswers);
+                await trackCompletion(currentRecommendedLine, reasoning, userAnswers, (altLines || []).map(a => a.name).filter(Boolean));
                 updateStepper(4);
                 
                 // Show UI elements
@@ -2686,7 +2941,8 @@
         try {
             const prompt = `
                 Eres un asesor financiero experto y consultor de financiamiento productivo del Ministerio de Desarrollo Productivo de la Provincia de Santa Fe, Argentina.
-                Tu tarea es realizar un análisis exhaustivo y riguroso del perfil de un usuario para recomendar, de forma justificada y con criterio profesional, la MEJOR línea de financiamiento disponible para su transición energética o proyecto ecológico.
+                Tu tarea es realizar un análisis exhaustivo y riguroso del perfil de un usuario para recomendar y rankear las mejores opciones de financiamiento disponibles para su transición energética o proyecto ecológico.
+                La salida debe alimentar un carrusel/tarjetas deslizantes bidireccional en la interfaz web (donde el usuario avanza con "Siguiente" o retrocede con "Anterior"). La TARJETA 1 será la principal y las siguientes (Tarjeta 2, 3) serán alternativas ordenadas por relevancia para que la transición sea fluida.
 
                 DATOS RECOPILADOS DEL USUARIO:
                 ${JSON.stringify(userAnswers, null, 2)}
@@ -2694,25 +2950,28 @@
                 LÍNEAS DE FINANCIAMIENTO CONFIGURADAS EN EL SISTEMA:
                 ${JSON.stringify(financialLines, null, 2)}
 
+                REGLA DE ORO DE CLASIFICACIÓN (FILTRO CRÍTICO):
+                Debes evaluar la "Pregunta 3" (con id "hasMiPyME") para definir obligatoriamente la primera tarjeta de la secuencia:
+                - SI el usuario respondió "NO" en la Pregunta 3 (que no cuenta con certificado MiPyME): La TARJETA 1 (Posición Inicial) DEBE SER "Financiamiento Verde (Banco CFI)" (id: "financiamiento_verde_cfi"). Las tarjetas a la derecha (Tarjeta 2, Tarjeta 3) serán líneas alternativas que coincidan parcialmente con el resto de sus respuestas. Integra hasta 2 líneas adicionales de respaldo en el arreglo "alternatives" para completar la secuencia de navegación bidireccional. No dejes la propiedad "alternatives" vacía.
+                - SI el usuario respondió "SÍ" (que posee certificado MiPyME): La TARJETA 1 será la recomendación o línea ideal según la lógica estándar, y las siguientes hacia la derecha (Tarjeta 2, Tarjeta 3) en "alternatives" serán las alternativas de respaldo.
+
+                PROCESO DE PENSAMIENTO INTERNO (Chain-of-Thought):
+                Debes realizar internamente los siguientes pasos de análisis reflexivo:
+                1. Evaluar el valor de la Pregunta 3 ("hasMiPyME").
+                2. Si es "No", activar el protocolo de descarte excepcional fijando "Financiamiento Verde (Banco CFI)" como 'recommendedLineId' principal, y seleccionando hasta 2 alternativas parcialmente compatibles para colocarlas en 'alternatives'.
+                3. Si es "Sí", comparar todos los criterios (propósito, monto, categoría legal) con las líneas habilitadas para derivar la mejor opción y agregar las alternativas correspondientes ordendas por relevancia.
+
+                CRÍTICO - RESTRICCIÓN DE VISUALIZACIÓN:
+                - NO incluyas en "reasoning" ninguna mención ni sección explícita al "Proceso de Pensamiento Interno", "Chain-of-Thought", bitácoras, registros de descarte, ni la sección de "Pasos para la postulación" o guías de trámite.
+                - El campo "reasoning" debe contener estrictamente una explicación compacta, clara, profesional y persuasiva en español (formateada con etiquetas HTML básicas como <p> o <strong>) sobre por qué la línea de financiamiento recomendada es idónea para los objetivos técnicos y de inversión del usuario.
+
                 MARCO DE ANÁLISIS Y CRITERIO DE SELECCIÓN (MATRIZ DE COMPATIBILIDAD):
-                Realiza una evaluación metódica de cada línea de financiamiento disponible asignando prioridades según los siguientes criterios de ajuste:
-
-                1. Alineación Técnica y Propósito (Peso Máximo):
-                   - Compara el "purpose" (Propósito de la inversión: 'Energías Renovables', 'Eficiencia Energética', 'Triple Impacto') y la lista de "activity" seleccionada por el usuario con el campo "criteria.purpose" e "idealFor" de cada línea de financiamiento.
-                   - Evalúa semánticamente el texto provisto por el usuario en "activity_desc" (descripción de su actividad). Por ejemplo: menciones a bombas de calor, riego, paneles solares, biodigestores, calderas, luminarias LED o aislamiento de plantas industriales deben vincularse de inmediato con la línea más adecuada.
-
-                2. Categoría Legal y Certificado MiPyME:
-                   - Valida si "category" del usuario coincide con las categorías admitidas por la línea ("criteria.category").
-                   - Si el usuario seleccionó "Pequeña y mediana empresa (PyME)", comprueba de forma crítica el campo "hasMiPyME". Las líneas que requieren obligatoriamente certificado MiPyME vigente deben ser descartadas o calificadas negativamente si "hasMiPyME" es "No". Si es "Si", califícala con la máxima prioridad.
-
-                3. Compatibilidad de Monto Solicitado:
-                   - Compara el monto solicitado en "amount" con la propiedad "maxAmount" de la línea y su "criteria.amount". La línea ideal debe tener capacidad de cobertura para el rango de inversión proyectado.
-
-                4. Viabilidad del Plazo de Devolución:
-                   - Coteja "desired_term" (Plazo estimado: 'Hasta 12 meses', 'Hasta 24 meses', 'Hasta 36 meses', 'Más de 36 meses') con la propiedad "term" e "idealFor" de la línea. Evita recomendar líneas con plazos máximos significativamente menores al solicitado, a menos que sea la única opción técnica viable.
-
-                5. Regla de Desempate (Tasa de Interés y Beneficios):
-                   - Si dos o más líneas resultan elegibles o empatadas, selecciona como recomendación principal aquella que ofrezca la tasa de interés ("rate") más baja o bonificada, o los mayores plazos de gracia/amortización.
+                Realiza una evaluación metódica de cada línea de financiamiento disponible asignando prioridades según los siguientes criterios de ajuste si "hasMiPyME" es "Si":
+                1. Alineación Técnica y Propósito (Peso Máximo)
+                2. Categoría Legal y Certificado MiPyME
+                3. Compatibilidad de Monto Solicitado
+                4. Viabilidad del Plazo de Devolución
+                5. Regla de Desempate (Tasa de Interés y Beneficios)
 
                 INSTRUCCIONES DE RESPUESTA EN FORMATO JSON:
                 Devuelve únicamente un objeto JSON con la estructura indicada abajo. No agregues introducciones ni textos extra fuera del JSON.
@@ -2720,7 +2979,7 @@
                 Estructura del JSON:
                 {
                     "recommendedLineId": "ID_DE_LA_LINEA_PRINCIPAL",
-                    "reasoning": "Un informe detallado, convincente y estructurado en español (máx. 3 párrafos en formato HTML simple). Debe explicar precisamente: 1) Compatibilidad técnica de la actividad del usuario y su propósito con la línea, 2) Adecuación de montos y plazos en base a la tasa conveniente ofrecida, 3) Pasos recomendados para postular.",
+                    "reasoning": "Un informe limpio, conciso y profesional en español utilizando formato HTML básico (párrafos <p> y destacados) que justifique la idoneidad técnica y financiera de la línea recomendada para el proyecto del usuario. NO incluyas diagramas de pensamiento, textos de razonamiento interno, pasos de postulación u guías detalladas de trámites.",
                     "alternatives": ["ID_ALternativa_1", "ID_ALternativa_2"]
                 }
             `;
@@ -2733,7 +2992,7 @@
             clearInterval(msgInterval);
             renderResults(aiMainLine, aiAltLines, result.reasoning);
             currentRecommendedLine = aiMainLine ? aiMainLine.name : "No especificada";
-            await trackCompletion(currentRecommendedLine, result.reasoning, userAnswers);
+            await trackCompletion(currentRecommendedLine, result.reasoning, userAnswers, (aiAltLines || []).map(a => a.name).filter(Boolean));
             updateStepper(4);
             
             // Show UI elements
@@ -2749,28 +3008,58 @@
     }
 
     function fallbackRecommendation() {
-        const scores = financialLines.map(line => {
-            let score = 0;
-            if (line.criteria.purpose && line.criteria.purpose.includes(userAnswers.purpose)) score += 20;
-            if (line.criteria.amount && line.criteria.amount.includes(userAnswers.amount)) score += 15;
-            return { ...line, score };
-        });
-        scores.sort((a, b) => b.score - a.score);
-        
-        const mainLine = scores[0] || financialLines[0];
-        const reasoning = mainLine ? (mainLine.idealFor || "Esta línea se ajusta a tu perfil.") : "No se encontró una recomendación exacta.";
-        
-        renderResults(mainLine, scores.slice(1, 3), reasoning);
+        let mainLine = null;
+        let altLines = [];
+        let reasoning = "";
+
+        if (String(userAnswers['hasMiPyME']).trim().toLowerCase() === 'no') {
+            mainLine = financialLines.find(l => l.id === 'financiamiento_verde_cfi') || financialLines.find(l => l.name.toLowerCase().includes('cfi')) || financialLines[0];
+            altLines = financialLines.filter(l => l.id !== mainLine.id).slice(0, 2);
+            reasoning = `
+                <div style="line-height: 1.6; font-size: 0.95rem; color: rgba(255,255,255,0.95);">
+                    <p style="margin-bottom: 1rem;">Hemos realizado el análisis de tu perfil bajo nuestro sistema lógico de respaldo de forma interna y determinamos que la opción recomendada es el <strong>Financiamiento Verde (Banco CFI)</strong>. Este programa posee un esquema normativo flexible para productores, emprendedores y PyMEs santafesinas que aún no tienen constituido o renovado su Certificado MiPyME.</p>
+                    <p>Ofrece un plazo excepcional de hasta <strong>60 meses</strong> para su amortización y un esquema preferencial de tasas fijada al 21% los primeros dos años bajo sistema de amortización Alemán.</p>
+                </div>
+            `;
+        } else {
+            // Standard fallback scoring
+            const scores = financialLines.map(line => {
+                let score = 0;
+                let reasons = [];
+                if (line.criteria.purpose && line.criteria.purpose.includes(userAnswers.purpose)) {
+                    score += 20;
+                    reasons.push(`Coincidencia en Propósito (${userAnswers.purpose})`);
+                }
+                if (line.criteria.amount && line.criteria.amount.includes(userAnswers.amount)) {
+                    score += 15;
+                    reasons.push(`Coincidencia en Rango de Monto (${userAnswers.amount})`);
+                }
+                if (line.criteria.category && line.criteria.category.includes(userAnswers.category)) {
+                    score += 10;
+                    reasons.push(`Apto para Categoría legal (${userAnswers.category})`);
+                }
+                return { ...line, score, reasons };
+            });
+            scores.sort((a, b) => b.score - a.score);
+            
+            mainLine = scores[0] || financialLines[0];
+            altLines = scores.filter(l => l.id !== mainLine.id && !l.isSpecial).slice(0, 2);
+
+            reasoning = `
+                <p style="line-height: 1.6; font-size: 0.95rem; color: rgba(255,255,255,0.95);">${mainLine.idealFor || "Esta línea se adapta perfectamente a los requisitos y montos informados para tu proyecto de transición energética."}</p>
+            `;
+        }
+
+        renderResults(mainLine, altLines, reasoning);
         currentRecommendedLine = mainLine ? mainLine.name : "No especificada";
         
         // Show UI elements
         document.getElementById('results-summary').style.display = 'flex';
         document.getElementById('main-rec-title').style.display = 'block';
         document.getElementById('user-info-section').style.display = 'block';
-        document.getElementById('alternatives-title').style.display = 'block';
 
         // Track completion even in fallback
-        trackCompletion(currentRecommendedLine, reasoning, userAnswers);
+        trackCompletion(currentRecommendedLine, reasoning, userAnswers, (altLines || []).map(a => a.name).filter(Boolean));
         
         // Save current session answers temporarily
         localStorage.setItem('temp_current_answers', JSON.stringify(userAnswers));
@@ -2857,112 +3146,304 @@
             `;
         }
 
-        // Show/Hide alternatives title
+        // 1. Build standard symmetric slide decks
+        currentResultCards = [];
+        
+        // Target Card 1 (Main Recommendation)
+        if (main) {
+            currentResultCards.push({
+                id: main.id,
+                name: main.name,
+                desc: main.desc,
+                maxAmount: main.maxAmount,
+                term: main.term,
+                rate: main.rate,
+                idealFor: main.idealFor,
+                links: main.links || [],
+                contacts: main.contacts || [],
+                contactEpigraph: main.contactEpigraph,
+                reasoning: reasoning || main.idealFor
+            });
+        }
+        
+        // Target Cards 2, 3 (Alternatives)
+        (alts || []).slice(0, 2).forEach(alt => {
+            currentResultCards.push({
+                id: alt.id,
+                name: alt.name,
+                desc: alt.desc,
+                maxAmount: alt.maxAmount,
+                term: alt.term,
+                rate: alt.rate,
+                idealFor: alt.idealFor,
+                links: alt.links || [],
+                contacts: alt.contacts || [],
+                contactEpigraph: alt.contactEpigraph,
+                reasoning: alt.idealFor
+            });
+        });
+
+        // 2. Hide visual alternatives grid from screen, but keep populated for PDF compatibility!
         const altTitle = document.getElementById('alternatives-title');
         const altContainer = document.getElementById('alternatives-container');
+        if (altTitle) altTitle.style.display = 'none';
         
-        // Alternatives are now shown for everyone as per request
-        const finalAlts = alts;
+        if (altContainer) {
+            altContainer.style.display = 'none';
+            altContainer.innerHTML = (alts || []).map(alt => {
+                return `
+                    <div class="alt-card">
+                        <div class="alt-title">
+                            ${alt.name}
+                        </div>
+                        <p class="alt-desc">${alt.desc}</p>
+                        
+                        ${alt.links && alt.links.length > 0 ? `
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <h5 style="font-size: 0.85rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Más información:</h5>
+                            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                ${alt.links.map(l => {
+                                    const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
+                                    const linkText = isDriveLink ? 'Líneas de financiamiento' : l;
+                                    return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: white; text-decoration: underline; font-size: 0.8rem; font-weight: 600; word-break: break-all;">${linkText}</a>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
 
-        if (altTitle && altContainer) {
-            altTitle.style.display = 'block';
-            altContainer.style.display = 'grid';
+                        ${alt.contacts && alt.contacts.length > 0 ? `
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                            <h5 style="font-size: 0.85rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Contacto:</h5>
+                            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                ${alt.contacts.map(c => `<span style="font-size: 0.8rem; color: white; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
+                            </div>
+                            ${alt.contactEpigraph ? `<p style="font-size: 0.75rem; margin-top: 0.5rem; color: white; opacity: 0.8; font-style: italic; word-break: break-word;">${alt.contactEpigraph}</p>` : ''}
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
         }
 
-        // Render Main
-        document.getElementById('main-recommendation').innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 1rem;">
-                <div class="badge">Recomendación para tu perfil</div>
-                <button onclick="shareRecommendation('${main.name.replace(/'/g, "\\'")}')" class="btn" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(124, 58, 237, 0.1); color: #7c3aed; border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 99px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(124, 58, 237, 0.2)'" onmouseout="this.style.background='rgba(124, 58, 237, 0.1)'">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                    Compartir
-                </button>
-            </div>
-            <h4 class="line-title">${main.name}</h4>
-            <p class="line-desc">${main.desc}</p>
+        // 3. Render top tab controls for seamless switching
+        const tabsContainer = document.getElementById('recommendation-tabs');
+        if (tabsContainer) {
+            if (currentResultCards.length > 1) {
+                tabsContainer.style.display = 'flex';
+                tabsContainer.innerHTML = currentResultCards.map((card, i) => {
+                    const cleanName = card.name.split(' (')[0];
+                    return `
+                        <button onclick="goToCard(${i})" class="rec-tab" id="rec-tab-${i}">
+                            <span style="font-size: 0.95rem; display: flex; align-items: center; gap: 0.35rem;">
+                                ${i === 0 ? '🏆' : '💡'} <strong style="font-weight: 800;">${i === 0 ? 'Opción Principal' : 'Alternativa ' + i}</strong>
+                            </span>
+                            <span style="font-size: 0.72rem; opacity: 0.85; max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;" title="${card.name}">${cleanName}</span>
+                        </button>
+                    `;
+                }).join('');
+            } else {
+                tabsContainer.style.display = 'none';
+            }
+        }
+
+        // 4. Render first card (Position 1) in the carousel
+        showCard(0);
+    }
+
+    function showCard(index) {
+        if (index < 0 || index >= currentResultCards.length) return;
+        const prevIndex = currentCardIndex;
+        currentCardIndex = index;
+        
+        // Update top tabs active state
+        currentResultCards.forEach((_, i) => {
+            const tab = document.getElementById(`rec-tab-${i}`);
+            if (tab) {
+                if (i === index) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            }
+        });
+        
+        const card = currentResultCards[index];
+        const cardContainer = document.getElementById('main-recommendation');
+        if (!cardContainer) return;
+
+        // Reset inline properties to let the CSS class definitions rule
+        cardContainer.style.opacity = '';
+        cardContainer.style.transform = '';
+        cardContainer.style.transition = '';
+
+        // Add class to perform slide-out/fade-out
+        cardContainer.classList.remove('main-card-slide-right', 'main-card-slide-left');
+        
+        cardContainer.style.transition = 'opacity 0.12s ease-out, transform 0.12s ease-out';
+        cardContainer.style.opacity = '0';
+        if (index > prevIndex) {
+            cardContainer.style.transform = 'translateX(-30px) scale(0.98)';
+        } else if (index < prevIndex) {
+            cardContainer.style.transform = 'translateX(30px) scale(0.98)';
+        } else {
+            cardContainer.style.transform = 'translateY(15px) scale(0.98)';
+        }
+
+        setTimeout(() => {
+            // Remove previous animation classes
+            cardContainer.classList.remove('main-card-slide-right', 'main-card-slide-left');
             
-            <div class="line-details">
-                <div class="detail-item">
-                    <span>Monto Máximo</span>
-                    <strong>${main.maxAmount || '-'}</strong>
-                </div>
-                <div class="detail-item">
-                    <span>Plazo</span>
-                    <strong>${main.term || '-'}</strong>
-                </div>
-                <div class="detail-item">
-                    <span>Tasa</span>
-                    <strong>${main.rate || '-'}</strong>
-                </div>
-            </div>
+            // Clear inline styling before the next class is added
+            cardContainer.style.opacity = '';
+            cardContainer.style.transform = '';
+            cardContainer.style.transition = '';
 
-            ${reasoning ? `
-            <div class="why-ideal">
-                <h4>Diagnóstico y Justificación:</h4>
-                <p>${reasoning}</p>
-            </div>
-            ` : ''}
+            const isMain = index === 0;
+            const cardBadge = isMain 
+                ? `Recomendación Principal | Tarjeta ${index + 1} de ${currentResultCards.length}`
+                : `Opción Alternativa | Tarjeta ${index + 1} de ${currentResultCards.length}`;
 
-            <div style="margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 1.5rem;">
-                ${main.links && main.links.length > 0 ? `
-                <div style="flex: 1; min-width: 250px;">
-                    <h4 style="font-size: 1.1rem; color: #7c3aed; margin-bottom: 0.75rem; font-weight: 700;">Más información:</h4>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        ${main.links.map(l => {
-                            const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
-                            const linkText = isDriveLink ? 'Líneas de financiamiento' : (l.length > 40 ? l.substring(0, 40) + '...' : l);
-                            return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: #1f2937; text-decoration: underline; font-size: 0.95rem; font-weight: 600; display: block; word-break: break-all;">${linkText}</a>`;
-                        }).join('')}
-                    </div>
-                </div>
+            // Highlight border and shadow based on whether it is custom/principal or alternative
+            if (isMain) {
+                cardContainer.classList.add('is-main');
+                cardContainer.classList.remove('is-alt');
+                cardContainer.style.borderColor = '#7c3aed';
+                cardContainer.style.boxShadow = '0 20px 25px -5px rgba(124, 58, 237, 0.15), 0 10px 10px -5px rgba(124, 58, 237, 0.08)';
+            } else {
+                cardContainer.classList.add('is-alt');
+                cardContainer.classList.remove('is-main');
+                cardContainer.style.borderColor = 'rgba(0,0,0,0.1)';
+                cardContainer.style.boxShadow = 'var(--shadow-lg)';
+            }
+
+            cardContainer.innerHTML = `
+                <!-- Floating Left Arrow Button inside the Card -->
+                ${currentResultCards.length > 1 && index > 0 ? `
+                <button onclick="prevCard()" class="carousel-arrow-btn left-arrow" aria-label="Tarjeta Anterior">
+                    <span>←</span>
+                </button>
                 ` : ''}
 
-                ${main.contacts && main.contacts.length > 0 ? `
-                <div style="flex: 1; min-width: 250px; padding: 1.25rem; background: #f3f4f6; border-radius: 16px;">
-                    <h4 style="font-size: 1.1rem; color: #7c3aed; margin-bottom: 0.75rem; font-weight: 700;">Canales de contacto:</h4>
-                    <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                        ${main.contacts.map(c => `<span style="font-size: 0.95rem; color: #1f2937; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
-                    </div>
-                    ${main.contactEpigraph ? `<p style="font-size: 0.85rem; margin-top: 0.75rem; color: #6b7280; font-style: italic; word-break: break-word; line-height: 1.4;">${main.contactEpigraph}</p>` : ''}
-                </div>
+                <!-- Floating Right Arrow Button inside the Card -->
+                ${currentResultCards.length > 1 && index < currentResultCards.length - 1 ? `
+                <button onclick="nextCard()" class="carousel-arrow-btn right-arrow" aria-label="Tarjeta Siguiente">
+                    <span>→</span>
+                </button>
                 ` : ''}
-            </div>
-        `;
 
-        // Render Alternatives
-        document.getElementById('alternatives-container').innerHTML = finalAlts.map(alt => {
-            return `
-                <div class="alt-card">
-                    <div class="alt-title">
-                        ${alt.name}
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 1rem; flex-wrap: wrap;">
+                    <div class="badge" style="background: ${isMain ? '#ede9fe' : '#f3f4f6'}; color: ${isMain ? '#7c3aed' : '#4b5563'}; border: 1px solid ${isMain ? 'rgba(124,58,237,0.15)' : 'rgba(75,85,99,0.1)'}">${cardBadge}</div>
+                    <button onclick="shareRecommendation('${card.name.replace(/'/g, "\\'")}')" class="btn" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(124, 58, 237, 0.1); color: #7c3aed; border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 99px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(124, 58, 237, 0.2)'" onmouseout="this.style.background='rgba(124, 58, 237, 0.1)'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        Compartir
+                    </button>
+                </div>
+                <h4 class="line-title" style="color: #7c3aed; font-size: 1.75rem; font-weight: 800; margin-bottom: 0.75rem;">${card.name}</h4>
+                <p class="line-desc" style="color: #4b5563; margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.5;">${card.desc}</p>
+                
+                <div class="line-details">
+                    <div class="detail-item">
+                        <span>Monto Máximo</span>
+                        <strong>${card.maxAmount || '-'}</strong>
                     </div>
-                    <p class="alt-desc">${alt.desc}</p>
-                    
-                    ${alt.links && alt.links.length > 0 ? `
-                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                        <h5 style="font-size: 0.85rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Más información:</h5>
-                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                            ${alt.links.map(l => {
+                    <div class="detail-item">
+                        <span>Plazo</span>
+                        <strong>${card.term || '-'}</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span>Tasa</span>
+                        <strong>${card.rate || '-'}</strong>
+                    </div>
+                </div>
+
+                <div class="why-ideal">
+                    <h4>Diagnóstico y Justificación:</h4>
+                    <p style="margin: 0; line-height: 1.6;">${card.reasoning || card.idealFor || 'Esta línea se adapta perfectamente como alternativa para respaldar financieramente tu inversión ecológica.'}</p>
+                </div>
+
+                <div style="margin-top: 2.2rem; display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between;">
+                    ${card.links && card.links.length > 0 ? `
+                    <div style="flex: 1; min-width: 250px;">
+                        <h4 style="font-size: 1.1rem; color: #7c3aed; margin-bottom: 0.75rem; font-weight: 700;">Más información:</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            ${card.links.map(l => {
                                 const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
-                                const linkText = isDriveLink ? 'Líneas de financiamiento' : l;
-                                return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: white; text-decoration: underline; font-size: 0.8rem; font-weight: 600; word-break: break-all;">${linkText}</a>`;
+                                const linkText = isDriveLink ? 'Líneas de financiamiento' : (l.length > 40 ? l.substring(0, 40) + '...' : l);
+                                return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: #1f2937; text-decoration: underline; font-size: 0.95rem; font-weight: 600; display: block; word-break: break-all;">${linkText}</a>`;
                             }).join('')}
                         </div>
                     </div>
                     ` : ''}
 
-                    ${alt.contacts && alt.contacts.length > 0 ? `
-                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                        <h5 style="font-size: 0.85rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Contacto:</h5>
-                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                            ${alt.contacts.map(c => `<span style="font-size: 0.8rem; color: white; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
+                    ${card.contacts && card.contacts.length > 0 ? `
+                    <div style="flex: 1; min-width: 250px; padding: 1.25rem; background: #f3f4f6; border-radius: 16px;">
+                        <h4 style="font-size: 1.1rem; color: #7c3aed; margin-bottom: 0.75rem; font-weight: 700;">Canales de contacto:</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                            ${card.contacts.map(c => `<span style="font-size: 0.95rem; color: #1f2937; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
                         </div>
-                        ${alt.contactEpigraph ? `<p style="font-size: 0.75rem; margin-top: 0.5rem; color: white; opacity: 0.8; font-style: italic; word-break: break-word;">${alt.contactEpigraph}</p>` : ''}
+                        ${card.contactEpigraph ? `<p style="font-size: 0.85rem; margin-top: 0.75rem; color: #6b7280; font-style: italic; word-break: break-word; line-height: 1.4;">${card.contactEpigraph}</p>` : ''}
                     </div>
                     ` : ''}
                 </div>
+
+                <!-- Sliding Controls inside the Card Container -->
+                ${currentResultCards.length > 1 ? `
+                <div class="carousel-controls" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem; border-top: 1px solid #ede9fe; padding-top: 1.5rem; gap: 1rem; flex-wrap: wrap;">
+                    <button onclick="prevCard()" id="btn-prev-card" style="margin-top: 0; padding: 0.65rem 1.3rem; border-radius: 12px; font-weight: 700; color: #4b5563; background: #f3f4f6; border: 1px solid #e5e7eb; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem; ${index === 0 ? 'opacity: 0.35; pointer-events: none; filter: grayscale(1);' : ''}" onmouseover="this.style.background='#e5e7eb'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f3f4f6'; this.style.transform='translateY(0)';">
+                        ← Anterior
+                    </button>
+                    
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        ${currentResultCards.map((_, i) => {
+                            const isActive = i === index;
+                            return `
+                                <div onclick="goToCard(${i})" style="
+                                    height: 8px; 
+                                    border-radius: 4px; 
+                                    background: ${isActive ? '#7c3aed' : '#d1d5db'}; 
+                                    width: ${isActive ? '22px' : '8px'}; 
+                                    cursor: pointer; 
+                                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                                " title="Ir a la tarjeta ${i + 1}"></div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <button onclick="nextCard()" id="btn-next-card" style="margin-top: 0; padding: 0.65rem 1.3rem; border-radius: 12px; font-weight: 700; color: white; background: #7c3aed; border: none; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem; ${index === currentResultCards.length - 1 ? 'opacity: 0.35; pointer-events: none; filter: grayscale(1);' : ''}" onmouseover="this.style.background='#6d28d9'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#7c3aed'; this.style.transform='translateY(0)';">
+                        Siguiente →
+                    </button>
+                </div>
+                ` : ''}
             `;
-        }).join('');
+
+            // Force browser layout reflow before triggering keyframe slide transition
+            void cardContainer.offsetWidth;
+
+            // Trigger the premium slide keyframe-animation dynamically
+            if (index > prevIndex) {
+                cardContainer.classList.add('main-card-slide-right');
+            } else if (index < prevIndex) {
+                cardContainer.classList.add('main-card-slide-left');
+            } else {
+                cardContainer.classList.add('main-card-slide-right');
+            }
+        }, 120);
+    }
+
+    function prevCard() {
+        if (currentCardIndex > 0) {
+            showCard(currentCardIndex - 1);
+        }
+    }
+
+    function nextCard() {
+        if (currentCardIndex < currentResultCards.length - 1) {
+            showCard(currentCardIndex + 1);
+        }
+    }
+
+    function goToCard(index) {
+        showCard(index);
     }
 
     function getStars(score) {
@@ -4253,30 +4734,50 @@
         // Initialize with base counts (only if not filtered)
         financialLines.forEach(line => {
             if (line && line.name) {
-                let count = 0;
+                let pCount = 0;
                 if (!isFiltered) {
-                    if (line.name === 'Leasing Sustentable (Banco Santa Fe)') count = 5;
-                    if (line.name === 'Eficiencia Energética (Banco Municipal de Rosario)') count = 140;
-                    if (line.name === 'Financiamiento Verde (Banco CFI)') count = 176;
+                    if (line.name === 'Leasing Sustentable (Banco Santa Fe)') pCount = 5;
+                    if (line.name === 'Eficiencia Energética (Banco Municipal de Rosario)') pCount = 140;
+                    if (line.name === 'Financiamiento Verde (Banco CFI)') pCount = 176;
                 }
-                lineCounts[line.name] = count;
+                lineCounts[line.name] = { principal: pCount, alternativa: 0 };
             }
         });
 
         // Add Triple Impacto legacy count if not filtered
         if (!isFiltered) {
-            lineCounts['Triple impacto (Banco CFI)'] = (lineCounts['Triple impacto (Banco CFI)'] || 0) + 38;
+            lineCounts['Triple impacto (Banco CFI)'] = { principal: 38, alternativa: 0 };
         }
 
-        // ALWAYS Count recommendations from completions (Real-time live data)
+        // Keep track of alternative count details for debug logging
+        const debugAlts = {};
+
+        // ALWAYS Count recommendations from completions (Real-time live data including alternatives)
         completions.forEach(c => {
             const lineName = c.line || "No especificada";
-            if (lineCounts.hasOwnProperty(lineName)) {
-                lineCounts[lineName]++;
-            } else {
-                lineCounts[lineName] = 1;
+            if (!lineCounts.hasOwnProperty(lineName)) {
+                lineCounts[lineName] = { principal: 0, alternativa: 0 };
+            }
+            lineCounts[lineName].principal++;
+
+            // Count alternatives
+            if (c.alternatives && Array.isArray(c.alternatives)) {
+                c.alternatives.forEach(altName => {
+                    if (altName) {
+                        if (!lineCounts.hasOwnProperty(altName)) {
+                            lineCounts[altName] = { principal: 0, alternativa: 0 };
+                        }
+                        lineCounts[altName].alternativa++;
+                        
+                        // Populate debug log object
+                        debugAlts[altName] = (debugAlts[altName] || 0) + 1;
+                    }
+                });
             }
         });
+
+        // Add debug log to verify alternative lines count
+        console.log("[DEBUG] Conteo de líneas alternativas recomendadas procesado:", JSON.stringify(debugAlts, null, 2));
 
         // Sort alphabetically by line name, but keep "Linea 0" at the very top and "No especificada" at the end
         const sortedLines = Object.entries(lineCounts).sort((a, b) => {
@@ -4289,7 +4790,7 @@
         
         const linesList = document.getElementById('recommended-lines-list');
         linesList.innerHTML = sortedLines.length > 0 
-            ? sortedLines.map(([name, count], index) => {
+            ? sortedLines.map(([name, countObj], index) => {
                 const lineObj = financialLines.find(l => l.name === name);
                 const isLinea0 = name && name.includes("Linea 0");
                 const displayIndex = isLinea0 ? 0 : (sortedLines.findIndex(l => l[0].includes("Linea 0")) !== -1 ? index : index + 1);
@@ -4298,6 +4799,7 @@
                 // No special encoding needed for attribute injection if we are careful, 
                 // but let's be super safe with quotes for the data-name attribute
                 const attrName = (name || "").replace(/"/g, '&quot;');
+                const totalRecs = countObj.principal + countObj.alternativa;
 
                 return `
                 <div style="padding: 1.25rem; background: rgba(255,255,255,0.1); border-radius: 16px; border-left: 5px solid ${isLinea0 ? '#4ade80' : '#7c3aed'}; color: white; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative; ${!lineObj && name !== "No especificada" ? 'border: 1px dashed rgba(255,255,255,0.3);' : ''}">
@@ -4343,9 +4845,15 @@
                     ` : ''}
 
                     ${!isLinea0 ? `
-                    <p style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.5rem;">
-                        💡 Recomendado <span style="font-weight: 800; color: #7c3aed; background: white; padding: 0.1rem 0.6rem; border-radius: 8px; margin: 0 0.2rem;">${count}</span> veces
-                    </p>
+                    <div style="margin-top: 0.75rem; font-size: 0.88rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.5rem;">
+                        <span style="font-weight: 500; font-size: 0.95rem; color: #c084fc; display: block; margin-bottom: 0.25rem;">
+                            💡 Total Recomendada: <strong style="font-weight: 800; color: white;">${totalRecs}</strong> veces
+                        </span>
+                        <div style="display: flex; gap: 1rem; opacity: 0.82; font-size: 0.8rem;">
+                            <span>🎯 Principal: <strong style="color: white;">${countObj.principal}</strong></span>
+                            <span>🔄 Alternativa: <strong style="color: white;">${countObj.alternativa}</strong></span>
+                        </div>
+                    </div>
                     ` : `
                     <p style="font-size: 0.85rem; opacity: 0.7; font-style: italic; margin-top: 0.5rem;">
                         Informativa (no automatizada).
@@ -4380,13 +4888,26 @@
             lineCounts['Triple impacto (Banco CFI)'] = (lineCounts['Triple impacto (Banco CFI)'] || 0) + 38;
         }
 
-        // ALWAYS count live recommendations from Firestore
+        // ALWAYS count live recommendations from Firestore (including alternatives)
         completions.forEach(c => {
             const lineName = c.line || c.lineaRecomendada || "No especificada";
             if (lineCounts.hasOwnProperty(lineName)) {
                 lineCounts[lineName]++;
             } else {
                 lineCounts[lineName] = (lineCounts[lineName] || 0) + 1;
+            }
+
+            // Count alternatives
+            if (c.alternatives && Array.isArray(c.alternatives)) {
+                c.alternatives.forEach(altName => {
+                    if (altName) {
+                        if (lineCounts.hasOwnProperty(altName)) {
+                            lineCounts[altName]++;
+                        } else {
+                            lineCounts[altName] = 1;
+                        }
+                    }
+                });
             }
         });
 
