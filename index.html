@@ -86,6 +86,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            position: relative;
         }
 
         header {
@@ -245,29 +246,55 @@
             opacity: 1;
         }
 
-        /* Screens */
+        /* Screens - Modern CSS transition setup for elegant steps */
         .screen {
             display: none;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(24px) scale(0.99);
+            transition: opacity 0.44s cubic-bezier(0.16, 1, 0.3, 1), transform 0.44s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .screen.active {
             display: block;
             opacity: 1;
-            transform: translateY(0);
-            animation: screenFadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+            transform: translateY(0) scale(1);
         }
 
-        @keyframes screenFadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(35px) scale(0.985);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        /* Directional Transition States */
+        .screen.entering-right {
+            display: block !important;
+            opacity: 0 !important;
+            transform: translateX(45px) scale(0.985) !important;
+        }
+
+        .screen.entering-left {
+            display: block !important;
+            opacity: 0 !important;
+            transform: translateX(-45px) scale(0.985) !important;
+        }
+
+        .screen.leaving-left {
+            display: block !important;
+            position: absolute !important;
+            top: 2rem !important;
+            left: 1rem !important;
+            right: 1rem !important;
+            opacity: 0 !important;
+            transform: translateX(-45px) scale(0.985) !important;
+            pointer-events: none !important;
+            z-index: 1 !important;
+        }
+
+        .screen.leaving-right {
+            display: block !important;
+            position: absolute !important;
+            top: 2rem !important;
+            left: 1rem !important;
+            right: 1rem !important;
+            opacity: 0 !important;
+            transform: translateX(45px) scale(0.985) !important;
+            pointer-events: none !important;
+            z-index: 1 !important;
         }
 
         /* Staggered entrance for options */
@@ -1460,6 +1487,58 @@
                 text-align: center !important;
             }
         }
+
+        /* Floating Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(124, 58, 237, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.25rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer !important;
+            box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.5), 0 8px 10px -6px rgba(124, 58, 237, 0.5);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        .back-to-top:hover {
+            background: #7c3aed;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(124, 58, 237, 0.6), 0 10px 10px -5px rgba(124, 58, 237, 0.6);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .back-to-top:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        @media (max-width: 600px) {
+            .back-to-top {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1489,6 +1568,17 @@
             <div class="step-item" id="step-item-4">
                 <div class="step-bubble">4</div>
                 <div class="step-label">Resultados</div>
+            </div>
+        </div>
+        
+        <!-- Numerical progress bar and Step X of Y label tracker -->
+        <div id="progress-tracker-container" style="display: none; flex-direction: column; gap: 0.65rem; margin: -1.5rem auto 2.5rem auto; max-width: 500px; padding: 0 1rem; width: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
+                <span id="progress-step-text" style="text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.3s ease;">Paso 1 de 4: Inicio</span>
+                <span id="progress-percent-text" style="font-feature-settings: 'tnum'; transition: all 0.3s ease;">25% Completado</span>
+            </div>
+            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.15); border-radius: 9999px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); padding: 1px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);">
+                <div id="progress-bar-fill" style="width: 25%; height: 100%; background: linear-gradient(90deg, #10b981, #7c3aed); border-radius: 9999px; transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);"></div>
             </div>
         </div>
     </header>
@@ -1529,10 +1619,18 @@
     <section id="results-screen" class="screen">
         <div class="results-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;">
             <h2 style="font-size: 2.5rem; font-weight: 800; margin: 0;">¡Análisis Completo!</h2>
-            <button onclick="downloadPDF()" style="background: white; color: #7c3aed; border: none; padding: 0.6rem 1.2rem; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.6rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)';">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                PDF
-            </button>
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.5rem 1rem; border-radius: 12px; backdrop-filter: blur(4px);">
+                    <input type="checkbox" id="include-comparison-table" style="width: 1.1rem; height: 1.1rem; accent-color: #7c3aed; cursor: pointer; margin: 0;" checked>
+                    <label for="include-comparison-table" style="font-size: 0.85rem; font-weight: 600; color: white; cursor: pointer; user-select: none; margin: 0;">
+                        Incluir tabla comparativa resumen
+                    </label>
+                </div>
+                <button onclick="downloadPDF()" style="background: white; color: #7c3aed; border: none; padding: 0.6rem 1.2rem; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.6rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)';">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    PDF
+                </button>
+            </div>
         </div>
 
         <div id="results-summary" class="summary-recap" style="display: none;"></div>
@@ -1589,7 +1687,28 @@
             <p id="user-info-thanks" style="display: none; color: #059669; font-weight: 700; margin-top: 1rem; text-align: center;">¡Información enviada correctamente!</p>
         </div>
 
-        <h3 id="alternatives-title" class="secondary-title">Opciones que podrían interesarte</h3>
+        <h3 id="alternatives-title" class="secondary-title" style="margin-bottom: 1.5rem;">Opciones que podrían interesarte</h3>
+        
+        <!-- Alternatives search bar wrapper -->
+        <div id="alternatives-search-wrapper" style="display: none; max-width: 500px; margin: 0 auto 2rem auto; position: relative; z-index: 10;">
+            <div style="position: relative; display: flex; align-items: center;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 1rem; pointer-events: none;">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="alternatives-search" placeholder="Buscar líneas alternativas por nombre..." oninput="filterAlternatives()" style="width: 100%; height: 46px; padding: 0 2.5rem 0 2.75rem; background: rgba(255, 255, 255, 0.15); border: 1.5px solid rgba(255, 255, 255, 0.25); border-radius: 14px; color: white; font-size: 0.95rem; font-weight: 500; outline: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" onfocus="this.style.borderColor='#7c3aed'; this.style.boxShadow='0 0 0 3px rgba(124, 58, 237, 0.3)'; this.style.background='rgba(255,255,255,0.2)';" onblur="this.style.borderColor='rgba(255,255,255,0.25)'; this.style.boxShadow='none'; this.style.background='rgba(255,255,255,0.15)';">
+                <button onclick="clearAlternativesSearch()" id="clear-search-btn" style="position: absolute; right: 0.75rem; background: none; border: none; color: rgba(255,255,255,0.7); cursor: pointer; display: none; padding: 0.25rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div id="no-search-results-feedback" style="display: none; text-align: center; padding: 2rem; color: rgba(255,255,255,0.7); font-size: 0.95rem; font-weight: 500; background: rgba(255,255,255,0.06); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.15); margin-top: 1rem;">
+                🔍 No se encontraron líneas alternativas con ese nombre.
+            </div>
+        </div>
+
         <div id="alternatives-container" class="alternatives-grid">
             <!-- Injected by JS -->
         </div>
@@ -2723,7 +2842,43 @@
         return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
     }
 
-    // Navigation
+    // Navigation - Smooth screen transition handlers using CSS transitions
+    function changeActiveScreen(fromElement, toElement, direction) {
+        if (!fromElement) {
+            if (toElement) toElement.classList.add('active');
+            return;
+        }
+        if (!toElement) {
+            fromElement.classList.remove('active');
+            return;
+        }
+
+        const outClass = direction === 'next' ? 'leaving-left' : 'leaving-right';
+        const inClass = direction === 'next' ? 'entering-right' : 'entering-left';
+
+        // Add leaving styles to source element
+        fromElement.classList.remove('active');
+        fromElement.classList.add(outClass);
+
+        // Prep target element
+        toElement.classList.remove('active');
+        toElement.classList.add(inClass);
+
+        // Reflow to register initial state
+        void toElement.offsetWidth;
+
+        // Transition target element in
+        setTimeout(() => {
+            toElement.classList.remove(inClass);
+            toElement.classList.add('active');
+        }, 30);
+
+        // Cleanup former active elements after transition finishes (matches 0.44s transition)
+        setTimeout(() => {
+            fromElement.classList.remove(outClass);
+        }, 460);
+    }
+
     function nextStep(step) {
         if (step > 1 && !validateStep(step - 1)) return;
 
@@ -2740,13 +2895,13 @@
              // Actually, if it's step 1 from the home screen, it's a new start.
         }
 
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        
+        const currentActive = document.querySelector('.screen.active');
         const nextScreen = document.getElementById(`step-${step}`);
+        
         if (nextScreen) {
             if (step >= 1) document.getElementById('stepper').style.display = 'flex';
-            nextScreen.classList.add('active');
             updateStepper(step + 1);
+            changeActiveScreen(currentActive, nextScreen, 'next');
             currentStep = step;
         } else {
             // If no more steps, assume we go to results
@@ -2770,6 +2925,11 @@
                 item.querySelector('.step-bubble').innerHTML = idx;
             }
         });
+        
+        // Update numerical progress percentage and Step X of Y label
+        if (typeof updateProgressTracker === 'function') {
+            updateProgressTracker(stepNumber);
+        }
     }
 
     // Option Selection and Question Logic
@@ -2843,26 +3003,31 @@
     }
 
     function prevStep(step) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const currentActive = document.querySelector('.screen.active');
+        let prevScreen = null;
+        
         if (step === 0) {
-            document.getElementById('welcome-screen').classList.add('active');
+            prevScreen = document.getElementById('welcome-screen');
             document.getElementById('stepper').style.display = 'none';
         } else {
-            const prevScreen = document.getElementById(`step-${step}`);
-            if (prevScreen) prevScreen.classList.add('active');
+            prevScreen = document.getElementById(`step-${step}`);
         }
-        updateStepper(step + 1);
-        currentStep = step;
+        
+        if (prevScreen) {
+            updateStepper(step + 1);
+            changeActiveScreen(currentActive, prevScreen, 'prev');
+            currentStep = step;
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function calculateResults() {
         if (!validateStep(2)) return;
 
-        // Show loading state with multi-stage messages
-        document.getElementById('step-2').classList.remove('active');
+        // Show loading state with multi-stage messages using premium Transition
+        const step2 = document.getElementById('step-2');
         const resultsScreen = document.getElementById('results-screen');
-        resultsScreen.classList.add('active');
+        changeActiveScreen(step2, resultsScreen, 'next');
         
         // Hide summary and results until ready
         document.getElementById('results-summary').style.display = 'none';
@@ -3183,41 +3348,61 @@
             });
         });
 
-        // 2. Hide visual alternatives grid from screen, but keep populated for PDF compatibility!
+        // 2. Display visual alternatives grid and setup real-time search engine
         const altTitle = document.getElementById('alternatives-title');
         const altContainer = document.getElementById('alternatives-container');
-        if (altTitle) altTitle.style.display = 'none';
+        const altSearchWrapper = document.getElementById('alternatives-search-wrapper');
+        const hasAlternatives = alts && alts.length > 0;
+        
+        if (altTitle) altTitle.style.display = hasAlternatives ? 'block' : 'none';
+        
+        if (altSearchWrapper) {
+            altSearchWrapper.style.display = hasAlternatives ? 'block' : 'none';
+            // Clear input search
+            const searchInput = document.getElementById('alternatives-search');
+            if (searchInput) searchInput.value = '';
+            const clearBtn = document.getElementById('clear-search-btn');
+            if (clearBtn) clearBtn.style.display = 'none';
+            const feedbackNoResults = document.getElementById('no-search-results-feedback');
+            if (feedbackNoResults) feedbackNoResults.style.display = 'none';
+        }
         
         if (altContainer) {
-            altContainer.style.display = 'none';
+            altContainer.style.display = hasAlternatives ? 'grid' : 'none';
             altContainer.innerHTML = (alts || []).map(alt => {
                 return `
-                    <div class="alt-card">
-                        <div class="alt-title">
+                    <div class="alt-card" data-name="${alt.name.replace(/"/g, '&quot;')}">
+                        <div class="alt-title" style="word-break: break-word; font-size: 1.15rem; font-weight: 800; color: #fdfdfd; margin-bottom: 0.75rem;">
                             ${alt.name}
                         </div>
-                        <p class="alt-desc">${alt.desc}</p>
+                        <p class="alt-desc" style="font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.45; margin-bottom: 1.25rem;">${alt.desc}</p>
                         
+                        <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 1rem; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span style="opacity: 0.7; font-weight: 500;">Monto Máx:</span><strong style="color: #ffffff;">${alt.maxAmount || '-'}</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span style="opacity: 0.7; font-weight: 500;">Plazo:</span><strong style="color: #ffffff;">${alt.term || '-'}</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span style="opacity: 0.7; font-weight: 500;">Tasa:</span><strong style="color: #34d399; font-weight: 700;">${alt.rate || '-'}</strong></div>
+                        </div>
+
                         ${alt.links && alt.links.length > 0 ? `
-                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                            <h5 style="font-size: 0.85rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Más información:</h5>
-                            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.15); margin-bottom: 1rem;">
+                            <h5 style="font-size: 0.8rem; color: white; margin-bottom: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Más información:</h5>
+                            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
                                 ${alt.links.map(l => {
                                     const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
                                     const linkText = isDriveLink ? 'Líneas de financiamiento' : l;
-                                    return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: white; text-decoration: underline; font-size: 0.8rem; font-weight: 600; word-break: break-all;">${linkText}</a>`;
+                                    return `<a href="${l.startsWith('http') ? l : 'https://' + l}" target="_blank" style="color: #a78bfa; text-decoration: underline; font-size: 0.8rem; font-weight: 700; word-break: break-all; transition: all 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color='#a78bfa'">${linkText}</a>`;
                                 }).join('')}
                             </div>
                         </div>
                         ` : ''}
-
+ 
                         ${alt.contacts && alt.contacts.length > 0 ? `
-                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                            <h5 style="font-size: 0.85rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Contacto:</h5>
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.08); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                            <h5 style="font-size: 0.8rem; color: white; margin-bottom: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Contacto:</h5>
                             <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                                ${alt.contacts.map(c => `<span style="font-size: 0.8rem; color: white; word-break: break-word;"><strong>${c.type}:</strong> ${c.value}</span>`).join('')}
+                                ${alt.contacts.map(c => `<span style="font-size: 0.8rem; color: white; word-break: break-word;"><strong style="font-weight: 700; opacity: 0.9;">${c.type}:</strong> ${c.value}</span>`).join('')}
                             </div>
-                            ${alt.contactEpigraph ? `<p style="font-size: 0.75rem; margin-top: 0.5rem; color: white; opacity: 0.8; font-style: italic; word-break: break-word;">${alt.contactEpigraph}</p>` : ''}
+                            ${alt.contactEpigraph ? `<p style="font-size: 0.75rem; margin-top: 0.4rem; color: white; opacity: 0.8; font-style: italic; word-break: break-word;">${alt.contactEpigraph}</p>` : ''}
                         </div>
                         ` : ''}
                     </div>
@@ -5857,9 +6042,15 @@
         currentSatisfaction = null;
         feedbackSent = false;
 
-        // Reset UI
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('welcome-screen').classList.add('active');
+        // Reset UI with premium transition
+        const currentActive = document.querySelector('.screen.active');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        if (currentActive && currentActive !== welcomeScreen) {
+            changeActiveScreen(currentActive, welcomeScreen, 'prev');
+        } else {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            welcomeScreen.classList.add('active');
+        }
         document.getElementById('stepper').style.display = 'none';
         updateStepper(1);
         
@@ -5872,10 +6063,14 @@
         document.getElementById('user-email').disabled = false;
         document.getElementById('user-company').disabled = false;
         const saveBtn = document.getElementById('btn-save-user-info');
-        saveBtn.disabled = false;
-        saveBtn.innerText = "Enviar información y finalizar";
-        saveBtn.style.background = "#7c3aed";
-        document.getElementById('user-info-thanks').style.display = 'none';
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Enviar información y finalizar";
+            saveBtn.style.background = "#ebdcb9";
+            saveBtn.style.color = "#2d2219";
+        }
+        const thanksDiv = document.getElementById('user-info-thanks');
+        if (thanksDiv) thanksDiv.style.display = 'none';
         
         resetFeedbackUI();
         
@@ -5886,260 +6081,523 @@
     }
 
     async function downloadPDF() {
-        const { purpose, amount, category } = userAnswers;
-        const mainRecTitle = document.getElementById('main-rec-title').textContent;
-        const mainRecContent = document.getElementById('main-recommendation').cloneNode(true);
-        const altRecTitle = document.getElementById('alternatives-title').textContent;
-        const altRecContent = document.getElementById('alternatives-container').cloneNode(true);
-
-        const container = document.createElement('div');
-        container.style.padding = '40px';
-        container.style.fontFamily = "'Inter', Arial, sans-serif";
-        container.style.background = '#ffffff';
-        container.style.color = '#000000';
-        container.style.width = '700px'; // Slightly narrower to avoid scaling issues on A4 with margins
-
-        const header = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #7c3aed; padding-bottom: 15px; margin-bottom: 25px;">
-                <div>
-                    <h1 style="color: #7c3aed; margin: 0; font-size: 26px; font-weight: 950; letter-spacing: -1.2px;">Suma Eficiencia</h1>
-                    <p style="margin: 4px 0 0; font-size: 14px; color: #374151; font-weight: 600;">Transición Energética de Santa Fe</p>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 11px; color: #1f2937; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Gobierno de Santa Fe</div>
-                    <div style="font-size: 10px; color: #6b7280; font-weight: 600; margin-top: 2px;">Ministerio de Desarrollo Productivo</div>
-                    <div style="font-size: 10px; color: #9ca3af; margin-top: 4px;">Generado: ${new Date().toLocaleDateString('es-AR')}</div>
-                </div>
-            </div>
-            <div style="background: #fdfdfd; border: 1.5px solid #f3f4f6; padding: 15px 20px; border-radius: 12px; margin-bottom: 25px; page-break-inside: avoid;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 11.5px;">
-                    <div><span style="color: #6b7280; font-size: 8.5px; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 800; letter-spacing: 0.5px;">Propósito</span> <strong style="color: #111827;">${purpose || '-'}</strong></div>
-                    <div><span style="color: #6b7280; font-size: 8.5px; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 800; letter-spacing: 0.5px;">Monto</span> <strong style="color: #111827;">${amount || '-'}</strong></div>
-                    <div><span style="color: #6b7280; font-size: 8.5px; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 800; letter-spacing: 0.5px;">Empresa</span> <strong style="color: #111827;">${category || '-'}</strong></div>
-                </div>
-            </div>
-        `;
-
-        container.innerHTML = header;
-
-        const formatCard = (card, isMain = false) => {
-            card.style.background = '#ffffff';
-            card.style.border = '1px solid #d1d5db';
-            card.style.borderRadius = '8px';
-            card.style.padding = isMain ? '15px' : '12px';
-            card.style.marginBottom = '15px';
-            card.style.boxShadow = 'none';
-            card.style.color = '#000000';
-            card.style.backdropFilter = 'none';
-            card.style.width = '100%';
-            card.style.boxSizing = 'border-box';
-            card.style.height = 'auto';
-            card.style.display = 'block';
-            card.style.pageBreakInside = 'avoid';
-            card.style.position = 'relative';
-            
-            const titles = card.querySelectorAll('.line-title, .alt-title');
-            titles.forEach(t => {
-                t.style.color = '#7c3aed';
-                t.style.fontSize = isMain ? '18px' : '15px';
-                t.style.fontWeight = '800';
-                t.style.margin = '0 0 6px 0';
-                t.style.display = 'block';
-                t.style.pageBreakAfter = 'avoid';
-            });
-
-            const descs = card.querySelectorAll('.line-desc, .alt-desc');
-            descs.forEach(d => {
-                d.style.color = '#374151';
-                d.style.fontSize = isMain ? '12px' : '11.5px';
-                d.style.lineHeight = '1.3';
-                d.style.marginBottom = '10px';
-                d.style.display = 'block';
-            });
-
-            const detailItemsGrid = card.querySelector('.line-details');
-            if (detailItemsGrid) {
-                detailItemsGrid.style.display = 'flex';
-                detailItemsGrid.style.flexDirection = 'row';
-                detailItemsGrid.style.gap = '12px';
-                detailItemsGrid.style.borderTop = '1px solid #e5e7eb';
-                detailItemsGrid.style.borderBottom = '1px solid #e5e7eb';
-                detailItemsGrid.style.padding = '8px 0';
-                detailItemsGrid.style.margin = '8px 0';
-                detailItemsGrid.style.pageBreakInside = 'avoid';
-                
-                const details = detailItemsGrid.querySelectorAll('.detail-item');
-                details.forEach(d => {
-                    d.style.flex = '1';
-                    d.style.display = 'block';
-                    const span = d.querySelector('span');
-                    if (span) {
-                        span.style.fontSize = '8.5px';
-                        span.style.color = '#6b7280';
-                        span.style.textTransform = 'uppercase';
-                        span.style.fontWeight = '700';
-                        span.style.marginBottom = '1px';
-                        span.style.display = 'block';
-                    }
-                    const strong = d.querySelector('strong');
-                    if (strong) {
-                        strong.style.fontSize = '12px';
-                        strong.style.color = '#000000';
-                        strong.style.display = 'block';
-                        strong.style.fontWeight = '800';
-                    }
-                });
-            }
-
-            const whyIdeal = card.querySelector('.why-ideal');
-            if (whyIdeal) {
-                whyIdeal.style.background = '#f9fafb';
-                whyIdeal.style.borderLeft = '3px solid #7c3aed';
-                whyIdeal.style.padding = '10px 12px';
-                whyIdeal.style.borderRadius = '0 4px 4px 0';
-                whyIdeal.style.display = 'block';
-                whyIdeal.style.marginTop = '10px';
-                whyIdeal.style.pageBreakInside = 'avoid';
-                
-                const h4 = whyIdeal.querySelector('h4');
-                if (h4) {
-                    h4.style.fontSize = '9px';
-                    h4.style.color = '#7c3aed';
-                    h4.style.margin = '0 0 3px 0';
-                    h4.style.fontWeight = '900';
-                    h4.style.textTransform = 'uppercase';
-                }
-                const p = whyIdeal.querySelector('p');
-                if (p) {
-                    p.style.fontSize = '11.5px';
-                    p.style.color = '#1f2937';
-                    p.style.margin = '0';
-                    p.style.lineHeight = '1.3';
-                }
-            }
-
-            // Style links in PDF
-            card.querySelectorAll('a').forEach(link => {
-                link.style.color = '#7c3aed';
-                link.style.textDecoration = 'none';
-                link.style.fontWeight = '700';
-                link.style.fontSize = '11px';
-                link.style.display = 'block';
-                link.style.margin = '3px 0';
-            });
-            
-            // Style contacts in PDF
-            const contactContainers = card.querySelectorAll('div[style*="f3f4f6"], div[style*="rgba(255,255,255,0.1)"]');
-            contactContainers.forEach(container => {
-                container.style.display = 'block';
-                container.style.background = '#f3f4f6';
-                container.style.borderRadius = '6px';
-                container.style.padding = '10px';
-                container.style.marginTop = '10px';
-                container.style.border = '1px solid #e5e7eb';
-                container.style.pageBreakInside = 'avoid';
-                
-                const title = container.querySelector('h4, h5');
-                if (title) {
-                    title.style.fontSize = '10px';
-                    title.style.color = '#7c3aed';
-                    title.style.margin = '0 0 4px 0';
-                    title.style.fontWeight = '900';
-                    title.style.textTransform = 'uppercase';
-                }
-                
-                container.querySelectorAll('span').forEach(s => {
-                    s.style.fontSize = '11.5px';
-                    s.style.color = '#1f2937';
-                    s.style.display = 'block';
-                    s.style.marginBottom = '2px';
-                    const strong = s.querySelector('strong');
-                    if (strong) strong.style.fontWeight = '800';
-                });
-                
-                const epi = container.querySelector('p');
-                if (epi) {
-                    epi.style.fontSize = '9px';
-                    epi.style.marginTop = '4px';
-                    epi.style.color = '#6b7280';
-                }
-            });
-
-            // Hide buttons/feedback UI in PDF
-            card.querySelectorAll('.btn, .feedback-section').forEach(b => b.style.display = 'none');
-        };
-
-        const mainSection = document.createElement('div');
-        mainSection.style.marginBottom = '25px';
-        mainSection.innerHTML = `<h2 style="font-size: 16px; color: #7c3aed; font-weight: 900; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid #f3f4f6; text-transform: uppercase; letter-spacing: 0.5px;">Recomendación Principal</h2>`;
-        formatCard(mainRecContent, true);
-        mainSection.appendChild(mainRecContent);
-        container.appendChild(mainSection);
-
-        if (altRecContent && altRecContent.children.length > 0) {
-            const altSectionTitle = document.createElement('h2');
-            altSectionTitle.style.fontSize = '16px';
-            altSectionTitle.style.color = '#7c3aed';
-            altSectionTitle.style.fontWeight = '900';
-            altSectionTitle.style.marginBottom = '12px';
-            altSectionTitle.style.marginTop = '25px';
-            altSectionTitle.style.paddingBottom = '6px';
-            altSectionTitle.style.borderBottom = '2px solid #7c3aed';
-            altSectionTitle.style.textTransform = 'uppercase';
-            altSectionTitle.style.letterSpacing = '0.5px';
-            altSectionTitle.innerText = altRecTitle;
-            container.appendChild(altSectionTitle);
-            
-            const altList = document.createElement('div');
-            altList.style.display = 'flex';
-            altList.style.flexDirection = 'column';
-            altList.style.gap = '15px';
-            
-            Array.from(altRecContent.children).forEach(child => {
-                const cardClone = child.cloneNode(true);
-                formatCard(cardClone);
-                cardClone.style.pageBreakInside = 'avoid';
-                altList.appendChild(cardClone);
-            });
-            
-            container.appendChild(altList);
+        if (!currentResultCards || currentResultCards.length === 0) {
+            showAlert('Error', 'No hay datos de análisis disponibles para exportar.');
+            return;
         }
 
-        const footer = `
-            <div style="margin-top: 50px; padding-top: 25px; border-top: 1.5px solid #7c3aed; text-align: center; color: #4b5563; font-size: 11px;">
-                <p style="margin: 0; font-weight: 600;">Este es un resumen informativo generado por el simulador interactivo Suma Eficiencia.</p>
-                <p style="margin: 6px 0 0; font-size: 10px; color: #9ca3af;">Ministerio de Desarrollo Productivo - Gobierno de Santa Fe</p>
-                <p style="margin: 15px 0 0; font-size: 9px; color: #d1d5db;">El presente documento no constituye una pre-aprobación crediticia ni otorga derechos sobre las líneas mencionadas. Sujeto a evaluación bancaria.</p>
+        const { purpose, amount, category } = userAnswers;
+        const mainCard = currentResultCards[0];
+        const alts = currentResultCards.slice(1);
+
+        // Create virtual high-fidelity single container fitted exactly for page-budgeted PDF generation
+        const container = document.createElement('div');
+        container.style.width = '794px'; 
+        container.style.background = '#fdfbf7'; // Warm ivory backdrop
+        container.style.color = '#2d2219'; // Warm deep espresso 
+        container.style.fontFamily = "'Inter', 'Arial', sans-serif";
+        container.style.margin = '0';
+        container.style.padding = '0';
+        container.style.boxSizing = 'border-box';
+
+        // Include Inter font for ultimate crispness in html2canvas screenshot conversion
+        let fontLink = `
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+            <style>
+                .pdf-page, .pdf-page * {
+                    box-sizing: border-box !important;
+                }
+                .pdf-page {
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 11px !important;
+                    line-height: 1.45 !important;
+                    color: #1e293b !important;
+                }
+                .pdf-page h1, .pdf-page h2, .pdf-page h3, .pdf-page h4, .pdf-page h5 {
+                    font-family: 'Inter', sans-serif !important;
+                    line-height: 1.25 !important;
+                    margin-top: 0 !important;
+                }
+                .pdf-page p, .pdf-page span, .pdf-page td, .pdf-page th, .pdf-page div {
+                    font-family: 'Inter', sans-serif !important;
+                }
+                .pdf-page table {
+                    border-collapse: collapse !important;
+                    line-height: 1.4 !important;
+                }
+                .pdf-page td, .pdf-page th {
+                    line-height: 1.4 !important;
+                }
+            </style>
+        `;
+
+        // 1. PAGE 1: COVER HEADER & MAIN RECOMMENDATION
+        let page1Content = `
+            <div class="pdf-page" style="width: 794px; min-width: 794px; height: 1120px; min-height: 1120px; box-sizing: border-box; padding: 15mm; background: #ffffff; position: relative; overflow: hidden; page-break-after: always; page-break-inside: avoid; page-break-before: avoid; margin: 0 auto; font-size: 11px; line-height: 1.45; color: #1e293b; font-family: 'Inter', sans-serif;">
+                <!-- Decorative Top Black Ribbon to convey ministerial prestige -->
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #000000;"></div>
+                
+                <!-- Page Content Wrapper structured securely to fill the exact A4 height -->
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; margin: 0 auto;">
+                    <div style="margin: 0 auto; width: 100%;">
+                        <!-- Formal Government Header (Perfect Centered Version) -->
+                        <div style="text-align: center; border-bottom: 2px solid #000000; padding-bottom: 12px; margin: 0 auto 24px auto; width: 100%;">
+                            <h1 style="color: #000000; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0px; text-transform: uppercase; font-family: 'Inter', sans-serif;">SUMA EFICIENCIA</h1>
+                            <p style="margin: 4px 0 0; font-size: 11px; color: #1e293b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">Programa de Transición Energética de Santa Fe</p>
+                            <p style="margin: 3px 0 0; font-size: 9px; color: #475569; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Ministerio de Desarrollo Productivo • Gobierno de la Provincia de Santa Fe</p>
+                            <p style="margin: 6px 0 0; font-size: 8.5px; color: #475569; font-weight: 500;">Fecha de consulta: ${new Date().toLocaleDateString('es-AR')}</p>
+                        </div>
+ 
+                         <!-- Certificate Title Badge Centered -->
+                        <div style="text-align: center; margin: 0 auto 22px auto; width: 100%;">
+                            <div style="display: inline-block; background: #f8fafc; border: 1px solid #000000; border-radius: 4px; padding: 6px 18px; font-size: 9.5px; font-weight: 800; color: #000000; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif;">
+                                Informe Técnico Consultivo de Financiamiento Energético
+                            </div>
+                        </div>
+ 
+                         <!-- Parametros Evaluados (Symmetrical centered block layout) -->
+                        <div style="border: 1px solid #000000; border-radius: 4px; background: #f8fafc; padding: 18px; margin: 0 auto 24px auto; width: 100%; box-sizing: border-box;">
+                            <h4 style="margin: 0 auto 12px auto; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.8px; color: #000000; border-bottom: 1px solid #000000; padding-bottom: 5px; font-weight: 800; font-family: 'Inter', sans-serif; text-align: center; width: 100%;">PARÁMETROS DEL PROYECTO EVALUADO</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 10.5px; line-height: 1.5; margin: 0 auto; table-layout: fixed;">
+                                <tr>
+                                    <td style="padding: 4px 10px; color: #475569; width: 45%; font-weight: 600; text-align: right; word-wrap: break-word; overflow-wrap: break-word;">Destino de la Inversión:</td>
+                                    <td style="padding: 4px 10px; color: #000000; font-weight: 700; text-align: left; word-wrap: break-word; overflow-wrap: break-word;">${purpose || '-'}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 4px 10px; color: #475569; font-weight: 600; text-align: right; word-wrap: break-word; overflow-wrap: break-word;">Volumen Financiero Solicitado:</td>
+                                    <td style="padding: 4px 10px; color: #000000; font-weight: 700; text-align: left; word-wrap: break-word; overflow-wrap: break-word;">${amount || '-'}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 4px 10px; color: #475569; font-weight: 600; text-align: right; word-wrap: break-word; overflow-wrap: break-word;">Categoría Financiera / Societaria:</td>
+                                    <td style="padding: 4px 10px; color: #000000; font-weight: 700; text-align: left; word-wrap: break-word; overflow-wrap: break-word;">${category || '-'}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Centered Section Header -->
+                        <h2 style="font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase; text-align: center; border-bottom: 2px solid #000000; padding-bottom: 6px; margin: 0 auto 16px auto; width: 100%; letter-spacing: 0.3px; font-family: 'Inter', sans-serif;">1. Línea de Crédito Principal Sugerida</h2>
+                        
+                        <!-- Premium Highlight Card for main recommended option (pure black and slate accents) -->
+                        <div style="border: 1px solid #000000; border-left: 6px solid #000000; border-radius: 4px; padding: 20px; background: #ffffff; margin: 0 auto 20px auto; width: 100%; box-sizing: border-box;">
+                            <h3 style="font-size: 14px; font-weight: 800; color: #000000; margin: 0 0 10px 0; letter-spacing: 0px; text-align: center; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif; text-transform: uppercase;">${mainCard.name}</h3>
+                            <p style="font-size: 11px; color: #1e293b; line-height: 1.55; margin: 0 0 16px 0; text-align: justify; word-wrap: break-word; overflow-wrap: break-word;">${mainCard.desc}</p>
+                            
+                            <!-- Key Financial Specs Details table (Centered headers) -->
+                            <table style="width: 100%; border-collapse: collapse; margin: 0 auto 18px auto; font-size: 10px; border: 1px solid #000000; border-radius: 4px; overflow: hidden; table-layout: fixed; box-sizing: border-box;">
+                                <thead>
+                                    <tr style="background: #000000; color: #ffffff;">
+                                        <th style="padding: 10px 12px; text-align: center; font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; width: 33.3%; font-weight: 700; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Plazo de Amortización</th>
+                                        <th style="padding: 10px 12px; text-align: center; font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; width: 33.3%; border-left: 1px solid #000000; font-weight: 700; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Cupo Financiero Máximo</th>
+                                        <th style="padding: 10px 12px; text-align: center; font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; width: 33.3%; border-left: 1px solid #000000; font-weight: 700; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Tasa Estimada (TNA Bonificada)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="background: #f8fafc; border-top: 1px solid #000000;">
+                                        <td style="padding: 11px 12px; font-weight: 700; color: #000000; text-align: center; word-wrap: break-word; overflow-wrap: break-word;">${mainCard.term || '-'}</td>
+                                        <td style="padding: 11px 12px; font-weight: 700; color: #000000; border-left: 1px solid #000000; text-align: center; word-wrap: break-word; overflow-wrap: break-word;">${mainCard.maxAmount || '-'}</td>
+                                        <td style="padding: 11px 12px; font-weight: 800; color: #000000; border-left: 1px solid #000000; font-size: 10.5px; text-align: center; word-wrap: break-word; overflow-wrap: break-word;">${mainCard.rate || '-'}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+ 
+                             <!-- Ideal justification structure -->
+                            <div style="background: #f8fafc; border: 1px solid #000000; border-left: 5px solid #000000; padding: 12px 16px; margin-top: 14px; border-radius: 4px; box-sizing: border-box; width: 100%;">
+                                <h4 style="font-size: 8.5px; text-transform: uppercase; font-weight: 800; color: #000000; margin: 0 0 5px 0; letter-spacing: 0.5px; text-align: center; font-family: 'Inter', sans-serif;">Justificación de Elegibilidad Técnica:</h4>
+                                <p style="font-size: 10px; color: #1e293b; margin: 0; line-height: 1.45; text-align: justify; word-wrap: break-word; overflow-wrap: break-word;">${mainCard.reasoning || mainCard.idealFor || 'Este crédito cumple con la tasa de subsidio especial de Santa Fe para adquisición de paneles solares, calderas de alta eficiencia energética u optimización técnica edilicia.'}</p>
+                            </div>
+                        </div>
+ 
+                         <!-- Page 1 Contacts Info in a single elegant centered column -->
+                        ${(mainCard.links && mainCard.links.length > 0) || (mainCard.contacts && mainCard.contacts.length > 0) ? `
+                            <div style="width: 100%; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; margin: 0 auto;">
+                                ${mainCard.links && mainCard.links.length > 0 ? `
+                                    <div style="border: 1px solid #000000; border-radius: 4px; padding: 12px 15px; background: #f8fafc; box-sizing: border-box; width: 100%;">
+                                        <h4 style="font-size: 9px; text-transform: uppercase; font-weight: 800; color: #000000; margin: 0 0 6px 0; border-bottom: 1px solid #000000; padding-bottom: 4px; letter-spacing: 0.5px; text-align: center; font-family: 'Inter', sans-serif;">Documentación e Instructivos disponibles</h4>
+                                        <div style="text-align: center; font-size: 9.5px; color: #1e293b; line-height: 1.45; word-wrap: break-word; overflow-wrap: break-word;">
+                                            ${mainCard.links.map(l => {
+                                                const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
+                                                const linkText = isDriveLink ? 'Ficha de Líneas Técnicas Oficiales (PDF)' : l;
+                                                return `<span style="display: block; padding: 2px 0;">• <strong>${linkText}</strong></span>`;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                ${mainCard.contacts && mainCard.contacts.length > 0 ? `
+                                    <div style="border: 1px solid #000000; border-radius: 4px; padding: 12px 15px; background: #f8fafc; box-sizing: border-box; width: 100%;">
+                                        <h4 style="font-size: 9px; text-transform: uppercase; font-weight: 800; color: #000000; margin: 0 0 6px 0; border-bottom: 1px solid #000000; padding-bottom: 4px; letter-spacing: 0.5px; text-align: center; font-family: 'Inter', sans-serif;">Atención y Asesoría Técnica</h4>
+                                        <div style="text-align: center; font-size: 9.5px; color: #1e293b; line-height: 1.45; word-wrap: break-word; overflow-wrap: break-word;">
+                                            ${mainCard.contacts.map(c => `
+                                                <span style="display: block; margin-bottom: 2.5px;"><strong style="font-weight: 700; color: #475569;">${c.type}:</strong> ${c.value}</span>
+                                            `).join('')}
+                                            ${mainCard.contactEpigraph ? `<p style="font-size: 8px; color: #475569; font-style: italic; margin: 4px 0 0 0; line-height: 1.25; text-align: center;">${mainCard.contactEpigraph}</p>` : ''}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+ 
+                     <!-- Page Footer -->
+                    <div style="text-align: center; font-size: 8.5px; color: #475569; border-top: 1px solid #000000; padding-top: 10px; margin-top: 15px; box-sizing: border-box; font-weight: 600; margin: 0 auto; width: 100%;">
+                        Documento Oficial de Simulación Respaldo • Página 1 de 3 • Ministerio de Desarrollo Productivo, Santa Fe
+                    </div>
+                </div>
             </div>
         `;
-        const footerEl = document.createElement('div');
-        footerEl.innerHTML = footer;
-        container.appendChild(footerEl);
+
+        // 2. PAGE 2: ALTERNATIVE OPTIONS LISTED EXQUISITELY
+        const altsToRender = alts.slice(0, 2);
+
+        let page2Content = `
+            <div class="pdf-page" style="width: 794px; min-width: 794px; height: 1120px; min-height: 1120px; box-sizing: border-box; padding: 15mm; background: #ffffff; position: relative; overflow: hidden; page-break-after: always; page-break-inside: avoid; page-break-before: avoid; margin: 0 auto; font-size: 11px; line-height: 1.45; color: #1e293b; font-family: 'Inter', sans-serif;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #000000;"></div>
+                
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; margin: 0 auto;">
+                    <div style="margin: 0 auto; width: 100%;">
+                        <!-- Formal Government Centered Mini Header -->
+                        <div style="text-align: center; border-bottom: 2px solid #000000; padding-bottom: 10px; margin: 0 auto 24px auto; width: 100%;">
+                            <span style="font-size: 11px; font-weight: 800; color: #000000; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif;">SUMA EFICIENCIA</span>
+                            <span style="display: block; font-size: 9px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px;">Opciones de Financiamiento Secundarias</span>
+                        </div>
+
+                        <h2 style="font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase; text-align: center; border-bottom: 1px solid #000000; padding-bottom: 6px; margin: 0 auto 14px auto; width: 100%; letter-spacing: 0.3px; font-family: 'Inter', sans-serif;">2. Líneas de Crédito Alternativas Recomendadas</h2>
+                        <p style="font-size: 10.5px; color: #1e293b; margin-bottom: 20px; line-height: 1.5; text-align: justify; word-wrap: break-word; overflow-wrap: break-word;">
+                             A continuación se detallan otras opciones de financiamiento disponibles en el ecosistema bancario de Santa Fe que demuestran un alto ratio de encaje técnico. Estas herramientas actúan como alternativas en caso de requerir co-financiación o re-encuadrar el proyecto de transición:
+                        </p>
+
+                        <!-- Loop through the selected alternatives and build beautiful framed single-column elements -->
+                        ${altsToRender.length > 0 ? altsToRender.map((alt, idx) => `
+                            <div style="border: 1px solid #000000; border-left: 5px solid #000000; border-radius: 4px; padding: 18px 20px; margin: 0 auto 18px auto; background: #ffffff; box-sizing: border-box; width: 100%;">
+                                <h3 style="font-size: 12px; font-weight: 800; color: #000000; margin: 0 0 8px 0; border-bottom: 1px solid #000000; padding-bottom: 5px; letter-spacing: 0px; text-align: center; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif; text-transform: uppercase;">Opción Alternativa ${idx + 2}: ${alt.name}</h3>
+                                <p style="font-size: 10.5px; color: #1e293b; line-height: 1.45; margin: 0 0 12px 0; text-align: justify; word-wrap: break-word; overflow-wrap: break-word;">${alt.desc}</p>
+                                
+                                <!-- Alt specs table structure -->
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; border: 1px solid #000000; border-radius: 4px; overflow: hidden; table-layout: fixed; box-sizing: border-box;">
+                                    <thead>
+                                        <tr style="background: #f8fafc; border-bottom: 1px solid #000000;">
+                                            <th style="padding: 7px 10px; text-align: center; font-size: 8px; text-transform: uppercase; color: #000000; font-weight: 800; width: 33.3%; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Amortización Máxima</th>
+                                            <th style="padding: 7px 10px; text-align: center; font-size: 8px; text-transform: uppercase; color: #000000; font-weight: 800; width: 33.3%; border-left: 1px solid #000000; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Monto de Financiación</th>
+                                            <th style="padding: 7px 10px; text-align: center; font-size: 8px; text-transform: uppercase; color: #000000; font-weight: 800; width: 33.3%; border-left: 1px solid #000000; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Tasa Referencial (TNA)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="padding: 8px 10px; font-weight: 700; font-size: 10px; color: #000000; text-align: center; word-wrap: break-word; overflow-wrap: break-word;">${alt.term || '-'}</td>
+                                            <td style="padding: 8px 10px; font-weight: 700; font-size: 10px; color: #000000; border-left: 1px solid #000000; text-align: center; word-wrap: break-word; overflow-wrap: break-word;">${alt.maxAmount || '-'}</td>
+                                            <td style="padding: 8px 10px; font-weight: 800; font-size: 10px; color: #000000; border-left: 1px solid #000000; text-align: center; word-wrap: break-word; overflow-wrap: break-word;">${alt.rate || '-'}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Secondary links structure safely nested in single-column -->
+                                ${(alt.links && alt.links.length > 0) || (alt.contacts && alt.contacts.length > 0) ? `
+                                    <div style="background: #f8fafc; border: 1px solid #000000; border-radius: 4px; padding: 12px 14px; font-size: 9.5px; line-height: 1.45; text-align: center; box-sizing: border-box; width: 100%;">
+                                        ${alt.links && alt.links.length > 0 ? `
+                                            <div style="margin-bottom: 6px; word-wrap: break-word; overflow-wrap: break-word;">
+                                                <strong style="color: #000000; display: block; margin-bottom: 2px;">Documento técnico de consulta:</strong>
+                                                ${alt.links.map(l => {
+                                                    const isDriveLink = l.includes('1NLfn9BLqJn6gYYOy9R75a27ftC2cA9Qz');
+                                                    const linkText = isDriveLink ? 'Ficha de Líneas Oficiales (PDF)' : l;
+                                                    return `<span style="color: #1e293b; display: block;">• ${linkText}</span>`;
+                                                }).join('')}
+                                            </div>
+                                        ` : ''}
+                                        ${alt.contacts && alt.contacts.length > 0 ? `
+                                            <div style="word-wrap: break-word; overflow-wrap: break-word;">
+                                                <strong style="color: #000000; display: block; margin-bottom: 2px;">Vía de consultas oficiales:</strong>
+                                                ${alt.contacts.map(c => `
+                                                    <span style="color: #1e293b; display: block;">• <strong>${c.type}:</strong> ${c.value}</span>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('') : `
+                            <div style="border: 1px solid #000000; border-style: dashed; padding: 45px; text-align: center; color: #475569; border-radius: 4px; font-size: 11px; margin: 20px auto 0 auto; background: #f8fafc; width: 100%;">
+                                No se registran créditos alternativos específicos asignables a esta configuración de montos o propósitos.
+                            </div>
+                        `}
+                    </div>
+
+                    <!-- Page Footer -->
+                    <div style="text-align: center; font-size: 8.5px; color: #475569; border-top: 1px solid #000000; padding-top: 10px; margin-top: 15px; box-sizing: border-box; font-weight: 600; margin: 0 auto; width: 100%;">
+                        Documento Oficial de Simulación Respaldo • Página 2 de 3 • Ministerio de Desarrollo Productivo, Santa Fe
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // 3. PAGE 3: CONSOLIDATED RESUME MATRIX TABLE & INST-WARNING BLOCK (ALWAYS PRINTED ACCORDING TO REQUIREMENTS)
+        let page3Content = `
+            <div class="pdf-page" style="width: 794px; min-width: 794px; height: 1120px; min-height: 1120px; box-sizing: border-box; padding: 15mm; background: #ffffff; position: relative; overflow: hidden; page-break-inside: avoid; page-break-before: avoid; margin: 0 auto; font-size: 11px; line-height: 1.45; color: #1e293b; font-family: 'Inter', sans-serif;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #000000;"></div>
+                
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; margin: 0 auto;">
+                    <div style="margin: 0 auto; width: 100%;">
+                        <!-- Formal Government Page 3 Centered Header -->
+                        <div style="text-align: center; border-bottom: 2px solid #000000; padding-bottom: 10px; margin: 0 auto 24px auto; width: 100%;">
+                            <span style="font-size: 11px; font-weight: 800; color: #000000; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Inter', sans-serif;">SUMA EFICIENCIA</span>
+                            <span style="display: block; font-size: 9px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px;">Resumen Comparativo de Opciones</span>
+                        </div>
+
+                        <h2 style="font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase; text-align: center; border-bottom: 1px solid #000000; padding-bottom: 6px; margin: 0 auto 14px auto; width: 100%; letter-spacing: 0.3px; font-family: 'Inter', sans-serif;">3. Tabla Comparativa General</h2>
+                        <p style="font-size: 10.5px; color: #1e293b; margin-bottom: 18px; line-height: 1.5; text-align: justify; word-wrap: break-word; overflow-wrap: break-word;">
+                             Consolidado general analítico de las líneas de crédito simuladas para el perfil actual de inversión. Este cuadro resume y compara de forma compacta y legible a lo ancho la información correspondiente:
+                        </p>
+
+                        <!-- Centered table container using flex alignment on A4 layout page 3 -->
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 0 auto;">
+                            <!-- High-Quality, beautifully styled 5-Column Comparison Table with requested headers and alternate striping -->
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; background: #ffffff; border: 1px solid #000000; border-radius: 4px; overflow: hidden; font-size: 9.5px; margin-top: 20px; margin-bottom: 22px; table-layout: fixed; box-sizing: border-box;">
+                                <thead>
+                                    <tr style="background: #000000; color: #ffffff; font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #000000;">
+                                        <th style="padding: 10px 12px; width: 25%; border-right: 1px solid #000000; font-weight: 700; text-align: center; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Nombre de la Línea</th>
+                                        <th style="padding: 10px 12px; width: 18%; border-right: 1px solid #000000; font-weight: 700; text-align: center; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Características</th>
+                                        <th style="padding: 10px 12px; width: 18%; border-right: 1px solid #000000; font-weight: 700; text-align: center; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Público Objetivo</th>
+                                        <th style="padding: 10px 12px; width: 26%; border-right: 1px solid #000000; font-weight: 700; text-align: center; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Ventajas</th>
+                                        <th style="padding: 10px 12px; width: 13%; font-weight: 700; text-align: center; word-wrap: break-word; overflow-wrap: break-word; font-family: 'Inter', sans-serif;">Tasa (TNA)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${currentResultCards.map((card, idx) => {
+                                        const isMain = idx === 0;
+                                        const rowBg = idx % 2 === 1 ? '#f8fafc' : '#ffffff';
+                                        const lineWeight = isMain ? '700' : '500';
+                                        const titleTextColor = isMain ? '#000000' : '#1e293b';
+                                        const rateHighlightCol = '#ffffff';
+                                        const rateBg = '#000000';
+                                        
+                                        // Custom high-quality target descriptions and advantages mapped beautifully
+                                        const featuresHtml = `<strong>Monto:</strong> ${card.maxAmount || 'Consultar'}<br/><strong style="margin-top:2px; display:inline-block;">Plazo:</strong> ${card.term || 'N/D'}`;
+                                        const audienceHtml = card.idealFor || 'Micro, pequeñas y medianas empresas santafesinas.';
+                                        
+                                        // Extracting dynamic advantage line with a formal tone
+                                        let advantagesHtml = card.reasoning || '';
+                                        if (advantagesHtml.length > 120) {
+                                            advantagesHtml = advantagesHtml.substring(0, 115) + '...';
+                                        }
+                                        if (!advantagesHtml) {
+                                            advantagesHtml = 'Financiamiento subvencionado con garantías flexibles para modernización tecnológica.';
+                                        }
+
+                                        return `
+                                            <tr style="background: ${rowBg}; border-bottom: 1px solid #000000;">
+                                                <td style="padding: 10px 12px; font-weight: ${lineWeight}; color: ${titleTextColor}; border-right: 1px solid #000000; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word;">
+                                                    <strong>${card.name}</strong>
+                                                    ${isMain ? '<span style="display:block; margin-top:2px; font-size:7.5px; color:#000000; font-weight:800; text-transform:uppercase;">[Sugerido]</span>' : ''}
+                                                </td>
+                                                <td style="padding: 10px 12px; font-size: 8.5px; color: #1e293b; border-right: 1px solid #000000; line-height: 1.45; word-wrap: break-word; overflow-wrap: break-word;">${featuresHtml}</td>
+                                                <td style="padding: 10px 12px; font-size: 8.5px; color: #1e293b; border-right: 1px solid #000000; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word;">${audienceHtml}</td>
+                                                <td style="padding: 10px 12px; font-size: 8.5px; color: #1e293b; border-right: 1px solid #000000; line-height: 1.4; text-align: justify; word-wrap: break-word; overflow-wrap: break-word;">${advantagesHtml}</td>
+                                                <td style="padding: 10px 12px; font-weight: 800; color: ${rateHighlightCol}; text-align: center; background: ${rateBg}; font-size: 9.5px; line-height: 1.25; word-wrap: break-word; overflow-wrap: break-word;">
+                                                    <strong>${card.rate || '-'}</strong>
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Official Instructions (Elegant black container to guide application submission) -->
+                        <div style="border: 1px solid #000000; border-left: 5px solid #000000; padding: 14px 16px; background: #f8fafc; margin: 0 auto 20px auto; border-radius: 4px; box-sizing: border-box; width: 100%;">
+                            <h4 style="margin: 0 0 6px 0; font-size: 9px; text-transform: uppercase; color: #000000; font-weight: 800; letter-spacing: 0.5px; text-align: center; font-family: 'Inter', sans-serif;">Instrucciones para la Gestión de Elegibilidad</h4>
+                            <p style="margin: 0; font-size: 9px; color: #1e293b; line-height: 1.5; text-align: justify; word-wrap: break-word; overflow-wrap: break-word;">
+                                 Los créditos presentados se encuentran supeditados a la evaluación técnica provista por la Secretaría de Desarrollo de Transición Energética de Santa Fe. Antes del ingreso de la carpeta formal en la sucursal del banco adherido, el tomador de crédito debe adjuntar el <strong>Certificado de Aptitud e Indicadores de Ahorro Energético (CAE)</strong> que se tramita de manera 100% digital a través de la plataforma oficial Trámites Santa Fe.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="margin: 0 auto; width: 100%;">
+                        <!-- Formal Legal Disclaimer & Ministerial Stamp -->
+                        <div style="border-top: 2px solid #000000; padding-top: 12px; margin: 10px auto 0 auto; text-align: center; color: #1e293b; font-size: 8px; line-height: 1.45; box-sizing: border-box; width: 100%;">
+                            <p style="margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; color: #000000; font-family: 'Inter', sans-serif;">SIMULADOR OFICIAL SUMA EFICIENCIA — TRANSICIÓN ENERGÉTICA DE SANTA FE</p>
+                            <p style="margin: 2px 0 0; font-size: 8px; color: #1e293b; font-weight: 700; text-align: center; font-family: 'Inter', sans-serif; text-transform: uppercase;">Ministerio de Desarrollo Productivo, Gobierno de la Provincia de Santa Fe</p>
+                            <p style="margin: 8px 0 0; font-size: 7.5px; color: #475569; text-align: justify; line-height: 1.35; word-wrap: break-word; overflow-wrap: break-word;">
+                                * <strong>Cláusula de Limitación Crediticia:</strong> El presente reporte técnico constituye una simulación consultiva meramente ilustrativa basada en las respuestas ingresadas voluntariamente por el usuario. El Ministerio de Desarrollo Productivo y las entidades bancarias consorciadas no asumen obligaciones de otorgamiento formal de crédito por la mera emisión de esta simulación preliminar, quedando todos los importes, plazos y tasas sujetos al análisis de solvencia definitivo por parte de cada entidad bancaria según la reglamentación del Banco Central de la República Argentina (BCRA).
+                            </p>
+                        </div>
+
+                        <!-- Page Footer -->
+                        <div style="text-align: center; font-size: 8.5px; color: #475569; border-top: 1px solid #000000; padding-top: 10px; margin-top: 15px; box-sizing: border-box; font-weight: 600; margin: 0 auto; width: 100%;">
+                            Documento Oficial de Simulación Respaldo • Página 3 de 3 • Ministerio de Desarrollo Productivo, Santa Fe
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Assemble HTML blocks in standard sequence (always produces exactly 3 pages as demanded)
+        let fullHtml = fontLink;
+        fullHtml += `<div style="width: 794px; background: #ffffff; color: #1e293b; box-sizing: border-box; font-size: 0; line-height: 0; margin: 0; padding: 0;">`;
+        fullHtml += page1Content;
+        fullHtml += page2Content;
+        fullHtml += page3Content;
+        fullHtml += `</div>`;
+
+        container.innerHTML = fullHtml;
+
+        // Create offscreen wrapper to hide the element from visual flow while layouting perfectly
+        const pdfWrapper = document.createElement('div');
+        pdfWrapper.id = 'suma-pdf-offscreen-wrapper';
+        pdfWrapper.style.position = 'absolute';
+        pdfWrapper.style.left = '0px';
+        pdfWrapper.style.top = (window.pageYOffset || document.documentElement.scrollTop) + 'px';
+        pdfWrapper.style.width = '794px';
+        pdfWrapper.style.height = 'auto';
+        pdfWrapper.style.opacity = '1.0';
+        pdfWrapper.style.pointerEvents = 'none';
+        pdfWrapper.style.zIndex = '-9999';
+
+        pdfWrapper.appendChild(container);
+        document.body.appendChild(pdfWrapper);
 
         const opt = {
-            margin: [15, 10, 15, 10], // top, left, bottom, right
-            filename: `Evaluacion_Suma_Eficiencia_${new Date().getTime()}.pdf`,
+            margin: [0, 0, 0, 0], // exact 1120px heights inside divs with proper breaks yields pristine 3-pages PDF
+            filename: `Informe_Tecnico_Suma_Eficiencia_${new Date().getTime()}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
+            html2canvas: { 
+                scale: 2.2, 
+                useCORS: true, 
+                logging: false, 
+                letterRendering: true,
+                scrollX: 0,
+                scrollY: 0,
+                x: 0,
+                y: 0,
+                windowWidth: 794,
+                windowHeight: 3360 // 3 pages of exactly 1120px height
+            },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            pagebreak: { mode: ['css', 'legacy'] }
         };
 
         const btn = document.querySelector('button[onclick="downloadPDF()"]');
         const originalBtnText = btn.innerHTML;
-        btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px; margin-right: 8px;"></div> Generando...';
+        btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px; margin-right: 8px; border-color: #000000; border-top-color: transparent;"></div> Generando...';
         btn.disabled = true;
 
         try {
             await html2pdf().set(opt).from(container).save();
         } catch (err) {
             console.error("PDF generation failed:", err);
-            showAlert('Error', 'No se pudo generar el PDF. Por favor, intente nuevamente.');
+            showAlert('Error', 'No se pudo generar el PDF estructurado. Por favor, intente nuevamente.');
         } finally {
+            // Clean up from DOM body
+            if (document.body.contains(pdfWrapper)) {
+                document.body.removeChild(pdfWrapper);
+            }
             btn.innerHTML = originalBtnText;
             btn.disabled = false;
         }
     }
+
+    // Update numerical progress tracker
+    function updateProgressTracker(stepNumber) {
+        const trackerContainer = document.getElementById('progress-tracker-container');
+        if (!trackerContainer) return;
+        
+        // Show tracker whenever stepper is displayed
+        const stepper = document.getElementById('stepper');
+        if (stepper && stepper.style.display !== 'none') {
+            trackerContainer.style.display = 'flex';
+        } else {
+            trackerContainer.style.display = 'none';
+        }
+        
+        const steps = [
+            { label: 'Inicio', percent: 25 },
+            { label: 'Propósito', percent: 50 },
+            { label: 'Perfil', percent: 75 },
+            { label: 'Resultados', percent: 100 }
+        ];
+        
+        const currentStepConfig = steps[stepNumber - 1] || { label: 'En progreso', percent: (stepNumber / 4) * 100 };
+        
+        const percentTextVal = `${currentStepConfig.percent}% Completado`;
+        const stepTextVal = `Paso ${stepNumber} de 4: ${currentStepConfig.label}`;
+        
+        const stepTextEl = document.getElementById('progress-step-text');
+        const percentTextEl = document.getElementById('progress-percent-text');
+        const fillEl = document.getElementById('progress-bar-fill');
+        
+        if (stepTextEl) stepTextEl.innerText = stepTextVal;
+        if (percentTextEl) percentTextEl.innerText = percentTextVal;
+        if (fillEl) fillEl.style.width = `${currentStepConfig.percent}%`;
+    }
+
+    window.updateProgressTracker = updateProgressTracker;
+
+    // Floating Back to Top Button Logic
+    function scrollToMainRecommendation() {
+        const target = document.getElementById('main-recommendation');
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    window.scrollToMainRecommendation = scrollToMainRecommendation;
+
+    window.addEventListener('scroll', () => {
+        const btn = document.getElementById('back-to-top-btn');
+        if (!btn) return;
+
+        const resultsScreen = document.getElementById('results-screen');
+        if (resultsScreen && resultsScreen.classList.contains('active')) {
+            // Check if user scrolled down more than 350px from the top
+            if (window.scrollY > 350) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        } else {
+            btn.classList.remove('visible');
+        }
+    });
+
+    // Real-time filtering function for alternative cards
+    function filterAlternatives() {
+        const query = (document.getElementById('alternatives-search').value || '').trim().toLowerCase();
+        const altCards = document.querySelectorAll('#alternatives-container .alt-card');
+        const clearBtn = document.getElementById('clear-search-btn');
+        const noResultsFeedback = document.getElementById('no-search-results-feedback');
+        
+        // Show/hide clear search button
+        if (clearBtn) {
+            clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+        }
+        
+        let visibleCount = 0;
+        
+        altCards.forEach(card => {
+            const name = (card.getAttribute('data-name') || '').toLowerCase();
+            if (name.includes(query)) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        if (noResultsFeedback) {
+            noResultsFeedback.style.display = (altCards.length > 0 && visibleCount === 0) ? 'block' : 'none';
+        }
+    }
+    
+    // Clear search value and re-evaluate
+    function clearAlternativesSearch() {
+        const input = document.getElementById('alternatives-search');
+        if (input) {
+            input.value = '';
+            filterAlternatives();
+            input.focus();
+        }
+    }
+
+    // Expose functions globally to HTML listeners
+    window.filterAlternatives = filterAlternatives;
+    window.clearAlternativesSearch = clearAlternativesSearch;
 
     window.downloadPDF = downloadPDF;
 </script>
@@ -6202,6 +6660,14 @@
             © 2026 Gobierno de Santa Fe
         </div>
     </footer>
+
+    <!-- Floating Back to Top Button for Results Screen -->
+    <button id="back-to-top-btn" class="back-to-top" onclick="scrollToMainRecommendation()" aria-label="Volver arriba">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+        <span>Volver Arriba</span>
+    </button>
 
 </body>
 </html>
